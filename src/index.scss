@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Verdana, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #304F74;
+}
+body {
+  margin: 0 14px;
+  display: flex;
+  justify-content: center;
+  width: 98.5vw;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border: 1px solid transparent;
+  padding: 0.5em 0.8em;
+  height: 42px;
+  color: white;
+  font-size: 0.9em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7) ;
+}
+.authForm::after {
+  content: "";
+  position: absolute;
+  z-index: -5;
+  inset: 0;
+  border-radius: 40px; 
+  padding: 2px; 
+  background:linear-gradient(120deg,rgb(235, 235, 235),rgb(0, 0, 0)); 
+  -webkit-mask: 
+     linear-gradient(#fff 0 0) content-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude; 
+}
+.authButton {
+  background: linear-gradient(90deg, #DDB961 0%, #B5833C 60%, #F7DE81 80%, #B98434 100%);
+}
+/* .ant-picker-range > div:first-child {
+  width: 3px;
+}
+.ant-picker-range-separator {
+  display: none;
+} */
+.ant-table-thead th {
+  background-color: #304F74 !important; 
+  color: white !important;
+  text-align: center !important;
+}
+.customDragger > div:first-child {
+  background-color: white;
+  height: 300px;
+  border: 1px solid #D2DBE1;
+}
+.anticon > svg {
+  display: none;
+}
