@@ -1,5 +1,5 @@
-import { useParams } from "react-router";
-import { columnsKatmDialog, dataKATM, dataKatmDialog } from "../../../helpers/fnHelpers";
+/* import { useParams } from "react-router"; */
+import { columnsKatmDialog,/*  dataKATM, */ dataKatmDialog } from "../../../helpers/fnHelpers";
 import CustomInput from "../../UI/CustomInput";
 import PassportInputs from "../../UI/PassportInputs";
 import DragNDrop from "../../UI/DragNDrop";
@@ -8,7 +8,7 @@ import ButtonComponent from "../../UI/ButtonComponent";
 import KATMRequests from "./KATMRequests";
 
 function KATMBrowseContent() {
-  const params = useParams();
+ /*  const params = useParams();
   const allKATM = [...dataKATM];
   const currentID = params.id_client?.slice(
     params.id_client?.lastIndexOf("=") + 1
@@ -16,7 +16,7 @@ function KATMBrowseContent() {
   const activeKATM: any = allKATM.find(
     (katm) => currentID && katm.index === Number(currentID)
   );
-
+ */
   return (
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px] ">
