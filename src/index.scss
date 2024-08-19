@@ -13,15 +13,17 @@
   color: #304F74;
 }
 body {
-  margin: 0 14px;
+  padding: 0 14px;
   display: flex;
   justify-content: center;
-  width: 98.5vw;
+  max-width: 100vw;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
+h1, h2, h3, h4, h5, ul {
+  font-size: 1.1em;
+  padding: 0;
+  margin: 0;
   line-height: 1.1;
 }
 
@@ -35,6 +37,7 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+  border-radius: 9px;
 }
 input::placeholder {
   color: rgba(255, 255, 255, 0.7) ;
@@ -56,12 +59,6 @@ input::placeholder {
 .authButton {
   background: linear-gradient(90deg, #DDB961 0%, #B5833C 60%, #F7DE81 80%, #B98434 100%);
 }
-/* .ant-picker-range > div:first-child {
-  width: 3px;
-}
-.ant-picker-range-separator {
-  display: none;
-} */
 .ant-table-thead th {
   background-color: #304F74 !important; 
   color: white !important;
@@ -72,6 +69,41 @@ input::placeholder {
   height: 300px;
   border: 1px solid #D2DBE1;
 }
-.anticon > svg {
+.anticon-delete > svg {
   display: none;
+}
+.ant-table-column-sorter-full {
+  display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.activeNav {
+  background-color: #304F74;
+  transition: all 0.3s ease-in-out;
+  path {
+    fill: white;
+    transition: all 0.3s ease-in-out;
+  }
+  p {    
+    transition: all 0.3s ease-in-out;
+  }
+}
+.scroll::-webkit-scrollbar {
+   width: 12px;
+}
+
+.scroll::-webkit-scrollbar-track {
+   border-radius: 10px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+   border-radius: 3px;
+   -webkit-box-shadow: inset 0 0 6px #a2baca; 
 }

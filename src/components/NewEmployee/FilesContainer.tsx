@@ -2,7 +2,7 @@ import DragNDrop from "../UI/DragNDrop";
 
 function FilesContainer() {
   return (
-    <div>
+    <div className="flex flex-col gap-y-[14px] pt-[10px]">
       <p className="w-[600px]">
         <label htmlFor="file" className="font-bold text-black">
           Копия документов

@@ -1,17 +1,16 @@
 import { FormEvent } from "react";
 import SVGComponent from "../UI/SVGComponent";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../store/auth";
 import { motion } from "framer-motion";
+import useActions from "../../helpers/hooks/useActions";
 
 function Login({showRecoveryPass}: {showRecoveryPass: () => void}) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useActions()
 
   function handleAuthSubmit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    dispatch(authActions.setAuthentificated())
+    dispatch.setAuthentificated()
     navigate("/")
   }
 
@@ -20,12 +19,12 @@ function Login({showRecoveryPass}: {showRecoveryPass: () => void}) {
     onSubmit={handleAuthSubmit} 
     className="authForm h-[647px] flex flex-col justify-around w-[420px] rounded-[40px] p-[48px] bg-transparent/55 backdrop-blur-[90px] mb-80">
       <h3 className="text-[24px] text-center font-bold text-white">Авторизация в систему</h3>
-      <div>
+      <div className="overflow-hidden">
         <p className="text-center text-white">сканируйте отпечаток пальца</p>
         <SVGComponent title={"fprint"}/>
-        <motion.div className="h-[3px] w-5/12 bg-lombard-btn-green mx-auto"
+        <motion.div className="h-[14px] rounded-md w-5/12 bg-gradient-to-b from-lombard-btn-green mx-auto"
         animate={{y: [0, -75, -200, -75, 0]}}
-        transition={{repeat: Infinity, duration: 4, repeatDelay: 0, ease: "linear", bounce: 0}}/>
+        transition={{repeat: Infinity, duration: 2, repeatDelay: 0, ease: "linear", bounce: 0}}/>
         <p className="text-center text-gray-400">или</p>
       </div>
       <div>

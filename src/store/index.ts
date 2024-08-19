@@ -1,11 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from './auth';
-import clientReducer from './client';
+import authReducer from "./auth";
+import clientReducer from "./client";
+import filialReducer from "./filial";
+import smsReducer from "./sms";
+import employeelReducer from "./employee";
+import katmReducer from "./katm";
 
 const store = configureStore({
-  reducer:  { clientsStore: clientReducer,
-  auth: authReducer },
+  reducer: {
+    auth: authReducer,
+    clientStore: clientReducer,
+    filialStore: filialReducer,
+    smsStore: smsReducer,
+    employeeStore: employeelReducer,
+    katmStore: katmReducer
+  },
 });
 
-
+export type RootState = ReturnType<typeof store.getState>;
 export default store;

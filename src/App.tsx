@@ -2,11 +2,10 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import RootLayout from './pages/RootLayout';
 import { childrenRoutes } from './helpers/routes';
 import Authentification from './pages/Authentification';
-import { useSelector } from 'react-redux';
-import { GlobalStateType } from './helpers/types';
+import { useAppSelector } from './helpers/hooks/useAppSelector';
 
 function App() {  
-  const authentificated = useSelector((state: GlobalStateType) => state.auth.authentificated);
+  const authentificated = useAppSelector(state => state.auth.authentificated);
 
   const router = createBrowserRouter([
     {

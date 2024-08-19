@@ -1,10 +1,10 @@
 function PassportInputs({name} : {name: string}) {
   return ( 
-  <div className="flex flex-col gap-1 mb-2 justify-center text-black text-[14px]">
+  <div className="flex flex-col gap-[8px] justify-center text-black text-[14px]">
     <label htmlFor={name} className="font-bold text-black">
       Серия и номер паспорта
     </label>
-    <div className="flex justify-end  h-[32px]">
+    <div className="flex justify-end  h-[41px]">
       <input
         type="text"
         name={name}

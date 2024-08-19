@@ -74,7 +74,7 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
   return (
     <>
       {multiple && (
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <p className="text-lombard-text-black font-bold">Копия документов</p>
           <div className="flex">
             <button
@@ -115,9 +115,9 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
               }`}
             >
               <Carousel slides={previewImage} currentIndex={currentIndex} />
-              {!multiple && <button className="h-8 hover:bg-lombard-btn-grey" onClick={() => setPreviewImage([])}>
+              {/* {!multiple && <button className="h-8 hover:bg-lombard-btn-grey" onClick={() => setPreviewImage([])}>
                 <SVGComponent title="cart"/>
-              </button>}
+              </button>} */}
             </div>
           </>
         ) : (

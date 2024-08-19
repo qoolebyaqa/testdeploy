@@ -23,10 +23,11 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
         <h3 className="text-[24px] text-center font-bold">
           Восстановить доступ
         </h3>
-        <p className="text-center">
+        <p className="text-center my-6">
           {recoveryPassStep === 2
             ? "Введите новый пароль"
-            : recoveryPassStep === 3 ? "для подтверждения вам отправлен код на номер или электронную почту" : ''}
+            : recoveryPassStep === 0 || recoveryPassStep === 1 ? "для восстановления пароля вам будет отправлена ссылка по" 
+            : recoveryPassStep === 3 ? "для подтверждения вам отправлен код на номер" : ''}
         </p>
         {recoveryPassStep === 2 ? (
           <div className="py-4 px-[2px]">
@@ -36,6 +37,7 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
               name="newPass"
               className="bg-white"
               labelStyles="text-white mt-[6px]"
+              placeholder="********"
             />
             <CustomInput
               type="password"
@@ -43,21 +45,20 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
               name="repeatNewPass"
               className="bg-white"
               labelStyles="text-white mt-[6px]"
+              placeholder="********"
             />
           </div>
         ) : recoveryPassStep === 3 ? <ConfirmationCode /> : (
           <motion.div
-            className="text-center rounded-2xl border-[1px] border-lombard-btn-grey py-10 overflow-hidden h-[180px]"
+            className="text-center rounded-2xl border-[1px] border-lombard-btn-grey py-10 overflow-hidden h-[140px]"
             animate={recoveryPassStep === 1 && { height: [180, 180, 190, 210] }}
           >
-            <motion.div animate={recoveryPassStep === 1 && { y: [0, -50, -100, -150] }}>
+            <motion.div animate={recoveryPassStep === 1 && { y: [0, -40, -80, -100] }}>
               <p>Номеру телефона</p>
               <strong>+998 (99) 08*-**-60</strong>
-              <p>или на электронную почту</p>
-              <strong>ravshazim@gmail.com</strong>
               <motion.div
                 className="bg-lombard-btn-green w-[100px] h-[100px] rounded-full mx-auto mt-16 text-[68px] flex items-center justify-center"
-                animate={recoveryPassStep === 1 && { scale: [1, 1.5, 1.3, 1] }}
+                animate={recoveryPassStep === 1 && { scale: [1, 1.3, 1.2, 1] }}
               >
                 <SVGComponent title="achivement" />
               </motion.div>

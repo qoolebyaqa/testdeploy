@@ -5,9 +5,9 @@ function HeaderNavItem({titleBtn, svgCase, path}: {titleBtn:string, svgCase: str
   const { pathname } = useLocation();
   return ( 
     <NavLink to={path}>
-      <button className="flex rounded-lg mx-1" style={pathname === path ? {backgroundColor: "#EFF2F4"}: {}}>
+      <button className={`flex rounded-lg mx-1 ${pathname === path ? "activeNav" : ''}`}>
         <i><SVGComponent title={svgCase}/></i>
-        <p className="text-black ml-[4px]">{titleBtn}</p>
+        <p className={`${pathname === path ? 'text-white' : 'text-black'} ml-[4px]`}>{titleBtn}</p>
       </button>
     </NavLink> );
 }

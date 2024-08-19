@@ -1,28 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "../components/auth/Login";
 import RecoveryPass from "../components/auth/RecoveryPass";
 import SVGComponent from "../components/UI/SVGComponent";
 import {motion} from 'framer-motion';
+import Loader from "../components/UI/Loader";
+import authBg from '/authBG.webp'
 
 function Authentification() {
   const [toggleRecoveryPass, setToggleRecoveryPass] = useState('');
-  const [bgImage, setBgImage] = useState({});
+  const [bgImage, setBgImage] = useState(authBg);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const image = new Image();
+    image.src = bgImage;
+    image.onload = () => {
+      setLoading(false);
+    };
+  }, [bgImage]);
 
   const handleAnimationComplete = () => {
     if (toggleRecoveryPass === 'recovery') {
       setBgImage("/bgPassRecovery.png");
     } else if (toggleRecoveryPass === 'login') {
-      setBgImage("/authBG.png");
+      setBgImage(authBg);
     }
   };
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
-    <motion.div className="w-screen h-dvh bg-no-repeat bg-cover mx-auto flex p-[76px] bg-[url('/authBG.png')]"
+    <motion.div className="w-screen h-dvh bg-no-repeat bg-cover mx-auto flex lg:flex-row flex-col lg:p-[76px] p-2  bg-center"
     style={{ backgroundImage: `url(${bgImage})` }}
     animate={toggleRecoveryPass === 'recovery' ? { opacity: [0.4, 0.5, 0.6, 0.8, 1]} :  { opacity: [0, 0.1, 0.6, 0.8, 1]}}
     onAnimationStart={handleAnimationComplete}>
       <h1>
-        <SVGComponent title="logo" recoveryPass={toggleRecoveryPass}/>
+        <SVGComponent title="logo" recoveryPass={toggleRecoveryPass} className="w-[204px] h-[164px]"/>
       </h1>
       <div className='mx-auto overflow-hidden py-10'>
         <motion.div

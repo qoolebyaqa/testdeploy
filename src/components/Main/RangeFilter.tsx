@@ -20,7 +20,7 @@ function RangeFilter({
   return (
     <div className="h-[60px] flex items-center relative">
       {iconInput !== "arrow" && titleFilter && (<>
-        <CustomInput name={titleFilter} type="text" placeholder={titleFilter} value={dateValues.join('-')} onClick={() => setVisible(true)} onChange={() => {}} className="relative z-10 h-[35px] w-[240px] left-[30px]"/>
+        <CustomInput name={titleFilter} type="text" placeholder={titleFilter} value={dateValues.join('-')} onClick={() => setVisible(true)} onChange={() => {}} className="relative z-10 h-[35px] w-[220px] left-[0px] text-xs"/>
         <div className="absolute z-30 h-[22px] right-[10px]"><SVGComponent title={iconInput} /></div>
         <RangePicker
           onOpenChange={() => setVisible(false)}
@@ -29,7 +29,7 @@ function RangeFilter({
           format={dateFormat}
           width={0}
           separator={''}
-          style={{ width: "1px", height: '0px'}}
+          style={{ width: "1px", height: '0px', position: "absolute"}}
         /></>
       )}
       {!titleFilter && (

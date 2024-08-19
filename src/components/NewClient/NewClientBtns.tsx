@@ -1,14 +1,22 @@
 import ButtonComponent from "../UI/ButtonComponent";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import useActions from "../../helpers/hooks/useActions";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import Sms from "../UI/Sms";
 
 function NewClientBtns() {
-  const buttons = [
+  const [showDialog, setShowDialog] = useState(false);
+  const regStep = useAppSelector(state => state.clientStore.regClientStep)
+  const dispatch = useActions();
+  const buttons = regStep === 1 ? [
     { title: "Сохранить", color: "bg-lombard-btn-green" },
     { title: "Продлить", color: "bg-lombard-main-blue" },
     { title: "Пересмотр", color: "bg-lombard-main-blue" },
     { title: "Закрыть договор", color: "bg-lombard-btn-red" },
-    { title: "СМС", color: "bg-lombard-btn-yellow"},
+    { title: "СМС", color: "bg-lombard-btn-yellow", handler: () => {setShowDialog(true)}},
     { title: "Печать", color: "bg-lombard-btn-yellow", handler: () => {} },
-  ];
+  ] : [{ title: "Подтвердить", color: "bg-lombard-btn-green", handler: () => {dispatch.setRegClientStep(1)} }]
 
   return (
     <>
@@ -24,6 +32,7 @@ function NewClientBtns() {
             />
           ))}
         </div>
+        {showDialog && createPortal( <Sms clickHandler={() => setShowDialog(false)} page={"client"}/>, document.body)}
       </div> 
     </>
   );

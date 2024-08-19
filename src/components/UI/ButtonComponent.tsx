@@ -14,7 +14,7 @@ function ButtonComponent({
   return (
     <button
       onClick={clickHandler}
-      className={`flex items-center justify-center rounded-xl ${color} ${
+      className={`flex items-center justify-center rounded-lg ${color} ${
         className ? className : ""
       }`}
     >
