@@ -4,7 +4,8 @@ import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import useActions from "../../../helpers/hooks/useActions";
 
 interface IDottedBtn {
-  id: string
+  id: string;
+  /* page?: string; */
 }
 
 function DottedBtn({id}: IDottedBtn) {  
@@ -34,6 +35,7 @@ function DottedBtn({id}: IDottedBtn) {
     <button 
       className="w-[40px] h-[40px] flex justify-center items-center bg-lombard-main-blue self-end mb-[2px]"
       onClick={() => setOpenControls(prev => !prev)}
+      type="button"
     >
       <div 
         className={`flex justify-between items-center h-[16px] transition-all duration-300 ${openControls ? 'gap-0' : 'gap-[4px]'}`}

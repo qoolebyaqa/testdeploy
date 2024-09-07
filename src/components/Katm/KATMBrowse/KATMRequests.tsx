@@ -1,15 +1,30 @@
-import DragNDrop from "../../UI/DragNDrop";
-import CollapseTable, { ITableControl } from "../../UI/CollapseTable";
+import CollapseWrapper from "../../UI/CollapseWrapper";
+import { Table, TableColumnsType } from "antd";
+import { IKatmDialogType, ISeekDayDialogType } from "../../../helpers/types";
+
+export interface ITableControl {
+  columns: TableColumnsType, 
+  data: IKatmDialogType[] | ISeekDayDialogType[],
+  selectHandler?: (...args: any[]) => void
+}
 
 function KATMRequests({ columns, data, selectHandler }: ITableControl) {
   const tableControl = {selectHandler, columns, data};
   return (
     <div className="w-4/5">
-      <CollapseTable tableControl={tableControl} height={240} title="КАТМ запросы" svg="refreshArrows"/>
-      <div className="m-2 bg-white rounded-2xl  p-2 h-[400px] text-black border-2">
-      <h3 className="py-4  font-extrabold border-b-[1px] mb-2">Загрузить справку</h3>
-        <DragNDrop />
-      </div>
+      <CollapseWrapper title="КАТМ запросы" page="katm">
+        <Table
+          columns={tableControl.columns}
+          dataSource={tableControl.data}
+          pagination={false}
+          virtual scroll={{ y: 240 - 80}}
+          className="drop-shadow-2xl hover:cursor-pointer"
+          bordered
+          onRow={(record) => {
+            return { onClick: () => tableControl.selectHandler && tableControl.selectHandler(record) };
+          }}
+        />
+      </CollapseWrapper>
     </div>
   );
 }

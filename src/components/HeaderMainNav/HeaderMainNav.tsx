@@ -2,21 +2,12 @@ import { NavLink, useLocation } from "react-router-dom";
 import HeaderNavItem from "./HeaderNavItem";
 import HeaderUserBlock from "./HeaderUserBlock";
 import SVGComponent from "../UI/SVGComponent";
-import { dataFilials, dataKATM } from "../../helpers/fnHelpers";
-import { IDataFilialType, IDataKatmType } from "../../helpers/types";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 function HeaderMainNav() {
   const {pathname} = useLocation();
-  const allFilials: IDataFilialType[] = [...dataFilials];
-  const allKATM: IDataKatmType[] = [...dataKATM];
-  const currentID = pathname.slice(
-    pathname.lastIndexOf("=") + 1
-  );
-  const activeFilial = allFilials.find(
-    (filial) => currentID && filial.index === Number(currentID)
-  );
-  const activeKATM = allKATM.find(
-    (katm) => currentID && katm.index === Number(currentID)
-  );
+  const currentFilial = useAppSelector(state => state.filialStore.filialChoosenOne)
+  const currentContract = useAppSelector(state => state.contractStore.contractChoosenOne)
+  const currentKATM = useAppSelector(state => state.katmStore.katmChoosenOne)
   const navList = [
     { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
     { titleBtn: "Сотрудники", svgCase: "employees", path: "/employees" },
@@ -28,10 +19,10 @@ function HeaderMainNav() {
   const specialLayouts = [
     {path: "/new-employee", navTo: '/employees', breadCrumb: '/ Регистрация сотрудника', linkWording: 'Сотрудники'},
     {path: "/new-client", navTo: '/', breadCrumb: '/ Регистрация клиента', linkWording: 'Клиенты'},
-    {path: "/filials/browse", navTo: '/filials', breadCrumb: `/ ${activeFilial?.filial}`, linkWording: 'Филиалы'},
-    {path: "/katm/browse", navTo: '/katm', breadCrumb: `/ ${activeKATM?.name}`, linkWording: 'КАТМ Запросы'},
+    {path: "/filials/browse", navTo: '/filials', breadCrumb: `/ ${currentFilial?.filial}`, linkWording: 'Филиалы'},    
+    {path: "/contracts/browse", navTo: '/contracts', breadCrumb: `/ ${currentContract?.name}`, linkWording: 'Договоры'},
+    {path: "/katm/browse", navTo: '/katm', breadCrumb: `/ ${currentKATM?.name}`, linkWording: 'КАТМ Запросы'},
   ]
-
   return (
     <header className="flex pt-2 px-4 justify-between items-center">
       <div className="flex py-[12px]">
@@ -52,7 +43,7 @@ function HeaderMainNav() {
                 className="text-black px-2 placeholder:text-lombard-text-black bg-lombard-bg-inactive-grey h-[40px]  rounded-md"
               />
               <i>
-                <SVGComponent title="search" />
+                <SVGComponent title="search" className="w-[57px] h-[40px]"/>
               </i>
             </div>
             <nav>

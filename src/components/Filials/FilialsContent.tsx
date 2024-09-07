@@ -13,7 +13,7 @@ function FilialsContent() {
   const navigate = useNavigate();
 
   function selectFilialHandler (...args: IDataFilialType[]) {
-    dispatch.setFilialSelectedOne(args[0]);
+    dispatch.setFilialChoosenOne(args[0]);
     navigate(`/filials/browse=${args[0].index}`)
   }
 
@@ -28,7 +28,7 @@ function FilialsContent() {
         <ButtonComponent titleBtn="Добавить филиал" color="bg-lombard-btn-green" />
       </div>
     </div>
-    <DataTable columns={columnsForFilials} data={dataFilials} selectHandler={selectFilialHandler}/>
+    <DataTable columns={columnsForFilials} data={dataFilials} selectHandler={selectFilialHandler} pagination/>
   </> 
    );
 }

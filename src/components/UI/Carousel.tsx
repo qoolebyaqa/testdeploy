@@ -10,7 +10,7 @@ function Carousel({
 }) {
   return (
     <>
-      <div className="w-[320px] overflow-hidden">
+      <div className="w-[320px] overflow-hidden ml-8">
         <ul
           className={`relative flex justify-start transition-all delay-300`}
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}

@@ -1,21 +1,51 @@
 import useActions from "../../helpers/hooks/useActions";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import CustomInput from "../UI/CustomInput";
 import DropDown from "../UI/DropDown";
 import PassportInputs from "../UI/PassportInputs";
 import SwitchComponent from "../UI/SwitchComponent";
 import FilesContainer from "./FilesContainer";
 
+interface IGeneralUserInfo {
+  formValues: {[key:string]: string},
+  onInputChange: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void
+}
 const regDropDowns = [
   {
-    label: "Должность",
-    name: "position",
+    label: "Родной язык",
+    name: "language",
     items: [
-      { label: "Директор", key: 1 },
-      { label: "Бухгалтер", key: 2 },
-      { label: "Специалист", key: 3 },
+      { label: "Узбекский", key: 1, enumValue: 'UZ'},
+      { label: "Русский", key: 2, enumValue: 'RU' },
     ],
   },
   {
+    label: "Должность",
+    name: "job_title",
+    items: [
+      { label: "Директор", key: 1, enumValue: 'DIRECTOR'},
+      { label: "Бухгалтер", key: 2, enumValue: 'ACCOUNTANT' },
+      { label: "Специалист", key: 3, enumValue: 'SPECIALIST' },
+    ],
+  },
+  {
+    label: "Пользователь",
+    name: "role_id",
+    items: [
+      { label: "Пользователь", key: 1, enumValue: 'USER' },
+      { label: "Админ", key: 2, enumValue: 'ADMIN'  },
+    ],
+  },
+  {
+    label: "Филиалы",
+    name: "filial_id",
+    items: [
+      { label: "Мирабад", key: 1, enumValue: 1 },
+      { label: "Чиланзар", key: 2, enumValue: 2 },
+      { label: "Юнусабад", key: 3, enumValue: 3 },
+    ],
+  }
+  /* {
     label: "Ставка",
     name: "workterm",
     items: [
@@ -25,11 +55,20 @@ const regDropDowns = [
     ],
   },
   {
-    label: "Пользователь",
-    name: "role",
+    label: "Место рождения",
+    name: "birthPlace",
     items: [
-      { label: "Пользователь", key: 1 },
-      { label: "Админ", key: 2 },
+      { label: "Tashkent", key: 1 },
+      { label: "Urgench", key: 2 },
+      { label: "Termez", key: 3 },
+    ],
+  },
+  {
+    label: "Гражданство",
+    name: "citizenship_id",
+    items: [
+      { label: "Узбекистан", key: 1 },
+      { label: "Экспат", key: 2 },
     ],
   },
   {
@@ -49,75 +88,54 @@ const regDropDowns = [
       { label: "4", key: 2 },
       { label: "3", key: 3 },
     ],
-  },
-  {
-    label: "Филиалы",
-    name: "filials",
-    items: [
-      { label: "MU", key: 1 },
-      { label: "MA", key: 2 },
-      { label: "YA", key: 3 },
-    ],
-  },
-  {
-    label: "Место рождения",
-    name: "birthPlace",
-    items: [
-      { label: "Tashkent", key: 1 },
-      { label: "Urgench", key: 2 },
-      { label: "Termez", key: 3 },
-    ],
-  },
-  {
-    label: "Гражданство",
-    name: "birthPlace",
-    items: [
-      { label: "Узбекистан", key: 1 },
-      { label: "Экспат", key: 2 },
-    ],
-  },
+  }, */
 ];
 
-function DetailedRegistration() {
+function DetailedRegistration({onInputChange, formValues}:IGeneralUserInfo) {
   const dispatch = useActions();
+  const gender = useAppSelector(state => state.employeeStore.newEmployeeGender);
   return (
     <div className="p-[16px] flex gap-[5px] bg-white rounded-2xl">
       <div className="flex flex-col gap-y-[14px] pt-[10px]">
         <div className="flex gap-4 px-2">
           <CustomInput
             type="date"
-            name="birthdate"
+            name="birth_date"
             label="Дата рождения"
-            defaultValue={new Date().toLocaleDateString()}
-            required={true}
+            value={formValues.birth_date}
+            handleChange={onInputChange}
           />
-          <PassportInputs name="employeePassport" />
+          <PassportInputs name="employeePassport" handleChange={onInputChange} seriesVal={formValues.passport_series} passNum={formValues.passport_number}/>
         </div>
         <div className="flex flex-col justify-between px-2 gap-[6px]">
           <p className="font-bold text-black text-[14px]">Пол</p>
           <SwitchComponent
             inputName="sex"
-            selectedDefaultTitle="Мужской"
+            selectedDefaultTitle="Женский"
             selectedStyles="text-white bg-[#304F74]"
-            unselectedTitle="Женский"
+            unselectedTitle="Мужской"
             unselectedStyles="bg-[#fff] text-black border-[#D2DBE1]"
             inputHandler={dispatch.setNewEmployeeGender}
+            currentSelect={gender}
           />
         </div>
         <div className="px-2 flex flex-col gap-y-[12px]">
           <CustomInput
             label="Номер телефона"
             type="phone"
-            name="phone"
+            name="phone_number"
             placeholder="+998 (99) 123-45-67"
             required
+            value={formValues.phone_number}
+            handleChange={onInputChange}
           />
           <CustomInput
             label="Место проживания"
             type="text"
             name="address"
             placeholder="район ____, ул. ____, д.__, кв.__"
-            required
+            value={formValues.address}
+            handleChange={onInputChange}
           />
         </div>
         <ul className="flex flex-col justify-center px-2 gap-y-[14px]">
@@ -129,6 +147,9 @@ function DetailedRegistration() {
                 listOfItems={dropDown.items}
                 label={dropDown.label}
                 name={dropDown.name}
+                handleSelect={onInputChange}
+                value={formValues[dropDown.name]}
+                required
               />
             </li>
           ))}

@@ -5,6 +5,7 @@ import filialReducer from "./filial";
 import smsReducer from "./sms";
 import employeelReducer from "./employee";
 import katmReducer from "./katm";
+import contractsReducer from "./contracts";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     filialStore: filialReducer,
     smsStore: smsReducer,
     employeeStore: employeelReducer,
-    katmStore: katmReducer
+    katmStore: katmReducer,
+    contractStore: contractsReducer
   },
 });
 

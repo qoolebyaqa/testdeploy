@@ -1,28 +1,22 @@
-/* import { useParams } from "react-router"; */
-import { columnsKatmDialog,/*  dataKATM, */ dataKatmDialog } from "../../../helpers/fnHelpers";
+import { columnsKatmDialog, dataKatmDialog } from "../../../helpers/fnHelpers";
 import CustomInput from "../../UI/CustomInput";
 import PassportInputs from "../../UI/PassportInputs";
 import DragNDrop from "../../UI/DragNDrop";
 import SVGComponent from "../../UI/SVGComponent";
 import ButtonComponent from "../../UI/ButtonComponent";
 import KATMRequests from "./KATMRequests";
+import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 
 function KATMBrowseContent() {
- /*  const params = useParams();
-  const allKATM = [...dataKATM];
-  const currentID = params.id_client?.slice(
-    params.id_client?.lastIndexOf("=") + 1
-  );
-  const activeKATM: any = allKATM.find(
-    (katm) => currentID && katm.index === Number(currentID)
-  );
- */
+  const currentKATM = useAppSelector(state => state.katmStore.katmSelected);
+  console.log(currentKATM);
+
   return (
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px] ">
         <ButtonComponent titleBtn="О клиенте" color="bg-white" className="text-lombard-text-black"/>
       </div>
-      <div className="ml-2 flex bg-[#EFF2F4]">
+      <div className="pl-2 flex bg-[#EFF2F4]">
         <div
           className={`bg-white flex flex-col gap-3 rounded-2xl px-2 py-6 border-2`}
         >
@@ -49,7 +43,6 @@ function KATMBrowseContent() {
               type="date"
               name="birthdate"
               label="Дата рождения"
-              defaultValue={new Date().toLocaleDateString()}
               required={true}
             />
           </div>

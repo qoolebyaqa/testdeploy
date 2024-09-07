@@ -6,7 +6,7 @@ function NewClientContent() {
   return (
     <div className="bg-lombard-bg-inactive-grey ">
       <NewClientBtns />
-      <div className="flex p-2 h-svh max-w-[1520px] mx-auto">
+      <div className="flex p-2 mx-auto justify-center">
         <GeneralClientInfo />
         <DepositDetails />
       </div> 

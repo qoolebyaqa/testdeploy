@@ -2,7 +2,7 @@ import DropDown from "../../UI/DropDown";
 
 function Deal() {
     return (
-        <div className="flex items-center justify-center gap-4 my-5">
+        <div className="flex items-center justify-center gap-4 my-6">
             <DropDown
                 title="Код продукта"
                 listOfItems={[
@@ -12,7 +12,6 @@ function Deal() {
                 triggerType="click"
                 name="creditType"
                 label="Код продукта"
-                className="h-[41px]"
             />
         </div>
     )

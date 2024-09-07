@@ -25,7 +25,7 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
   }
 
   async function readImage(originFile: RcFile, deleteAction?: Boolean) {
-    if(!/\b(.jpg|.jpeg|.png)\b/.test(originFile.name)) {
+    if(!/\.(jpg|jpeg|png)$/i.test(originFile.name)) {
       setPreviewImage((prev) => [{fileUid: originFile.uid, convertedSTR: '/dafaultDoc.jpg'}, ...prev])
     } else {
     const reader = new FileReader();
@@ -50,7 +50,6 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
   const props: UploadProps = {
     name: "file",
     multiple: !!multiple,
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
     showUploadList: !!multiple,
     async onRemove(e) {   
       if (e.originFileObj) {await readImage(e.originFileObj, true)}
@@ -58,7 +57,7 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
     async onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
-        /* console.log(info.file, info.fileList); */
+        console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -81,6 +80,7 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
               className="p-1"
               id="arrowLeft"
               onClick={carouselHandlerLeft}
+              type="button"
             >
               <i>
                 <SVGComponent title="arrowLeft" />
@@ -90,6 +90,7 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
               className="p-1"
               id="arrowRight"
               onClick={carouselHandlerRight}
+              type="button"
             >
               <i>
                 <SVGComponent title="arrowRight" />

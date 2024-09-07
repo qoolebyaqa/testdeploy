@@ -5,10 +5,16 @@ import { ISMSDataType } from "../helpers/types";
 
 const smsSlice = createSlice({
   name: "sms",
-  initialState: { smsSelectedOne: null, allSMS: dataSMS} as {smsSelectedOne: null | ISMSDataType | any, allSMS: ISMSDataType[]},
+  initialState: { selectedSMS: [], allSMS: dataSMS} as {selectedSMS: React.Key[], allSMS: ISMSDataType[]},
   reducers: {
-    setSmsSelectedOne(state, selection) {
-      state.smsSelectedOne = selection.payload
+    setSelectOneSms(state, selectedKey) {
+      state.selectedSMS = state.selectedSMS.includes(selectedKey.payload)
+      ? state.selectedSMS.filter((k: React.Key) => k !== selectedKey.payload)
+      : [...state.selectedSMS, selectedKey.payload];
+    },
+    setAllSelect(state){
+      state.selectedSMS = state.selectedSMS.length > 0 ?
+      [] : state.allSMS.map(val => val.key)
     }
   },
 });

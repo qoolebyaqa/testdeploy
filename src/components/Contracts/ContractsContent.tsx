@@ -1,13 +1,23 @@
 import ButtonComponent from "../UI/ButtonComponent";
-import { columnsForContracts, dataContracts } from "../../helpers/fnHelpers";
+import { columnsForContracts } from "../../helpers/fnHelpers";
 import DataTable from "../UI/DataTable";
 import { useNavigate } from "react-router";
 import RangeFilter from "../Main/RangeFilter";
 import DropDown from "../UI/DropDown";
+import useActions from "../../helpers/hooks/useActions";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import { IDataContractType } from "../../helpers/types";
 
 function ContractsContent() {
+  const dataContracts = useAppSelector(state => state.contractStore.allContracts);
+  const dispatch = useActions();
   const navigate = useNavigate();
-  
+
+  function selectFilialHandler (...args: IDataContractType[]) {
+    dispatch.setContractChoosenOne(args[0]);
+    navigate(`/contracts/browse=${args[0].index}`)
+  }
+
 
   return (
     <>
@@ -21,10 +31,10 @@ function ContractsContent() {
           <ButtonComponent color="bg-white" className="text-lombard-btn-red h-8 font-semibold" titleBtn="Очистить фильтр ✕"/>
           <RangeFilter iconInput="filters" />
           <ButtonComponent titleBtn="Применить" color="bg-lombard-main-blue" />
-          <ButtonComponent titleBtn="Создать" color="bg-lombard-btn-green" clickHandler={() => navigate('/new-client')}/>
+          <ButtonComponent titleBtn="Создать" color="bg-lombard-btn-green" clickHandler={() => {}}/>
         </div>
       </div>
-      <DataTable columns={columnsForContracts} data={dataContracts}/>
+      <DataTable columns={columnsForContracts} data={dataContracts} pagination selectHandler={selectFilialHandler}/>
     </>
   );
 }

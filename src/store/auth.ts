@@ -1,14 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface IAuthState {
+  access_token: string |  null, 
+  authLoading: boolean,
+  authError: string
+}
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: { userName: 'Arthur', authentificated: false },
+  initialState: { access_token: null, authLoading: false, authError: '' } as IAuthState,
   reducers: {
-    setUserName(state, action) {
-      state.userName = action.payload
+    setCurToken(state, access) {
+      state.access_token = access.payload
     },
-    setAuthentificated(state) {
-      state.authentificated = true;
+    setAuthLoading(state, bool) {
+      state.authLoading = bool.payload;
+    },
+    setAuthError(state, message) {
+      state.authError = message.payload;
     }
   },
 });

@@ -1,18 +1,19 @@
 import { TableColumnsType } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType } from "./types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
-import { Checkbox } from "antd";
 
-export function Copier<T extends { index?: number; key?: number }>(obj: T): T[] {
+export function Copier<T extends { index?: number; key?: number }>(obj: T, quantity?: number): T[] {
   const arr = [];
-  for (let i = 0; i < 100; i++) {
-    const obj1 = { ...obj };
-    obj1.index = i + 1;
-    obj1.key = i + 1;
-    arr.push(obj1);
-  }
+  let n = quantity ? quantity : 100
+    for (let i = 0; i < n; i++) {
+      const obj1 = { ...obj };
+      obj1.index = i + 1;
+      obj1.key = i + 1;
+      arr.push(obj1);
+    } 
   return arr;
 }
+
 
 export function toDefineItemsPerPage(length: number) {
   if (length < 50) {
@@ -26,6 +27,23 @@ export function toDefineItemsPerPage(length: number) {
   }
 }
 
+export async function convertTo64(file: Blob) {
+  try {
+    const reader = new FileReader();
+    const result = await new Promise<string | ArrayBuffer | null>(
+      (resolve, reject) => {
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+      }
+    );
+
+    return result;
+  } catch (error) {
+    console.error('Error reading file:', error);
+    throw error;
+  }
+}
 
 
 const classesForSortIcon = "flex justify-around";
@@ -113,7 +131,7 @@ const itemFilial = {
 };
 export const dataFilials: IDataFilialType[] = Copier(itemFilial);
 
-///SMS
+///notification
 export const columnsForSMS: TableColumnsType<ISMSDataType> = [
   {
     title: titleWIthIcon('№'),
@@ -143,12 +161,6 @@ export const columnsForSMS: TableColumnsType<ISMSDataType> = [
     title: "Статус",
     dataIndex: "status",
   },
-  {
-    title: () => <Checkbox />,
-    dataIndex: "checkbox",
-    render: () => <Checkbox />,
-
-  },
 ];
 export const itemSMS = {
   key: 1,
@@ -157,8 +169,7 @@ export const itemSMS = {
   phoneN: "+998 (99) 088-80-60",
   dateTime: "01.01.2024 09:08",
   SMSConent: "UzLombard. по номеру договора 9/24827 118911000 оплачено. Основная сумма: 11500000, процент: 391000",
-  status: 'Отправлено',
-  checkbox: <Checkbox onChange={() => {}} />
+  status: 'Отправлено'
 };
 export const dataSMS: ISMSDataType[] = Copier(itemSMS);
 
@@ -179,11 +190,11 @@ export const columnsForEmployees: TableColumnsType<IDataEmployeeType> = [
   },
   {
     title: "Статус",
-    dataIndex: "status",
+    dataIndex: "state",
   },
   {
     title: "Должность",
-    dataIndex: "position",
+    dataIndex: "job_title",
   },
   {
     title: "Ставка",
@@ -191,7 +202,7 @@ export const columnsForEmployees: TableColumnsType<IDataEmployeeType> = [
   },
   {
     title: "Пользватель",
-    dataIndex: "role",
+    dataIndex: "role_id",
   },
   {
     title: "Отпечаток пальца",
@@ -208,26 +219,21 @@ export const columnsForEmployees: TableColumnsType<IDataEmployeeType> = [
   {
     title: "Оценка",
     dataIndex: "grade",
-  },
-  {
-    title: "Действия",
-    dataIndex: "actionsEmployee",
-  },
+  }
 ]
 export const itemEmployee = {
   key: 1,
   index: 1,
   login: "Rushana-adm",
   name: "Narmuratova Rushana Maxmatmurodovna",
-  position: "Директор",
-  status: "Актив",
+  job_title: "Директор",
+  state: "Актив",
   workterm: 1,
-  role: "Админ",
+  role_id: "Админ",
   fprint: 10,
   language: "English",
   seekdays: "Воскресенье",
   grade: 5,
-  actionsEmployee: null
 };
 export const dataEmployees: IDataEmployeeType[] = Copier(itemEmployee);
 
@@ -268,10 +274,6 @@ export const columnsForKATM: TableColumnsType<IDataKatmType> = [
     title: "Основная сумма",
     dataIndex: "generalSum",
   },
-  {
-    title: "Действия",
-    dataIndex: "actions",
-  },
 ];
 export const itemKATM = {
   key: 1,
@@ -282,8 +284,7 @@ export const itemKATM = {
   cancel: 'отмена',
   regN: "14",
   Position: "Оператор",
-  generalSum: 17420,
-  actions: 'yes/no'
+  generalSum: 17420
 };
 export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 
@@ -296,7 +297,63 @@ export const columnsForClients: TableColumnsType<IDataClientType> = [
   },
   {
     title: titleWIthIcon("ID Клиента"),
-    dataIndex: "clientID",
+    dataIndex: "id",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("ФИО клиента"),
+    dataIndex: "name",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: "ПИНФЛ",
+    dataIndex: "pin",
+  },
+  {
+    title: "Паспорт",
+    dataIndex: "passport",
+  },
+  {
+    title: "Номер телефона",
+    dataIndex: "phone_number",
+  },
+  {
+    title: "Дата рождения",
+    dataIndex: "birth_date",
+  },
+  {
+    title: "Сумма займа",
+    dataIndex: "sum",
+  },
+  {
+    title: "Статус",
+    dataIndex: "status",
+  },
+];
+export const itemClient = {
+  key: 15,
+  index: 2,
+  id: "14",
+  name: "Zukhriddinov Jamoliddin Azimjonovich",
+  pin: "123456789012345",
+  passport: "AD 1234567",
+  phone_number: "+998 (__) ___-__-__",
+  birth_date: "01.01.2024",
+  sum: 50000000,
+  status: "-",
+};
+export const dataClients: IDataClientType[] = Copier(itemClient, 1);
+
+///contracts
+export const columnsForContracts: TableColumnsType<IDataContractType> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("Номер договора"),
+    dataIndex: "contract",
     sorter: (_a, _b) => 0,
   },
   {
@@ -317,68 +374,12 @@ export const columnsForClients: TableColumnsType<IDataClientType> = [
     dataIndex: "phoneN",
   },
   {
-    title: "Дата рождения",
-    dataIndex: "dateBirth",
-  },
-  {
-    title: "Сумма займа",
-    dataIndex: "sum",
-  },
-  {
-    title: "Статус",
-    dataIndex: "status",
-  },
-];
-export const itemClient = {
-  key: 1,
-  index: 1,
-  clientID: "14",
-  name: "Zukhriddinov Jamoliddin Azimjonovich",
-  jshir: "123456789012345",
-  passport: "AD 1234567",
-  phoneN: "+998 (__) ___-__-__",
-  dateBirth: "01.01.2024",
-  sum: 50000000,
-  status: "-",
-};
-export const dataClients: IDataClientType[] = Copier(itemClient);
-
-///contracts
-export const columnsForContracts: TableColumnsType<IDataContractType> = [
-  {
-    title: titleWIthIcon('№'),
-    dataIndex: "index",
-    sorter: (a, b) => a.index - b.index,
-  },
-  {
-    title: titleWIthIcon("Договор"),
-    dataIndex: "contract",
-    sorter: (_a, _b) => 0,
-  },
-  {
-    title: titleWIthIcon("ФИО"),
-    dataIndex: "name",
-    sorter: (_a, _b) => 0,
-  },
-  {
-    title: "Дата выдачи",
-    dataIndex: "releaseDate",
+    title: "Статус договора",
+    dataIndex: "contractStatus",
   },
   {
     title: "Сумма",
     dataIndex: "sum",
-  },
-  {
-    title: "Продления",
-    dataIndex: "prolongationDate",
-  },
-  {
-    title: "Данные паспорта",
-    dataIndex: "passprotInfo",
-  },
-  {
-    title: "№ ячейки",
-    dataIndex: "cellNumber",
   },
 ];
 export const itemContract = {
@@ -386,11 +387,11 @@ export const itemContract = {
   index: 1,
   contract: "10/5505",
   name: "Narmuratova Rushana Maxmatmurodovna",
-  releaseDate: "20.03.2024",
+  jshir: "20.03.2024",
+  passport: 'AD 5484456',
+  phoneN: "+998 90 123 45 67",
+  contractStatus: "-",
   sum: 500000,
-  prolongationDate: "11.09.2025",
-  passprotInfo: "AA 4948750 01.04.2014 G’allaorol TIIB Marjonbuloq SHMB",
-  cellNumber: "-",
 };
 export const dataContracts: IDataContractType[] = Copier(itemContract);
 
@@ -465,3 +466,43 @@ export const itemSeekDaysDialog = {
   dateOfChange: '01.05.2024'
 };
 export const dataSeekDaysDialog: ISeekDayDialogType[] = Copier(itemSeekDaysDialog);
+
+//katm modal
+export const columnsForKATMrequestDialog: TableColumnsType<IdataKATMrequestDialog> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("ID"),
+    dataIndex: "id",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: "Статус",
+    dataIndex: "status",
+  },
+  {
+    title: "Номер регистрации",
+    dataIndex: "regN",
+  },
+  {
+    title: "Задолженность",
+    dataIndex: "Position",
+  },
+  {
+    title: "Основная сумма",
+    dataIndex: "generalSum",
+  }
+];
+export const itemKATMrequestDialog = {
+  key: 1,
+  index: 1,
+  id: 95,
+  status: '1, 2, 6, 12, 14, 28, 29',
+  regN: "Февраль",
+  Position: "2024",
+  generalSum: "День отдыха",
+};
+export const dataKATMrequestDialog: IdataKATMrequestDialog[] = Copier(itemKATMrequestDialog, 2);

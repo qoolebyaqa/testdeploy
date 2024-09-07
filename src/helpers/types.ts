@@ -1,32 +1,30 @@
-import { ReactNode } from "react";
-
 export interface IDataContractType {
   key: React.Key;
   index: number;
-  contract: string;
-  name: string;
-  releaseDate: string;
-  sum: number;
-  prolongationDate: string;
-  passprotInfo: string;
-  cellNumber: string;
-}
-
-export interface IDataClientType {
-  key: number,
-  index: number,
-  clientID: string,
+  contract: string,
   name: string,
   jshir: string,
   passport: string,
   phoneN: string,
-  dateBirth: string,
+  contractStatus: string,
+  sum: number,
+}
+
+export interface IDataClientType {
+  key: React.Key,
+  index: number,
+  id: string,
+  name: string,
+  pin: string,
+  passport: string,
+  phone_number: string,
+  birth_date: string,
   sum: number,
   status: string,
 }
 
 export interface IDataKatmType {
-  key: number,
+  key: React.Key,
   index: number,
   time: string,
   name: string,
@@ -34,8 +32,7 @@ export interface IDataKatmType {
   cancel: string,
   regN: string,
   Position: string,
-  generalSum: number,
-  actions: string,
+  generalSum: number
 }
 export interface ISMSDataType {
   key: React.Key,
@@ -44,26 +41,25 @@ export interface ISMSDataType {
   phoneN: string,
   dateTime: string,
   SMSConent: string,
-  status: string,
-  checkbox: ReactNode
+  status: string
 }
 
 export interface IDataFilialType {
-    key: number,
-    index: number,
-    filial: string,
-    director: string,
-    accountant: string,
-    intController: string,
-    location: string,
-    phoneN: string,
-    MFO: string,
-    bankName: string,
-    iban: string,
-    limitCash: number,
-    detailsAcc: string,
-    notarius: string,
-    ATK: string,
+  key: React.Key,
+  index: number,
+  filial: string,
+  director: string,
+  accountant: string,
+  intController: string,
+  location: string,
+  phoneN: string,
+  MFO: string,
+  bankName: string,
+  iban: string,
+  limitCash: number,
+  detailsAcc: string,
+  notarius: string,
+  ATK: string,
 };
 
 export interface IDataEmployeeType {
@@ -71,15 +67,14 @@ export interface IDataEmployeeType {
   index: number,
   login: string,
   name: string,
-  status: string,
-  position: string,
+  state: string,
+  job_title: string,
   workterm: number,
-  role: string,
+  role_id: string,
   fprint: number,
   language: string,
   seekdays: string,
-  grade: number,
-  actionsEmployee: ReactNode | null
+  grade: number
 };
 
 export interface IKatmDialogType {
@@ -99,3 +94,12 @@ export interface ISeekDayDialogType {
   reason: string,
   dateOfChange: string
 }
+export interface IdataKATMrequestDialog {
+  key: React.Key,
+  index: number,
+  id: number,
+  status: string,
+  regN: string,
+  Position: string,
+  generalSum: string
+};

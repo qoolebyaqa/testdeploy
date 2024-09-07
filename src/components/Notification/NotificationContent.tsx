@@ -4,15 +4,23 @@ import DropDown from "../UI/DropDown";
 import DataTable from "../UI/DataTable";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-
 import { columnsForSMS } from "../../helpers/fnHelpers";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import Sms from "../UI/Sms";
+import { Checkbox } from "antd";
+import { ISMSDataType } from "../../helpers/types";
+import useActions from "../../helpers/hooks/useActions";
 
-function SMSContent() {
+function NotificationContent() {
   const [showDialog, setShowDialog] = useState(false);
-  const dataSMS = useAppSelector(state => state.smsStore.allSMS)
-
+  const dataSMS = useAppSelector(state => state.smsStore.allSMS);
+  const selectedRowKeys = useAppSelector(state => state.smsStore.selectedSMS);
+  const dispatch = useActions();
+  const checkbox =  {
+    title: () => <Checkbox onChange={() => dispatch.setAllSelect()} checked={!!selectedRowKeys.length}/>,
+    key: 'select',
+    render: (_: string, record: ISMSDataType) => <Checkbox onChange={() => dispatch.setSelectOneSms(record.key)} checked={selectedRowKeys.includes(record.key)}/>    
+  }
   return (
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
@@ -22,15 +30,16 @@ function SMSContent() {
           <CustomInput type="date" name="smsSelector" defaultValue={new Date().toLocaleString()} />
           <DropDown title="Все" listOfItems={[{ key: 1, label: 'Все' }]} triggerType="click" name="smsStatus1" className="w-[170px]" />
           <ButtonComponent titleBtn="Применить" color="bg-lombard-main-blue" />
-          {/* <ButtonComponent titleBtn="Переотправить" color="bg-lombard-btn-yellow" /> */}
-          {/* <ButtonComponent titleBtn="Отменить" color="bg-lombard-btn-grey" className="text-lombard-text-black" /> */}
+          {selectedRowKeys.length > 0 && <ButtonComponent titleBtn="Удалить" color="bg-lombard-btn-red" />}
+          {selectedRowKeys.length > 0 && <ButtonComponent titleBtn="Переотправить" color="bg-lombard-btn-yellow" />}
+          {selectedRowKeys.length > 0 && <ButtonComponent titleBtn="Отменить" color="bg-lombard-btn-grey" className="text-lombard-text-black" />}
           <ButtonComponent titleBtn="Отправить СМС" color="bg-lombard-btn-green" clickHandler={() => setShowDialog(true)} />
         </div>
       </div>
       {showDialog && createPortal(<Sms clickHandler={() => setShowDialog(false)} page={"notification"} />, document.body)}
-      <DataTable columns={columnsForSMS} data={dataSMS} />
+      <DataTable columns={[...columnsForSMS, checkbox]} data={dataSMS} classes="customCssTable" pagination/>
     </>
   );
 }
 
-export default SMSContent;
+export default NotificationContent;

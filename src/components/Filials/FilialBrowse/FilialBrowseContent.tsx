@@ -1,18 +1,10 @@
-import { useParams } from "react-router";
 import CustomInput from "../../UI/CustomInput";
-import { dataFilials } from "../../../helpers/fnHelpers";
 import ButtonComponent from "../../UI/ButtonComponent";
 import ListOfCollapses from "./ListOfCollapses";
+import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 
 function FilialBrowseContent() {
-  const params = useParams();
-  const allFilials = [...dataFilials];
-  const currentID = params.id_browse?.slice(
-    params.id_browse?.lastIndexOf("=") + 1
-  );
-  const activeFilial: any = allFilials.find(
-    (filial) => currentID && filial.index === Number(currentID)
-  );
+  const currentFilial = useAppSelector(state => state.filialStore.filialChoosenOne);
   const inputs = [
     {
       title: "Директор",
@@ -90,7 +82,7 @@ function FilialBrowseContent() {
                 name={input.name}
                 label={input.title}
                 required
-                value={activeFilial[input.name]}
+                value={currentFilial[input.name]}
                 key={input.name}
               />
             ))}

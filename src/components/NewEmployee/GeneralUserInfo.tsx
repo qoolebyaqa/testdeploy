@@ -7,18 +7,23 @@ import { createPortal } from "react-dom";
 import DialogComponent from "../UI/DialogComponent";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
-function GeneralUserInfo() {
+interface IGeneralUserInfo {
+  formValues: {[key:string]: string}
+  onInputChange: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void
+}
+
+function GeneralUserInfo({onInputChange, formValues}:IGeneralUserInfo) {
   const [showDialog, setShowDialog] = useState(false);
   const gender = useAppSelector(state => state.employeeStore.newEmployeeGender);
   return (
     <div className="w-[280px] flex flex-col gap-4">
       <div className="bg-white rounded-2xl px-2 py-6">
         <div className="relative">
-          <img src={!gender ? '/defaultAvatarFemale.png': '/defaultAvatarMale.png'} alt="avatar" />
+          <img src={gender === 'FEMALE' ? '/defaultAvatarFemale.png': '/defaultAvatarMale.png'} alt="avatar" />
           <SVGComponent title="editPhoto" />
         </div>
-        <CustomInput type="text" name="name" label="ФИО" required />
-        <CustomInput type="text" name="id" label="ID" />
+        <CustomInput type="text" name="name" label="ФИО" required handleChange={onInputChange} value={formValues.name}/>
+        <CustomInput type="text" name="login" label="Логин" required handleChange={onInputChange} value={formValues.login} />
         <p className="font-bold text-black">Статус</p>
         <SwitchComponent
           inputName="role"

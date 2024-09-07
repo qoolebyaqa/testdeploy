@@ -5,19 +5,25 @@ import SVGComponent from "../components/UI/SVGComponent";
 import {motion} from 'framer-motion';
 import Loader from "../components/UI/Loader";
 import authBg from '/authBG.webp'
+import { useAppSelector } from "../helpers/hooks/useAppSelector";
 
 function Authentification() {
   const [toggleRecoveryPass, setToggleRecoveryPass] = useState('');
-  const [bgImage, setBgImage] = useState(authBg);
+  const [bgImage, setBgImage] = useState('');
   const [loading, setLoading] = useState(true);
-
+  const loadingState = useAppSelector((state) => state.auth.authLoading);
   useEffect(() => {
-    const image = new Image();
-    image.src = bgImage;
-    image.onload = () => {
-      setLoading(false);
-    };
-  }, [bgImage]);
+    async function preLoad() {
+      const image = new Image();
+      image.src = authBg;
+      image.onload = () => {
+        setBgImage(image.src);
+        setLoading(false);
+      };
+    }
+
+    preLoad();
+  }, []);
 
   const handleAnimationComplete = () => {
     if (toggleRecoveryPass === 'recovery') {
@@ -27,26 +33,22 @@ function Authentification() {
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  }
-
-  return (
-    <motion.div className="w-screen h-dvh bg-no-repeat bg-cover mx-auto flex lg:flex-row flex-col lg:p-[76px] p-2  bg-center"
+  return (<>{loading || loadingState ? <Loader /> : 
+    <motion.div className="w-screen h-[100vh] bg-no-repeat bg-cover mx-auto flex lg:flex-row flex-col lg:p-[76px] p-2  bg-center"
     style={{ backgroundImage: `url(${bgImage})` }}
     animate={toggleRecoveryPass === 'recovery' ? { opacity: [0.4, 0.5, 0.6, 0.8, 1]} :  { opacity: [0, 0.1, 0.6, 0.8, 1]}}
     onAnimationStart={handleAnimationComplete}>
       <h1>
         <SVGComponent title="logo" recoveryPass={toggleRecoveryPass} className="w-[204px] h-[164px]"/>
       </h1>
-      <div className='mx-auto overflow-hidden py-10'>
+      <div className='mx-auto overflow-hidden py-10 h-[700px]'>
         <motion.div
         animate={toggleRecoveryPass === 'recovery' ? {y: [0, -400, -800, -1000, -980]} : toggleRecoveryPass === "login" ? {y: [-980, -800, -400, 0]}: {}}>
         <Login showRecoveryPass={() => setToggleRecoveryPass('recovery')}/>
         <RecoveryPass showRecoveryPass={() => setToggleRecoveryPass('login')}/>
         </motion.div>
       </div>
-    </motion.div>
+    </motion.div>}</>
   );
 }
 

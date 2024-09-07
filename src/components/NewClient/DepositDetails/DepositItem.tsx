@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 function DepositItem({item}:{item: {[key:string]: string}}) {  
   const [showDialog, setShowDialog] = useState(false);
-  return ( <motion.li className="flex mt-5" animate={{x: [-100, 100, 50, 0]}} transition={{duration: 0.3}}>
+  return ( <motion.li className="flex mt-5" animate={{y: [-100, 100, 50, 0]}} transition={{duration: 0.3}}>
     <div className="w-5/12 mr-2">
       <div className="flex gap-1 items-center">
         <DropDown

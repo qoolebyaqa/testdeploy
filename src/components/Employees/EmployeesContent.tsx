@@ -1,22 +1,36 @@
-import { useNavigate } from "react-router";
-import { columnsForEmployees, dataEmployees } from "../../helpers/fnHelpers";
+import { useLoaderData, useNavigate } from "react-router";
+import { columnsForEmployees } from "../../helpers/fnHelpers";
 import ButtonComponent from "../UI/ButtonComponent";
 import DataTable from "../UI/DataTable";
 import DropDown from "../UI/DropDown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Delete from "../UI/Delete";
 import { createPortal } from "react-dom";
+import { Checkbox } from "antd";
+import { IDataEmployeeType } from "../../helpers/types";
+import useActions from "../../helpers/hooks/useActions";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
 function EmployeesContent() {
   const [showDialog, setShowDialog] = useState(false);
+  const dataEmployees = useAppSelector(state => state.employeeStore.allEmployees)
+  const dispatch = useActions();
   const navigate = useNavigate()
+  const users = useLoaderData();
+  console.log('users', users)
+  useEffect(() => {dispatch.setEmployeeList(users)},[])
+  const selectedRowKeys = useAppSelector(state => state.employeeStore.employeeSelected);
   const buttons = [
     {title: "Применить", color: "bg-lombard-main-blue"},
     {title: "Удалить", color: "bg-lombard-btn-red", handler: () => setShowDialog(true) }, 
     /* {title: "Печать", color: "bg-lombard-btn-yellow"}, */
     {title: "Регистрация", color: "bg-lombard-btn-green", handler: () => {navigate('/new-employee')}}
   ];
-
+  const checkbox =  {
+    title: () => <Checkbox onChange={() => dispatch.setAllEmployeeSelect()} checked={!!selectedRowKeys.length}/>,
+    key: 'select',
+    render: (_: string, record: IDataEmployeeType) => <Checkbox onChange={() => dispatch.setEmployeeSelectedOne(record.key)} onClick={(e) => e.stopPropagation()} checked={selectedRowKeys.includes(record.key)}/>    
+  }
   return ( 
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
@@ -31,7 +45,7 @@ function EmployeesContent() {
         </div>
         {showDialog && createPortal(<Delete clickHandler={() => setShowDialog(false)}/>, document.body)}
       </div>
-      <DataTable columns={columnsForEmployees} data={dataEmployees}/>
+      <DataTable columns={[...columnsForEmployees, checkbox]} data={dataEmployees} classes="customCssTable" pagination/>
     </>
    );
 }

@@ -1,29 +1,34 @@
 import { Table } from "antd";
 import type {  TableColumnsType, TableProps } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, ISMSDataType } from "../../../src/helpers/types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, ISMSDataType } from "../../../src/helpers/types";
 import { toDefineItemsPerPage } from "../../helpers/fnHelpers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface IDataTable {
   columns: TableColumnsType, 
-  data: IDataContractType[] | IDataEmployeeType[] | IDataClientType[] | IDataKatmType[] | ISMSDataType[] | IDataFilialType[],
-  selectHandler?: (...args: any[]) => void
+  data: IDataContractType[] | IDataEmployeeType[] | IDataClientType[] | IDataKatmType[] | ISMSDataType[] | IDataFilialType[] | IdataKATMrequestDialog[],
+  selectHandler?: (...args: any[]) => void,
+  classes?: string,
+  pagination?: boolean
 }
 
-function DataTable({columns, data, selectHandler}: IDataTable) {
+function DataTable({columns, data, selectHandler, classes, pagination}: IDataTable) {
   const [quantityPerPage, setQuantityPerPage] = useState(14); 
-  const onChange: TableProps<IDataContractType | IDataEmployeeType | IDataClientType | IDataKatmType | ISMSDataType | IDataFilialType>["onChange"] = (pagination, sorter) => {
+  const onChange: TableProps<IDataContractType | IDataEmployeeType | IDataClientType | IDataKatmType | ISMSDataType | IDataFilialType | IdataKATMrequestDialog>["onChange"] = (pagination, sorter) => {
     console.log("params", pagination, sorter);
     setQuantityPerPage(Number(pagination.pageSize));
   };
+  useEffect(() => {
+    setQuantityPerPage(data.length < 14 ? data.length : 14);
+  }, [data.length]);
   return (
-    <div className="px-3 bg-[#EFF2F4] relative">
+    <div className={`px-3 ${pagination ? 'bg-[#EFF2F4]' : ''}  relative`}>
       <Table
         columns={columns}
         dataSource={data}
         onChange={onChange}
-        pagination={{ pageSize: quantityPerPage, position: ["bottomCenter"], showSizeChanger: true, pageSizeOptions: toDefineItemsPerPage(data.length), locale: {"items_per_page": `из ${data.length}`}}}
-        className="drop-shadow-md hover:cursor-pointer"
+        pagination={pagination ? { pageSize: quantityPerPage, position: ["bottomCenter"], showSizeChanger: true, pageSizeOptions: toDefineItemsPerPage(data.length), locale: {"items_per_page": `из ${data.length}`}} : false}
+        className={`drop-shadow-md hover:cursor-pointer ${classes ? classes : ''}`}
         bordered
         onRow={(record) => {return {onClick: () => selectHandler && selectHandler(record)}}}
       />

@@ -3,15 +3,17 @@ import { useDispatch } from "react-redux";
 import { clientActions } from "../../store/client";
 import { filialActions } from "../../store/filial";
 import { authActions } from "../../store/auth";
-import { employeelActions } from "../../store/employee";
+import { employeeActions } from "../../store/employee";
 import { smsActions } from "../../store/sms";
 import { katmActions } from "../../store/katm";
+import { contractsActions } from "../../store/contracts";
 
 const actions = {
   ...clientActions,
+  ...contractsActions,
   ...filialActions,
   ...authActions,
-  ...employeelActions,
+  ...employeeActions,
   ...smsActions,
   ...katmActions
 };

@@ -1,50 +1,26 @@
-import { ReactNode } from "react";
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import DepositSwitch from "./DepositSwitch";
 import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import DepositItem from "./DepositItem";
 import Deal from "./Deal";
-
-interface DepositFrameProps {
-  title: string;
-  contractN?: string;
-  children: ReactNode;
-  /* step: number; */
-}
-
-export const DepositFrame: React.FC<DepositFrameProps> = ({
-  title,
-  contractN,
-  /* step, */
-  children,
-}) => {
-  return (
-    <div
-      className={`mx-4 bg-white rounded-2xl w-full p-[18px] font-bold text-black focus-within:border-lombard-main-blue focus-within:border-2`}
-    >
-      <div className="flex justify-between border-b-[1px]">
-        <h3 className="py-4 text-[18px]">{title}</h3>
-        {contractN && (
-          <p className="text-[#D2DBE1] font-medium text-[14px]">
-            Договор № <b className="text-[black] font-bold text-[15px]">{contractN}</b>
-          </p>
-        )}
-      </div>
-      {children}
-    </div>
-  );
-};
+import CollapseWrapper from "../../UI/CollapseWrapper";
+import DealInfo from "./DealInfo";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import DealInfoPopup from "./DealInfoPopup";
 
 function DepositDetails() {
   const formDepositItems = useAppSelector(state => state.clientStore.depositCommentForm)
+  const clientRegStep = useAppSelector(state => state.clientStore.regClientStep);
+  const [showDialog, setShowDialog] = useState(false);
 
   return (
-    <div className="flex flex-col gap-3 w-[80vw] pr-4">
-      <DepositFrame title="Договоры" contractN="10/2998">
+    <div className="flex flex-col gap-3 pr-4">
+      <CollapseWrapper title="Договор" page="newClient" notActive={clientRegStep < 1}>
         <Deal />
-      </DepositFrame>
-      <DepositFrame title="Залог" contractN="10/2998" /* step={1} */>
+      </CollapseWrapper>
+      <CollapseWrapper title="Залог" page="newClient" notActive={clientRegStep < 2}>
         <ul>
           {formDepositItems.map(item =>
             <DepositItem item={item} key={item.id} />
@@ -65,7 +41,6 @@ function DepositDetails() {
               label="№ ячейки"
               className="w-[45%]"
               labelStyles="w-[45%]"
-
             />
           </div>
           <div className="flex self-end h-[31px] translate-x-[-30%]">
@@ -73,24 +48,22 @@ function DepositDetails() {
             <DepositSwitch title="Согласие" />
           </div>
         </div>
-      </DepositFrame>
-      <DepositFrame title="Выдача кредита" /* step={2} */ contractN="10/2998">
+      </CollapseWrapper>
+      <CollapseWrapper title="Выдача кредита" page="newClient" notActive={clientRegStep < 3}>
         <div className="flex gap-2  my-5">
           <CustomInput
             type="date"
             name="dateIssue"
             label="Дата выдачи"
-            defaultValue={new Date().toLocaleDateString()}
           />
           <CustomInput
             type="date"
             name="datePayment"
             label="Дата оплаты"
-            defaultValue={new Date().toLocaleDateString()}
           />
           <CustomInput
             type="number"
-            name="creditSum"
+            name="creditSumTo"
             label="Сумма кредита, процент"
             placeholder="20 000 000"
           />
@@ -112,33 +85,31 @@ function DepositDetails() {
             className="h-[41px]"
           />
         </div>
-        <div className="bg-lombard-borders-grey flex h-[95px] my-2 rounded-lg gap-3 px-3">
+        <div className="bg-lombard-bg-inactive-grey flex h-[95px] my-2 rounded-lg gap-3 px-3">
           <CustomInput
             type="number"
-            name="bank1"
-            label="Банк"
+            name="bankCode"
+            label="Код Банка"
             placeholder="0"
           />
           <CustomInput
             type="number"
-            name="bank2"
-            label="Банк"
+            name="accountN"
+            label="Номер счета"
             placeholder="0"
           />
           <CustomInput
             type="number"
-            name="bank3"
-            label="UzCard/Humo"
-            placeholder="0"
-          />
-          <CustomInput
-            type="number"
-            name="bank4"
-            label="Наличные"
+            name="cardN"
+            label="Номер карты"
             placeholder="0"
           />
         </div>
-      </DepositFrame>
+      </CollapseWrapper>
+      <CollapseWrapper title="Данные сделки" page="newClient" handleClick={() => setShowDialog(true)} notActive={clientRegStep < 4}>
+        <DealInfo />
+      </CollapseWrapper>
+      {showDialog && createPortal(<DealInfoPopup clickHandler={() => setShowDialog(false)} />, document.body)}
     </div>
   );
 }
