@@ -5,7 +5,6 @@ import PassportInputs from "../UI/PassportInputs";
 import SVGComponent from "../UI/SVGComponent";
 import SwitchComponent from "../UI/SwitchComponent";
 import useActions from "../../helpers/hooks/useActions";
-import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import { FormEvent } from "react";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 const regDropDowns = [
@@ -66,27 +65,19 @@ const regDropDowns = [
   }, */
 ];
 
-function GeneralClientInfo() {
+interface IGeneralClientInfo {
+  inputsValues: {[key:string]: string},
+  handleInput?: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void
+}
+function GeneralClientInfo({inputsValues, handleInput}: IGeneralClientInfo) {
+  console.log(inputsValues)
   const dispatch = useActions();
-  const formValues = useAppSelector(
-    (state) => state.clientStore.generalClientForm
-  );
-
-  function handleInput(itemData: {
-    id?: string;
-    title: string;
-    value: string | string[] | boolean;
-  }) {
-    const newValue = { [itemData.title]: itemData.value };
-    dispatch.setGeneralClientForm(newValue);
-    return {};
-  }
   async function submitHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     dispatch.setClientLoading(true);
-    const clientDataToPost = {...formValues};
+    const clientDataToPost = {...inputsValues};
     const nameArr = ['first_name', 'last_name', 'middle_name'];
-    formValues.clientName.split(' ').forEach((val, i) => clientDataToPost[nameArr[i]] = val);
+    inputsValues.clientName.split(' ').forEach((val, i) => clientDataToPost[nameArr[i]] = val);
     delete clientDataToPost.clientName;
     clientDataToPost.tax_id = '2931323'
     clientDataToPost.type = 'CLIENT';
@@ -107,10 +98,10 @@ function GeneralClientInfo() {
         });
       }
       dispatch.addRegClientStep();
-      dispatch.setClientLoading(false);
     } catch (err) {
       console.log(err);
     }
+    dispatch.setClientLoading(false);
   }
   return (
     <div className="ml-2">
@@ -128,7 +119,7 @@ function GeneralClientInfo() {
             required
             maxLength={14}
             handleChange={handleInput}
-            value={formValues.pin}
+            value={inputsValues.pin}
           />
           <i className="self-end flex-none">
             <SVGComponent title="search" className="w-[45px] h-[32px]"/>
@@ -141,14 +132,14 @@ function GeneralClientInfo() {
           required
           placeholder="Фамилия Имя Отчество"
           handleChange={handleInput}
-          value={formValues.clientName}
+          value={inputsValues.clientName}
         />
         <div className="flex justify-between items-center">
           <CustomInput
             type="date"
             name="birth_date"
             label="Дата рождения"
-            value={formValues.birth_date}
+            value={inputsValues.birth_date}
             handleChange={handleInput}            
             required
           />
@@ -156,8 +147,8 @@ function GeneralClientInfo() {
         <PassportInputs
           name="clientPassport"
           handleChange={handleInput}
-          seriesVal={formValues.passport_series}
-          passNum={formValues.passport_number}
+          seriesVal={inputsValues.passport_series}
+          passNum={inputsValues.passport_number}
           required
         />
         <CustomInput
@@ -167,7 +158,7 @@ function GeneralClientInfo() {
           placeholder="+998 (__) ___-__-__"
           required
           handleChange={handleInput}
-          value={formValues.phone_number}
+          value={inputsValues.phone_number}
         />
         <DragNDrop multiple />
         <div>
@@ -179,14 +170,14 @@ function GeneralClientInfo() {
               type="date"
               name="passport_issue_date"
               handleChange={handleInput}
-              value={formValues.passport_issue_date}
+              value={inputsValues.passport_issue_date}
               required
             />
             <CustomInput
               type="date"
               name="passport_expire_date"
               handleChange={handleInput}
-              value={formValues.passport_expire_date}
+              value={inputsValues.passport_expire_date}
               required
             />
           </div>
@@ -196,14 +187,14 @@ function GeneralClientInfo() {
           type="text"
           required
           handleChange={handleInput}
-          value={formValues.passport_issue_place}
+          value={inputsValues.passport_issue_place}
           label="Место выдачи паспорта"
         />
         <CustomInput
           name="address_reg"
           type="text"
           handleChange={handleInput}
-          value={formValues.address_reg}
+          value={inputsValues.address_reg}
           label="Прописка по паспорту"
           required
         />
@@ -216,14 +207,14 @@ function GeneralClientInfo() {
             unselectedTitle="Мужской"
             unselectedStyles="bg-[#fff] text-black border-[#D2DBE1]"
             inputHandler={handleInput}
-            currentSelect={formValues.gender}
+            currentSelect={inputsValues.gender}
           />
         </div>
         <CustomInput
           name="region_id"
           type="number"
           handleChange={handleInput}
-          value={formValues.region_id}
+          value={inputsValues.region_id}
           label="Номер региона"
           required
         />
@@ -231,7 +222,7 @@ function GeneralClientInfo() {
           name="district_id"
           type="number"
           handleChange={handleInput}
-          value={formValues.district_id}
+          value={inputsValues.district_id}
           label="Номер района"
           required
         />        
@@ -239,7 +230,7 @@ function GeneralClientInfo() {
           name="income_amount"
           type="text"
           handleChange={handleInput}
-          value={formValues.income_amount}
+          value={inputsValues.income_amount}
           label="Доходы"
           required
         />
@@ -254,7 +245,7 @@ function GeneralClientInfo() {
                 label={dropDown.label}
                 name={dropDown.name}
                 handleSelect={handleInput}
-                value={formValues[dropDown.name]}
+                value={inputsValues[dropDown.name]}
               />
             </li>
           ))}

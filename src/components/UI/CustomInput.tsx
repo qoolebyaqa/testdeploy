@@ -38,7 +38,7 @@ function CustomInput({
   onClick,
   onBlur
 }: ICustomInput) {
-  const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY", "DD.MM.YY"];
+  const dateFormatList = "DD/MM/YYYY";
   dayjs.extend(customParseFormat);
 
   const [inputVal, setInputVal] = useState('')
@@ -67,7 +67,7 @@ function CustomInput({
             }
             onChange={handleDate}
             placeholder="Выберите дату"
-            value={value ? dayjs(value, dateFormatList[0]) : null}
+            value={value ? dayjs(value, dateFormatList) : null}
             required={required}
           />
         </>

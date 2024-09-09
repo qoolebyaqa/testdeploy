@@ -97,7 +97,7 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
                 name="login"
                 id="login"
                 placeholder="Логин"
-                className="h-[56px] w-full bg-white/30 px-4"
+                className={`h-[56px] w-full ${user.login !== '' ? 'bg-white/80' : 'bg-white/30'}  px-4`}
                 value={user.login}
                 onChange={(e) => setUser({ ...user, login: e.target.value })}
               />
@@ -112,7 +112,7 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
                 name="password"
                 id="password"
                 placeholder="Пароль"
-                className="h-[56px] w-full bg-white/30 rounded-md px-4"
+                className={`h-[56px] w-full px-4 ${user.password !== '' ? 'bg-gray-50/95' : 'bg-white/30'}`}
                 value={user.password}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
               />

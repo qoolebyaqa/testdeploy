@@ -4,7 +4,7 @@ interface ISwitchProps {
   selectedStyles: string, 
   unselectedTitle: string, 
   unselectedStyles: string,
-  inputHandler?: ({id, title, value}: {id?: string, title:string, value: string | string[] | boolean}) => {},
+  inputHandler?: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void,
   inputName: string,
   currentSelect?: string
 }

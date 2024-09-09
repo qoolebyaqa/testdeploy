@@ -7,14 +7,12 @@ const clientSlice = createSlice({
   initialState: {
     clientsList: dataClients,
     regClientStep: 0,
-    generalClientForm: {gender: 'MALE'},
     depositCommentForm: [{ id: Math.random().toFixed(8) }],
     clientLoading: false,
     katmRequest: {result: 'none', styles: 'text-lombard-text-black border-lombard-borders-grey border-[1px]'}
   } as {
     clientsList: IDataClientType[];
     regClientStep: number;
-    generalClientForm: { [key: string]: string };
     depositCommentForm: { [key: string]: string }[];
     clientLoading: boolean;
     katmRequest: {result: string, styles: string}
@@ -31,10 +29,6 @@ const clientSlice = createSlice({
     },
     reduceRegClientStep(state) {
       if (state.regClientStep !== 0) state.regClientStep--;
-    },
-    setGeneralClientForm(state, inputValue) {
-      state.generalClientForm = {...state.generalClientForm, ...inputValue.payload};
-      console.log(state.generalClientForm)
     },
     addDepositCommentItem(state, id) {
       state.depositCommentForm.push({ id: id.payload });
@@ -55,7 +49,6 @@ const clientSlice = createSlice({
       state.katmRequest = requestResult.payload;
     },
     clearNewClientFormData(state){
-      state.generalClientForm = {}
       state.depositCommentForm = [{ id: Math.random().toFixed(8) }]
       state.regClientStep = 0
       state.katmRequest = {result: 'none', styles: 'text-lombard-text-black border-lombard-borders-grey border-[1px]'}

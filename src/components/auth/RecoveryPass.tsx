@@ -79,7 +79,7 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
             <ButtonComponent
               color="bg-lombard-btn-green"
               titleBtn="Подтвердить"
-              clickHandler={recoveryPassStep === 2 ? () => setRecoveryPassStep(3) : () => {window.location.reload()}}
+              clickHandler={recoveryPassStep === 2 ? () => setRecoveryPassStep(3) : () => {window.location.href = '/'}}
             />
           ) : (
             <>
