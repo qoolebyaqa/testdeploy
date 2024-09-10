@@ -13,6 +13,7 @@ let isRefreshingToken = false;
 function setAuthInterceptors(client: Axios) {
   client.interceptors.request.use(
     (request) => {
+      request.headers['Origin'] = 'https://uzstaging.netlify.app'
       request.headers['Idempotency-Key'] = uuidv4()     
       if(request.url?.includes('/v1/auth/login') || request.url?.includes('/v1/auth/refresh'))
         {return request;}
