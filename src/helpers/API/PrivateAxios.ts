@@ -13,8 +13,7 @@ let isRefreshingToken = false;
 function setAuthInterceptors(client: Axios) {
   client.interceptors.request.use(
     (request) => {
-      if(request.method === 'post' || request.method === 'put')
-        {request.headers['Idempotency-Key'] = uuidv4()}      
+      request.headers['Idempotency-Key'] = uuidv4()     
       if(request.url?.includes('/v1/auth/login') || request.url?.includes('/v1/auth/refresh'))
         {return request;}
       const token = store.getState().auth.access_token;
