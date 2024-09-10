@@ -14,7 +14,6 @@ const contractsSlice = createSlice({
   reducers: {
     setContractChoosenOne(state, selection) {
       state.contractChoosenOne = selection.payload;
-      console.log(state.contractChoosenOne);
     },
   },
 });

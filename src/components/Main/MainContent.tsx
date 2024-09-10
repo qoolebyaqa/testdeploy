@@ -7,6 +7,7 @@ import DropDown from "../UI/DropDown";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import useActions from "../../helpers/hooks/useActions";
 import { useEffect } from "react";
+import { IDataClientType } from "../../helpers/types";
 
 function MainContent() {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ function MainContent() {
   const clients : any = useLoaderData();
   console.log('loaderData', clients);
   useEffect(() => {dispatch.setClientsList(clients)},[])
+
+  function selectClientHandler (...args: IDataClientType[]) {
+    dispatch.setClientChoosenOne(args[0]);
+    navigate(`/browse=${args[0].index}`)
+  }
   return (
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
@@ -43,7 +49,7 @@ function MainContent() {
           />
         </div>
       </div>
-      <DataTable columns={columnsForClients} data={dataClients} pagination/>
+      <DataTable columns={columnsForClients} data={dataClients} pagination selectHandler={selectClientHandler}/>
     </>
   );
 }

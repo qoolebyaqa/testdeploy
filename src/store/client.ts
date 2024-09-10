@@ -5,12 +5,14 @@ import { IDataClientType } from "../helpers/types";
 const clientSlice = createSlice({
   name: "client",
   initialState: {
+    clientChoosenOne: null,
     clientsList: dataClients,
     regClientStep: 0,
     depositCommentForm: [{ id: Math.random().toFixed(8) }],
     clientLoading: false,
     katmRequest: {result: 'none', styles: 'text-lombard-text-black border-lombard-borders-grey border-[1px]'}
   } as {
+    clientChoosenOne: null | IDataClientType | any;
     clientsList: IDataClientType[];
     regClientStep: number;
     depositCommentForm: { [key: string]: string }[];
@@ -18,6 +20,14 @@ const clientSlice = createSlice({
     katmRequest: {result: string, styles: string}
   },
   reducers: {
+    setClientChoosenOne(state, selection) {
+      const modifiedSelection = {...selection.payload};
+      modifiedSelection.passport_series = selection.payload.passport.split(' ')[0];
+      modifiedSelection.passport_number = selection.payload.passport.split(' ')[1];
+      
+      state.clientChoosenOne = modifiedSelection;
+      console.log(modifiedSelection);
+    },
     setClientLoading(state, bool){
       state.clientLoading = bool.payload
     },

@@ -341,6 +341,8 @@ export const itemClient = {
   birth_date: "01.01.2024",
   sum: 50000000,
   status: "-",
+  expire_date: '89348',
+  gg: 'something'
 };
 export const dataClients: IDataClientType[] = Copier(itemClient, 1);
 

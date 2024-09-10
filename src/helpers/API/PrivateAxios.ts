@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const privateAxios: Axios = axios.create({
   baseURL: `${import.meta.env.VITE_BASE_URL}`,
-  withCredentials: true,
 });
 
 let isRefreshingToken = false;

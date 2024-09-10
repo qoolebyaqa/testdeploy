@@ -13,7 +13,7 @@ function ContractsContent() {
   const dispatch = useActions();
   const navigate = useNavigate();
 
-  function selectFilialHandler (...args: IDataContractType[]) {
+  function selectContractHandler (...args: IDataContractType[]) {
     dispatch.setContractChoosenOne(args[0]);
     navigate(`/contracts/browse=${args[0].index}`)
   }
@@ -34,7 +34,7 @@ function ContractsContent() {
           <ButtonComponent titleBtn="Создать" color="bg-lombard-btn-green" clickHandler={() => {}}/>
         </div>
       </div>
-      <DataTable columns={columnsForContracts} data={dataContracts} pagination selectHandler={selectFilialHandler}/>
+      <DataTable columns={columnsForContracts} data={dataContracts} pagination selectHandler={selectContractHandler}/>
     </>
   );
 }

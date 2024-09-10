@@ -127,12 +127,12 @@ function GeneralClientInfo({inputsValues, handleInput}: IGeneralClientInfo) {
         </div>
         <CustomInput
           type="text"
-          name="clientName"
+          name="name"
           label="ФИО"
           required
           placeholder="Фамилия Имя Отчество"
           handleChange={handleInput}
-          value={inputsValues.clientName}
+          value={inputsValues.name}
         />
         <div className="flex justify-between items-center">
           <CustomInput
