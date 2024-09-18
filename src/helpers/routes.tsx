@@ -116,10 +116,10 @@ export const router = createBrowserRouter([
 ]);
 
 //loaders
-async function passReset({params}:any){
+/* async function passReset({params}:any){
   const OTP = await ApiService.getOTP(params.tkn)
   return OTP;
-}
+} */
 
 async function clientsLoader() {
   if (!localStorage.getItem("rt")) {

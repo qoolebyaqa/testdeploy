@@ -4,7 +4,7 @@ import ButtonComponent from "../UI/ButtonComponent";
 import { motion } from "framer-motion";
 import CustomInput from "../UI/CustomInput";
 import ConfirmationCode from "./ConfirmationCode";
-import { ApiService } from "../../helpers/API/ApiSerivce";
+/* import { ApiService } from "../../helpers/API/ApiSerivce"; */
 import { useLoaderData } from "react-router";
 
 function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () => void, restoreStep?: number }) {
