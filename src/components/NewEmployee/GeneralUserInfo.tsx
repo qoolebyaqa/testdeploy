@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import DialogComponent from "../UI/DialogComponent";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import { ApiService } from "../../helpers/API/ApiSerivce";
 
 interface IGeneralUserInfo {
   formValues: {[key:string]: string}
@@ -15,6 +16,12 @@ interface IGeneralUserInfo {
 function GeneralUserInfo({onInputChange, formValues}:IGeneralUserInfo) {
   const [showDialog, setShowDialog] = useState(false);
   const gender = useAppSelector(state => state.employeeStore.newEmployeeGender);
+
+  const resetPass = async () => {
+    console.log(formValues.login);
+    const response = await ApiService.getLinktoReset('art-dev')
+    console.log(response);
+  }
   return (
     <div className="w-[280px] flex flex-col gap-4">
       <div className="bg-white rounded-2xl px-2 py-6">
@@ -53,7 +60,7 @@ function GeneralUserInfo({onInputChange, formValues}:IGeneralUserInfo) {
           createPortal(
             <DialogComponent closeHandler={() => setShowDialog(false)}>
               <div className="w-[280px]">
-                <CustomInput label="Логин" type="text" name="login" required />
+                <CustomInput label="Логин" type="text" name="login" required value={formValues.login}/>
                 <p className="py-[24px] font-bold text-black">
                   Отправить пароль
                 </p>
@@ -61,16 +68,19 @@ function GeneralUserInfo({onInputChange, formValues}:IGeneralUserInfo) {
                   label="По номеру телефона"
                   type="phone"
                   name="phone"
+                  value={formValues.phone_number}
                   placeholder="+998 (__)___-__-__"
                 />
                 <div className="flex flex-col gap-2 mt-8">
                   <ButtonComponent
                     color="bg-lombard-btn-green"
                     titleBtn="Отправить"
+                    clickHandler={resetPass}
                   />
                   <ButtonComponent
                     color="bg-lombard-btn-grey"
                     titleBtn="Отменить"
+                    clickHandler={() => setShowDialog(false)}
                   />
                 </div>
               </div>

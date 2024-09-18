@@ -35,6 +35,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
             variants={animationVariantsBtn}
             animate={showTable ? 'open' : 'closed'}
             disabled={notActive}
+            type="button"
             ><SVGComponent title="arrow" /></motion.button>
           </div>
         </div>

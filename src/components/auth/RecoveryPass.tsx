@@ -4,11 +4,40 @@ import ButtonComponent from "../UI/ButtonComponent";
 import { motion } from "framer-motion";
 import CustomInput from "../UI/CustomInput";
 import ConfirmationCode from "./ConfirmationCode";
+import { ApiService } from "../../helpers/API/ApiSerivce";
+import { useLoaderData } from "react-router";
 
-function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
-  const [recoveryPassStep, setRecoveryPassStep] = useState(0);
+function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () => void, restoreStep?: number }) {
+  const [recoveryPassStep, setRecoveryPassStep] = useState(restoreStep || 0);
+  const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+  const [passInputs, setPassInputs] = useState({newPass: '', repeatNewPass: ''})
+  const OTP: any = useLoaderData();
+  console.log(OTP);
   function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+  }
+
+  const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
+    setPassInputs(prev => ({...prev, [inputValue.title]: inputValue.value})) 
+  }
+
+  async function verifyOTP() {
+    try {
+      /* await ApiService.verifyOTP(OTP.data.token, Number(code.join(''))); */
+      setRecoveryPassStep(3)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function setNewPass() {
+    try {
+      console.log(passInputs)
+      /* await ApiService.setNewPass(OTP.data.token, passInputs.newPass, passInputs.repeatNewPass); */
+      window.location.href = '/'
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (
@@ -29,7 +58,7 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
             : recoveryPassStep === 0 || recoveryPassStep === 1 ? "для восстановления пароля вам будет отправлена ссылка по" 
             : recoveryPassStep === 3 ? "для подтверждения вам отправлен код на номер" : ''}
         </p>
-        {recoveryPassStep === 2 ? (
+        {recoveryPassStep === 3 ? (
           <div className="py-4 px-[2px]">
             <CustomInput
               type="password"
@@ -38,6 +67,7 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
               className="bg-white"
               labelStyles="text-white mt-[6px]"
               placeholder="********"
+              handleChange={valueChangeHandler}
             />
             <CustomInput
               type="password"
@@ -46,9 +76,10 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
               className="bg-white"
               labelStyles="text-white mt-[6px]"
               placeholder="********"
+              handleChange={valueChangeHandler}
             />
           </div>
-        ) : recoveryPassStep === 3 ? <ConfirmationCode /> : (
+        ) : recoveryPassStep === 2 ? <ConfirmationCode code={code} setCode={setCode}/> : (
           <motion.div
             className="text-center rounded-2xl border-[1px] border-lombard-btn-grey py-10 overflow-hidden h-[140px]"
             animate={recoveryPassStep === 1 && { height: [180, 180, 190, 210] }}
@@ -79,7 +110,7 @@ function RecoveryPass({ showRecoveryPass }: { showRecoveryPass: () => void }) {
             <ButtonComponent
               color="bg-lombard-btn-green"
               titleBtn="Подтвердить"
-              clickHandler={recoveryPassStep === 2 ? () => setRecoveryPassStep(3) : () => {window.location.href = '/'}}
+              clickHandler={recoveryPassStep === 2 ? verifyOTP : setNewPass}
             />
           ) : (
             <>

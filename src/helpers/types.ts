@@ -63,6 +63,7 @@ export interface IDataFilialType {
 };
 
 export interface IDataEmployeeType {
+  id?: Number,
   key: React.Key,
   index: number,
   login: string,

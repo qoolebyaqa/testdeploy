@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 
 function DepositItem({item}:{item: {[key:string]: string}}) {  
   const [showDialog, setShowDialog] = useState(false);
+  const info = `${item.comments} ${item.quality} проба, Общ. гр. ${item.totalWeight}, Чис. гр. ${item.pureWeight}`
   return ( <motion.li className="flex mt-5" animate={{y: [-100, 100, 50, 0]}} transition={{duration: 0.3}}>
     <div className="w-5/12 mr-2">
       <div className="flex gap-1 items-center">
@@ -17,8 +18,8 @@ function DepositItem({item}:{item: {[key:string]: string}}) {
           title="Выбрать"
           className="flex h-[41px]"
           listOfItems={[
-            { label: "Золото", key: 1 },
-            { label: "Серебро", key: 2 },
+            { label: "Золото", key: 1, enumValue: "GOLD" },
+            { label: "Другое", key: 2, enumValue: "OTHER" },
           ]}
           label="Тип залога"
           name="typeDeposit"
@@ -26,7 +27,7 @@ function DepositItem({item}:{item: {[key:string]: string}}) {
         />
         <button className="self-end p-0 m-0 flex max-w-[280px] overflow-hidden text-lg" onClick={() => setShowDialog(true)}><i>
           <SVGComponent title="message" />
-        </i>{item.comments && <p className="text-black py-2">{item.comments}</p>}
+        </i>{item.comments && <p className="text-black py-2 text-[10px]">{info}</p>}
         </button>
       </div>
     </div>

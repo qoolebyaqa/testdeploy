@@ -19,7 +19,7 @@ function MainContent() {
 
   function selectClientHandler (...args: IDataClientType[]) {
     dispatch.setClientChoosenOne(args[0]);
-    navigate(`/browse=${args[0].index}`)
+    navigate(`/clients/browse=${args[0].id}`)
   }
   return (
     <>

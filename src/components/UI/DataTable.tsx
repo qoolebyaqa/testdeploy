@@ -1,12 +1,12 @@
 import { Table } from "antd";
 import type {  TableColumnsType, TableProps } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, ISMSDataType } from "../../../src/helpers/types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, IKatmDialogType, ISMSDataType } from "../../../src/helpers/types";
 import { toDefineItemsPerPage } from "../../helpers/fnHelpers";
 import { useEffect, useState } from "react";
 
 export interface IDataTable {
   columns: TableColumnsType, 
-  data: IDataContractType[] | IDataEmployeeType[] | IDataClientType[] | IDataKatmType[] | ISMSDataType[] | IDataFilialType[] | IdataKATMrequestDialog[],
+  data: IDataContractType[] | IDataEmployeeType[] | IDataClientType[] | IDataKatmType[] | ISMSDataType[] | IDataFilialType[] | IdataKATMrequestDialog[] | IKatmDialogType[],
   selectHandler?: (...args: any[]) => void,
   classes?: string,
   pagination?: boolean
@@ -14,7 +14,7 @@ export interface IDataTable {
 
 function DataTable({columns, data, selectHandler, classes, pagination}: IDataTable) {
   const [quantityPerPage, setQuantityPerPage] = useState(14); 
-  const onChange: TableProps<IDataContractType | IDataEmployeeType | IDataClientType | IDataKatmType | ISMSDataType | IDataFilialType | IdataKATMrequestDialog>["onChange"] = (pagination, sorter) => {
+  const onChange: TableProps<IDataContractType | IDataEmployeeType | IDataClientType | IDataKatmType | ISMSDataType | IDataFilialType | IdataKATMrequestDialog | IKatmDialogType>["onChange"] = (pagination, sorter) => {
     console.log("params", pagination, sorter);
     setQuantityPerPage(Number(pagination.pageSize));
   };

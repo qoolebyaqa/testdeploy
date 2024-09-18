@@ -66,36 +66,44 @@ const regDropDowns = [
 ];
 
 interface IGeneralClientInfo {
+  formId?: string,
+  etag?: string,
   inputsValues: {[key:string]: string},
   handleInput?: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void
 }
-function GeneralClientInfo({inputsValues, handleInput}: IGeneralClientInfo) {
-  console.log(inputsValues)
+function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralClientInfo) {
+  console.log(inputsValues);
+  console.log(etag)
   const dispatch = useActions();
   async function submitHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     dispatch.setClientLoading(true);
     const clientDataToPost = {...inputsValues};
     const nameArr = ['first_name', 'last_name', 'middle_name'];
-    inputsValues.clientName.split(' ').forEach((val, i) => clientDataToPost[nameArr[i]] = val);
-    delete clientDataToPost.clientName;
+    inputsValues.name.split(' ').forEach((val, i) => clientDataToPost[nameArr[i]] = val);
+    delete clientDataToPost.name;
     clientDataToPost.tax_id = '2931323'
     clientDataToPost.type = 'CLIENT';
     console.log(clientDataToPost);
     const random = Math.floor(Math.random() * 10);
     try {
-      await ApiService.createCustomer(clientDataToPost)
-      if (random % 2) {
-        dispatch.setKatmRequest({
-          result: "ok",
-          styles:
-            "text-lombard-btn-green border-lombard-btn-green border-[1px]",
-        });
-      } else {
-        dispatch.setKatmRequest({
-          result: "err",
-          styles: "text-lombard-btn-red border-lombard-btn-red border-[1px]",
-        });
+      if (etag) {
+        await ApiService.updateCustomer(clientDataToPost, etag)
+      } else { 
+        await ApiService.createCustomer(clientDataToPost);        
+        if (random % 2) {
+          dispatch.setKatmRequest({
+            result: "ok",
+            styles:
+              "text-lombard-btn-green border-lombard-btn-green border-[1px]",
+          });
+        } else {
+          dispatch.clearRegStep();
+          dispatch.setKatmRequest({
+            result: "err",
+            styles: "text-lombard-btn-red border-lombard-btn-red border-[1px]",
+          });
+        }
       }
       dispatch.addRegClientStep();
     } catch (err) {
@@ -107,7 +115,7 @@ function GeneralClientInfo({inputsValues, handleInput}: IGeneralClientInfo) {
     <div className="ml-2">
       <form
         className={`bg-white flex flex-col gap-[16px] rounded-2xl  h-[85vh] overflow-y-scroll p-[18px] focus-within:border-lombard-main-blue focus-within:border-2 scroll`}
-        id="generalClientInfo"
+        id={formId || 'someID'}
         onSubmit={submitHandler}
       >
         <div className="flex justify-between gap-[1px]">

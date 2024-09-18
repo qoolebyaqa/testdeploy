@@ -7,7 +7,7 @@ import Sms from "../UI/Sms";
 import KATMreqPOPup from "./KATMreqPOPup";
 import { useNavigate } from "react-router";
 
-function NewClientBtns() {
+function NewClientBtns({formId}:{formId?: string}) {
   const [showDialog, setShowDialog] = useState("");
   const navigate = useNavigate();
   const regStep = useAppSelector((state) => state.clientStore.regClientStep);
@@ -19,67 +19,54 @@ function NewClientBtns() {
   }, [katmResponse]);
 
   const buttons =
-    regStep === 0
+    regStep !== 0
       ? [
-        {
-          title: "Подтвердить",
-          color: "bg-lombard-btn-green",
-          form: "generalClientInfo",
-          submit: true,
-          handler: () => {},
-          shouldBeDisabled: clientLoading,
-        },
-      ]
-      : katmResponse.result === 'err' ?
-      [
-        {
-          title: "Перейти в КАТМ",
-          color: "bg-lombard-btn-red",
-          submit: false,
-          form: "",
-          handler: () => {
-            navigate('/katm');
+          {
+            title: "Подтвердить",
+            color: "bg-lombard-btn-green",
+            submit: false,
+            form: "",
+            handler: () => {
+              if (regStep === 4) {
+                dispatch.clearNewClientFormData();
+                navigate('/');
+              } else {
+                dispatch.addRegClientStep();
+              }
+            },
+            shouldBeDisabled: katmResponse.result === "err",
           },
-          shouldBeDisabled: katmResponse.result === "err",
-        },
-      ]
-      :[
-        {
-          title: "Подтвердить",
-          color: "bg-lombard-btn-green",
-          submit: false,
-          form: "",
-          handler: () => {
-            if (regStep === 4) {
-              dispatch.clearNewClientFormData();
-              navigate('/');
-            } else {
-              dispatch.addRegClientStep();
-            }
+          {
+            title: "Отменить",
+            color: "bg-lombard-btn-red",
+            handler: () => {
+              dispatch.reduceRegClientStep();
+            },
           },
-          shouldBeDisabled: katmResponse.result === "err",
-        },
-        {
-          title: "Отменить",
-          color: "bg-lombard-btn-red",
-          handler: () => {
-            dispatch.reduceRegClientStep();
+          {
+            title: "СМС",
+            color: "bg-lombard-btn-yellow",
+            handler: () => {
+              setShowDialog("sms");
+            },
+            shouldBeDisabled: katmResponse.result === "err",
           },
-        },
-        {
-          title: "СМС",
-          color: "bg-lombard-btn-yellow",
-          handler: () => {
-            setShowDialog("sms");
+          {
+            title: "Печать",
+            color: "bg-lombard-btn-yellow",
+            handler: () => {},
           },
-          shouldBeDisabled: katmResponse.result === "err",
-        },
-        {
-          title: "Печать",
-          color: "bg-lombard-btn-yellow",
-          handler: () => {},
-        },
-      ];
+        ]
+      : [
+          {
+            title: "Подтвердить",
+            color: "bg-lombard-btn-green",
+            form: formId || 'someID',
+            submit: true,
+            handler: () => {},
+            shouldBeDisabled: clientLoading,
+          },
+        ];
 
   return (
     <>

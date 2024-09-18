@@ -34,6 +34,9 @@ const clientSlice = createSlice({
     setClientsList(state, clientList){
       state.clientsList = clientList.payload
     },
+    clearRegStep(state) {
+      state.regClientStep = 0
+    },
     addRegClientStep(state) {
       if (state.regClientStep < 4) state.regClientStep++;
     },

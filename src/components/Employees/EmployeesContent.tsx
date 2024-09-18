@@ -10,6 +10,7 @@ import { Checkbox } from "antd";
 import { IDataEmployeeType } from "../../helpers/types";
 import useActions from "../../helpers/hooks/useActions";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import { ApiService } from "../../helpers/API/ApiSerivce";
 
 function EmployeesContent() {
   const [showDialog, setShowDialog] = useState(false);
@@ -19,33 +20,49 @@ function EmployeesContent() {
   const users = useLoaderData();
   console.log('users', users)
   useEffect(() => {dispatch.setEmployeeList(users)},[])
-  const selectedRowKeys = useAppSelector(state => state.employeeStore.employeeSelected);
+  const selectedRowIds = useAppSelector(state => state.employeeStore.employeeSelected);
   const buttons = [
     {title: "Применить", color: "bg-lombard-main-blue"},
     {title: "Удалить", color: "bg-lombard-btn-red", handler: () => setShowDialog(true) }, 
-    /* {title: "Печать", color: "bg-lombard-btn-yellow"}, */
     {title: "Регистрация", color: "bg-lombard-btn-green", handler: () => {navigate('/new-employee')}}
   ];
   const checkbox =  {
-    title: () => <Checkbox onChange={() => dispatch.setAllEmployeeSelect()} checked={!!selectedRowKeys.length}/>,
+    title: () => <Checkbox onChange={() => dispatch.setAllEmployeeSelect()} checked={!!selectedRowIds.length}/>,
     key: 'select',
-    render: (_: string, record: IDataEmployeeType) => <Checkbox onChange={() => dispatch.setEmployeeSelectedOne(record.key)} onClick={(e) => e.stopPropagation()} checked={selectedRowKeys.includes(record.key)}/>    
+    render: (_: string, record: IDataEmployeeType) => <Checkbox onChange={() => {console.log(record); dispatch.setEmployeeSelectedOne(record.id)}} onClick={(e) => e.stopPropagation()} checked={selectedRowIds.includes(record.id)}/>    
+  }
+  function selectEmployeeHandler(...args: IDataEmployeeType[]) {
+    dispatch.setEmployeeChoosenOne(args[0]);
+    navigate(`/employees/browse=${args[0].id}`);
+  }
+  async function deleteEmployee() {
+    try {
+      selectedRowIds.forEach(async (id: string) => {
+        const getUserRes = await ApiService.getUser(id);
+        await ApiService.deleteUser(id, getUserRes.headers.etag.slice(2).replaceAll("\\", ""));
+        console.log(getUserRes);
+      })
+      dispatch.setAllEmployeeSelect();
+      setShowDialog(false)
+    } catch (err) {
+      console.log(err);
+    }
   }
   return ( 
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
         <h3 className="text-black font-extrabold text-[18px]">Сотрудники</h3>
         <div className="flex gap-1 items-center">
-          <DropDown name="employeePosition" title="Должность" listOfItems={[{label: 'Директор', key: 1}, {label: 'Оператор', key: 2}]}/>
-          <DropDown name="employeeStatus" title="Статус" listOfItems={[{label: 'Узбекистан', key: 1}, {label: 'Экспат', key: 2}]}/>
-          <DropDown name="employeeRate" title="Ставка" listOfItems={[{label: 'Узбекистан', key: 1}, {label: 'Экспат', key: 2}]}/>
-          <DropDown name="employee" title="Филиалы" listOfItems={[{label: 'Узбекистан', key: 1}, {label: 'Экспат', key: 2}]}/>
+          <DropDown name="employeePosition" title="Должность" listOfItems={[{label: 'Должность', key: 1}, {label: 'Директор', key: 1}, {label: 'Бухгалтер', key: 2}]}/>
+          <DropDown name="employeeStatus" title="Статус" listOfItems={[{label: 'Статус', key: 1}, {label: 'Активный', key: 1}, {label: 'Не активный', key: 2}]}/>
+          <DropDown name="employeeRate" title="Ставка" listOfItems={[{label: 'Ставка', key: 1}, {label: '1', key: 1}, {label: '0.5', key: 2}]}/>
+          <DropDown name="employee" title="Филиалы" listOfItems={[{label: 'Филиалы', key: 1}, {label: 'Мирабад', key: 1}, {label: 'Чиланзар', key: 2}]}/>
           <ButtonComponent color="bg-white" className="text-lombard-btn-red h-8 font-semibold" titleBtn="Очистить фильтр ✕"/>
-          {buttons.map(btn => <ButtonComponent key={btn.title} titleBtn={btn.title} color={btn.color} clickHandler={btn.handler}/>)}
+          {buttons.map(btn =>  {if(btn.title === 'Удалить' && !selectedRowIds.length) {return} else return <ButtonComponent key={btn.title} titleBtn={btn.title} color={btn.color} clickHandler={btn.handler}/>})}
         </div>
-        {showDialog && createPortal(<Delete clickHandler={() => setShowDialog(false)}/>, document.body)}
+        {showDialog && createPortal(<Delete clickHandler={() => setShowDialog(false)} deleteConfirm={deleteEmployee}/>, document.body)}
       </div>
-      <DataTable columns={[...columnsForEmployees, checkbox]} data={dataEmployees} classes="customCssTable" pagination/>
+      <DataTable columns={[...columnsForEmployees, checkbox]} data={dataEmployees} classes="customCssTable" pagination selectHandler={selectEmployeeHandler}/>
     </>
    );
 }

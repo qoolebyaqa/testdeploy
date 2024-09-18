@@ -7,8 +7,8 @@ import Loader from "../components/UI/Loader";
 import authBg from '/authBG.webp'
 import { useAppSelector } from "../helpers/hooks/useAppSelector";
 
-function Authentification() {
-  const [toggleRecoveryPass, setToggleRecoveryPass] = useState('');
+function Authentification({recoveryPass, restoreStep}:{recoveryPass?: string, restoreStep?: number}) {
+  const [toggleRecoveryPass, setToggleRecoveryPass] = useState(recoveryPass || '');
   const [bgImage, setBgImage] = useState('');
   const [loading, setLoading] = useState(true);
   const loadingState = useAppSelector((state) => state.auth.authLoading);
@@ -45,7 +45,7 @@ function Authentification() {
         <motion.div
         animate={toggleRecoveryPass === 'recovery' ? {y: [0, -400, -800, -1000, -980]} : toggleRecoveryPass === "login" ? {y: [-980, -800, -400, 0]}: {}}>
         <Login showRecoveryPass={() => setToggleRecoveryPass('recovery')}/>
-        <RecoveryPass showRecoveryPass={() => setToggleRecoveryPass('login')}/>
+        <RecoveryPass showRecoveryPass={() => setToggleRecoveryPass('login')} restoreStep={restoreStep}/>
         </motion.div>
       </div>
     </motion.div>}</>

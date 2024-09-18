@@ -15,6 +15,7 @@ function DepositCharacteristics({
   const depositCommentForm = useAppSelector(
     (state) => state.clientStore.depositCommentForm.find(item => item.id === id)
   );
+  console.log(depositCommentForm)
   return (
     <div className="flex flex-col gap-2">
       <p className="mb-4 font-bold text-black border-b-2 border-lombard-borders-grey">
@@ -24,13 +25,12 @@ function DepositCharacteristics({
         <DropDown
           title="Выбрать"
           listOfItems={[
-            { label: "Золото", key: 1 },
-            { label: "МТО", key: 2 },
+            { label: "Золото", key: 1, enumValue: "GOLD" },
+            { label: "Серебро", key: 2, enumValue: "SILVER"  },
           ]}
           triggerType="click"
           name="creditType"
           label="Тип"
-          className="h-[41px]"
           value={depositCommentForm?.creditType}
           handleSelect={dispatch.setDepositCommentForm}
           id={id}
@@ -38,13 +38,12 @@ function DepositCharacteristics({
         <DropDown
           title="Выбрать"
           listOfItems={[
-            { label: "583", key: 1 },
-            { label: "585", key: 2 },
+            { label: "583", key: 1, enumValue: "583" },
+            { label: "585", key: 2, enumValue: "585" },
           ]}
           triggerType="click"
           name="quality"
           label="Проба"
-          className="h-[41px]"
           value={depositCommentForm?.quality}
           handleSelect={dispatch.setDepositCommentForm}
           id={id}

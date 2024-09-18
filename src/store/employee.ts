@@ -5,32 +5,38 @@ import { IDataEmployeeType } from "../helpers/types";
 const employeeSlice = createSlice({
   name: "employee",
   initialState: {
+    employeeChoosenOne: null,
     employeeSelected: [],
     allEmployees: dataEmployees,
     newEmployeeGender: "MALE",
   } as {
-    employeeSelected: React.Key[];
+    employeeChoosenOne: null | IDataEmployeeType | any,
+    employeeSelected: number[] | any;
     allEmployees: IDataEmployeeType[];
     newEmployeeGender: string;
   },
   reducers: {
-    setEmployeeList(state, emplyeeList) {
-      state.allEmployees = emplyeeList.payload
+    setEmployeeChoosenOne(state, selection) {      
+      state.employeeChoosenOne = selection.payload;
+      console.log(state.employeeChoosenOne);
     },
-    setEmployeeSelectedOne(state, selectedKey) {
+    setEmployeeList(state, employeeList) {
+      state.allEmployees = employeeList.payload
+    },
+    setEmployeeSelectedOne(state, selectedID) {
       state.employeeSelected = state.employeeSelected.includes(
-        selectedKey.payload
+        selectedID.payload
       )
         ? state.employeeSelected.filter(
-            (k: React.Key) => k !== selectedKey.payload
+            (k: number) => k !== selectedID.payload
           )
-        : [...state.employeeSelected, selectedKey.payload];
+        : [...state.employeeSelected, selectedID.payload];
     },
     setAllEmployeeSelect(state) {
       state.employeeSelected =
         state.employeeSelected.length > 0
           ? []
-          : state.allEmployees.map((val) => val.key);
+          : state.allEmployees.map((val) => val.id);
     },
     setNewEmployeeGender(state, gender) {
       state.newEmployeeGender = gender.payload.value;

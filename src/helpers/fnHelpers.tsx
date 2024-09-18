@@ -1,5 +1,5 @@
 import { TableColumnsType } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType } from "./types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
 
 export function Copier<T extends { index?: number; key?: number }>(obj: T, quantity?: number): T[] {
@@ -470,41 +470,32 @@ export const itemSeekDaysDialog = {
 export const dataSeekDaysDialog: ISeekDayDialogType[] = Copier(itemSeekDaysDialog);
 
 //katm modal
-export const columnsForKATMrequestDialog: TableColumnsType<IdataKATMrequestDialog> = [
+export const columnsForKATMrequestDialog: TableColumnsType<IKatmDialogType> = [
   {
-    title: titleWIthIcon('№'),
+    title: titleWIthIcon('ID'),
     dataIndex: "index",
     sorter: (a, b) => a.index - b.index,
   },
   {
-    title: titleWIthIcon("ID"),
-    dataIndex: "id",
+    title: titleWIthIcon("День"),
+    dataIndex: "day",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Номер №"),
+    dataIndex: "docN",
     sorter: (_a, _b) => 0,
   },
   {
     title: "Статус",
     dataIndex: "status",
-  },
-  {
-    title: "Номер регистрации",
-    dataIndex: "regN",
-  },
-  {
-    title: "Задолженность",
-    dataIndex: "Position",
-  },
-  {
-    title: "Основная сумма",
-    dataIndex: "generalSum",
   }
 ];
 export const itemKATMrequestDialog = {
   key: 1,
   index: 1,
-  id: 95,
-  status: '1, 2, 6, 12, 14, 28, 29',
-  regN: "Февраль",
-  Position: "2024",
-  generalSum: "День отдыха",
+  day: "16.03.2024",
+  docN: "24071000017",
+  status: "-1"
 };
-export const dataKATMrequestDialog: IdataKATMrequestDialog[] = Copier(itemKATMrequestDialog, 2);
+export const dataKATMrequestDialog: IKatmDialogType[] = Copier(itemKATMrequestDialog, 2);

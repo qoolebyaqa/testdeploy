@@ -1,7 +1,6 @@
 import { useRef, useState, ClipboardEvent, ChangeEvent, useEffect, KeyboardEvent } from "react";
 
-const ConfirmationCode = () => {
-  const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+const ConfirmationCode = ({code, setCode}:{code: string[], setCode: any}) => {
   const [seconds, setSeconds] = useState(59);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 

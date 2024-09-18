@@ -34,7 +34,7 @@ function DropDown({
   id,
   required
 }: IDropDownProps ) {
-  const [selected, setSelected] = useState(title);
+  const [selected, setSelected] = useState(value || title);
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     const newSelect = listOfItems.find(
@@ -55,7 +55,7 @@ function DropDown({
   };
 
   return (
-    <div className="flex flex-col justify-center text-black text-[14px] grow">
+    <div className={`flex flex-col justify-center text-black text-[14px] grow ${label ? 'gap-2' : ''}`}>
       <label htmlFor={name} className="font-bold text-black text-[14px]">
         {label}
         {required && <input name={name} id={name} value={selected === title ? '' : selected} className="w-1 h-1 p-0 m-4 text-white" required onChange={() => {}}/>}

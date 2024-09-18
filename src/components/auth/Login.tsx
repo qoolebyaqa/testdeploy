@@ -54,6 +54,9 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
       }
     }
   }
+  async function getUserNumber() {
+    showRecoveryPass()
+  }
 
   return (
     <>
@@ -124,8 +127,9 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
           <div className="flex flex-col">
             <button className="authButton text-white font-bold">Войти</button>
             <button
+              type="button"
               className="text-lombard-bg-inactive-grey underline text-center"
-              onClick={showRecoveryPass}
+              onClick={getUserNumber}
             >
               Забыли пароль?
             </button>

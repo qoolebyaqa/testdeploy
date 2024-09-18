@@ -15,6 +15,9 @@ import Authentification from "../pages/Authentification";
 import RootLayout from "../pages/RootLayout";
 import { ApiService } from "./API/ApiSerivce";
 import ClientBrowse from "../components/Main/ClientBrowse/ClientBrowse";
+import store from "../store";
+import EmployeeBrowse from "../components/Employees/EmployeeBrowse/EmployeeBrowse";
+import Password from "../pages/Password";
 
 const childrenRoutes = [
   {
@@ -28,17 +31,30 @@ const childrenRoutes = [
         loader: clientsLoader,
       },
       {
-        path: ":id_browse",
+        path: "/clients/:id_browse",
         element: <ClientBrowse />,
         title: "Обзор клиента",
+        loader: clientLoader
       }
     ],
   },
   {
     path: "/employees",
-    element: <Employees />,
     title: "Сотрудники",
-    loader: employeesLoader,
+    children: [
+      {
+        path: "",
+        element: <Employees />,
+        title: "Сотрудники",
+        loader: employeesLoader,
+      },
+      {
+        path: ":id_browse",
+        element: <EmployeeBrowse />,
+        title: "Обзор сотрудника",
+        loader: employeeLoader
+      }
+    ],
   },
   {
     path: "/contracts",
@@ -92,9 +108,19 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: childrenRoutes,
   },
+  {
+    path: "/password/:tkn",
+    element: <Password />,
+    /* loader: passReset */
+  },
 ]);
 
 //loaders
+async function passReset({params}:any){
+  const OTP = await ApiService.getOTP(params.tkn)
+  return OTP;
+}
+
 async function clientsLoader() {
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
@@ -119,7 +145,7 @@ async function clientsLoader() {
         delete client.last_name;
         delete client.middle_name
         return client;
-      });
+      }).sort((a:any, b:any) => a.id - b.id);
     }
   }
 }
@@ -140,7 +166,56 @@ async function employeesLoader() {
         user.key = user.id;
         user.index = index + 1;
         return user;
-      });
+      }).sort((a:any, b:any) => a.id - b.id);
     }
   }
 }
+
+async function clientLoader({params}:any) {
+  const id = params.id_browse.slice(params.id_browse.indexOf('=') + 1)
+  if (!localStorage.getItem("rt")) {
+    return redirect("/auth");
+  } else {
+    const response = await ApiService.getCustomer(id);
+    if (response.status === 401) {
+      return redirect("/auth");
+    } else {
+      const etag = response.headers.etag.slice(2).replaceAll("\\", "")
+      const client = {...response.data};
+      client.key = client.id;
+      client.index = store.getState().clientStore.clientsList.find(val => val.id === client.id)?.index;
+      client.name = `${client.first_name} ${client.last_name} ${
+        client.middle_name ? client.middle_name : ""
+      }`;
+      client.sum = "-";
+      delete client.first_name;
+      delete client.last_name;
+      delete client.middle_name
+      return {client, etag}
+    }
+  }
+}
+
+async function employeeLoader({params}:any) {
+  const id = params.id_browse.slice(params.id_browse.indexOf('=') + 1)
+  if (!localStorage.getItem("rt")) {
+    return redirect("/auth");
+  } else {
+    const response = await ApiService.getUser(id);
+    if (response.status === 401) {
+      console.log(response.status === 401);
+      return redirect("/auth");
+    } else {
+      const etag = response.headers.etag.slice(2).replaceAll("\\", "")
+      const user = {...response.data};
+      user.key = user.id;
+      user.index = store.getState().employeeStore.allEmployees.find(val => val.id === user.id)?.index;      
+      user.workterm = 1;
+      user.fprint = 10;
+      user.seekdays = "Воскресенье";
+      user.grade = 5;
+      return {user, etag}
+    }
+  }
+}
+

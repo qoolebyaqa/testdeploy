@@ -6,9 +6,10 @@ import NewEmployeeBtns from "./NewEmployeeBtns";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useNavigate } from "react-router";
 
-function NewEmployeeContent() {
-  const [formValues, setFormValues] = useState<{[key:string]: string}>({})
+function NewEmployeeContent({currentUser, etag}: {currentUser?: any, etag?: string}) {
+  const [formValues, setFormValues] = useState<{[key:string]: string}>(currentUser ? currentUser : {gender: 'MALE'})
   const navigate = useNavigate();
+  console.log(currentUser)
 
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
     setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
@@ -18,10 +19,12 @@ function NewEmployeeContent() {
     e.preventDefault();
     const { name, login, phone_number, language, job_title, role_id, filial_id } = formValues
     const userDataToPost:any = { name, login, phone_number, language, job_title, role_id, filial_id };
+    if(etag) {userDataToPost.id = currentUser.id}
     userDataToPost.type = 'INTERNAL'
     try {
-      await ApiService.createUser(userDataToPost)
+      etag ? await ApiService.updateUser(userDataToPost, etag) : await ApiService.createUser(userDataToPost)
       navigate('/employees')
+      console.log(userDataToPost)
     } catch (err) {
       console.log(err);
     }
