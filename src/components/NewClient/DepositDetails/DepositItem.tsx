@@ -8,7 +8,7 @@ import DottedBtn from "./DottedBtn";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-function DepositItem({item}:{item: {[key:string]: string}}) {  
+function DepositItem({item, pushNewIndex, deleteIndex, formDepositItems, submitInputData}:{item: {[key:string]: string}, pushNewIndex: () => void, deleteIndex: (id: string) => void, formDepositItems: {[key:string]: string}[], submitInputData: (data: {[key:string]: string | string[]}) => void}) {  
   const [showDialog, setShowDialog] = useState(false);
   const info = `${item.comments} ${item.quality} проба, Общ. гр. ${item.totalWeight}, Чис. гр. ${item.pureWeight}`
   return ( <motion.li className="flex mt-5" animate={{y: [-100, 100, 50, 0]}} transition={{duration: 0.3}}>
@@ -34,11 +34,11 @@ function DepositItem({item}:{item: {[key:string]: string}}) {
     <div className="grow mr-12">
       <div className="flex gap-1">
         <CustomInput type="number" label="Цена" name="price" /> 
-        <DottedBtn id={item.id} />
+        <DottedBtn id={item.id} pushNewIndex={pushNewIndex} deleteIndex={deleteIndex} items={formDepositItems}/>
       </div>
     </div>    
     {showDialog && createPortal( <DialogComponent closeHandler={() => setShowDialog(false)}>
-      <DepositCharacteristics closeHandler={() => setShowDialog(false)} id={item.id}/>
+      <DepositCharacteristics closeHandler={() => setShowDialog(false)} id={item.id} submitInputData={submitInputData}/>
     </DialogComponent>, document.body)}
   </motion.li> );
 }

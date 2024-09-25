@@ -12,8 +12,8 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-    }/* ,
+    },
     host: 'localhost',
-    port: 8080 */
+    port: 8080
   },
 });

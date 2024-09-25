@@ -1,7 +1,7 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import ContractBrowse from "../components/Contracts/ContractBrowse/ContractBrowse";
 import KATMBrowseContent from "../components/Katm/KATMBrowse/KATMBrowseContent";
-import Cash from "../pages/Cash";
+import Cash from "../pages/Cash/Cash";
 import Contracts from "../pages/Contracts";
 import Employees from "../pages/Eployees";
 import FilialBrowse from "../pages/FilialBrowse";
@@ -18,6 +18,13 @@ import ClientBrowse from "../components/Main/ClientBrowse/ClientBrowse";
 import store from "../store";
 import EmployeeBrowse from "../components/Employees/EmployeeBrowse/EmployeeBrowse";
 import Password from "../pages/Password";
+import CashCredit from "../components/Cash/CashCredit";
+import CashDebet from "../components/Cash/CashDebit";
+import DebitCreditLayout from "../pages/Cash/DebitCreditLayout";
+import General from "../components/Cash/General";
+import Received from "../components/Cash/Received";
+import Lowcost from "../components/Cash/Lowcost";
+import Bills from "../pages/Cash/Bills";
 
 const childrenRoutes = [
   {
@@ -34,8 +41,8 @@ const childrenRoutes = [
         path: "/clients/:id_browse",
         element: <ClientBrowse />,
         title: "Обзор клиента",
-        loader: clientLoader
-      }
+        loader: clientLoader,
+      },
     ],
   },
   {
@@ -52,8 +59,8 @@ const childrenRoutes = [
         path: ":id_browse",
         element: <EmployeeBrowse />,
         title: "Обзор сотрудника",
-        loader: employeeLoader
-      }
+        loader: employeeLoader,
+      },
     ],
   },
   {
@@ -76,7 +83,7 @@ const childrenRoutes = [
       { path: ":id_browse", element: <FilialBrowse />, title: "Обзор филиала" },
     ],
   },
-  { path: "/cash", element: <Cash />, title: "Касса" },
+  { path: "/", element: null, title: "Касса" },
   { path: "/sms", element: <Notification />, title: "Уведомления" },
   {
     path: "/katm",
@@ -98,6 +105,27 @@ const childrenRoutes = [
   { path: "/new-client", element: <NewClient />, title: "Регистрация Клиента" },
 ];
 
+const childrenCashOperationsRoutes = [
+  { path: "/accountant/operations/debet", element: <CashDebet /> },
+  { path: "/accountant/operations/credit", element: <CashCredit /> },
+  { path: "/accountant/operations/general", element: <General /> },
+  { path: "/accountant/operations/received", element: <Received /> },
+  { path: "/accountant/operations/lowcost", element: <Lowcost /> },
+];
+
+const childrenCashRoutes = [
+  {
+    path: "/accountant/operations",
+    element: <DebitCreditLayout />,
+    children: childrenCashOperationsRoutes,
+  },
+  { path: "/accountant/bills", element: <Bills /> },
+  { path: "/accountant/deals", element: <Bills /> },
+  { path: "/accountant/proccess", element: <Bills /> },
+  { path: "/accountant/reports", element: <Bills /> },
+  { path: "/accountant/monitoring", element: <Bills /> },
+];
+
 export const router = createBrowserRouter([
   {
     path: "/auth",
@@ -111,15 +139,25 @@ export const router = createBrowserRouter([
   {
     path: "/password/:tkn",
     element: <Password />,
-    /* loader: passReset */
+    loader: passReset,
+  },
+  {
+    path: "/accountant",
+    element: <Cash />,
+    children: childrenCashRoutes,
   },
 ]);
 
 //loaders
-/* async function passReset({params}:any){
-  const OTP = await ApiService.getOTP(params.tkn)
-  return OTP;
-} */
+async function passReset({ params }: any) {
+  try {
+    const OTP = await ApiService.getOTP(params.tkn);
+    return OTP;
+  } catch (err) {
+    console.log(err)
+    return new Error('Some problem with server')
+  }
+}
 
 async function clientsLoader() {
   if (!localStorage.getItem("rt")) {
@@ -129,23 +167,25 @@ async function clientsLoader() {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      return response.data.content.map((item: any, index: number) => {
-        const client: any = {...item};
-        client.key = item.id;
-        client.index = index + 1;
-        client.name = `${item.first_name} ${item.last_name} ${
-          item.middle_name ? item.middle_name : ""
-        }`;
-        client.passport =
-          `${item.passport_series} ${item.passport_number}`.toUpperCase();
-        client.sum = "-";
-        delete client.passport_number;
-        delete client.passport_series;
-        delete client.first_name;
-        delete client.last_name;
-        delete client.middle_name
-        return client;
-      }).sort((a:any, b:any) => a.id - b.id);
+      return response.data.content
+        .map((item: any, index: number) => {
+          const client: any = { ...item };
+          client.key = item.id;
+          client.index = index + 1;
+          client.name = `${item.first_name} ${item.last_name} ${
+            item.middle_name ? item.middle_name : ""
+          }`;
+          client.passport =
+            `${item.passport_series} ${item.passport_number}`.toUpperCase();
+          client.sum = "-";
+          delete client.passport_number;
+          delete client.passport_series;
+          delete client.first_name;
+          delete client.last_name;
+          delete client.middle_name;
+          return client;
+        })
+        .sort((a: any, b: any) => a.id - b.id);
     }
   }
 }
@@ -158,21 +198,23 @@ async function employeesLoader() {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      return response.data.content.map((user: any, index: number) => {
-        user.workterm = 1;
-        user.fprint = 10;
-        user.seekdays = "Воскресенье";
-        user.grade = 5;
-        user.key = user.id;
-        user.index = index + 1;
-        return user;
-      }).sort((a:any, b:any) => a.id - b.id);
+      return response.data.content
+        .map((user: any, index: number) => {
+          user.workterm = 1;
+          user.fprint = 10;
+          user.seekdays = "Воскресенье";
+          user.grade = 5;
+          user.key = user.id;
+          user.index = index + 1;
+          return user;
+        })
+        .sort((a: any, b: any) => a.id - b.id);
     }
   }
 }
 
-async function clientLoader({params}:any) {
-  const id = params.id_browse.slice(params.id_browse.indexOf('=') + 1)
+async function clientLoader({ params }: any) {
+  const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
@@ -180,24 +222,26 @@ async function clientLoader({params}:any) {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      const etag = response.headers.etag.slice(2).replaceAll("\\", "")
-      const client = {...response.data};
+      const etag = response.headers.etag.slice(2).replaceAll("\\", "");
+      const client = { ...response.data };
       client.key = client.id;
-      client.index = store.getState().clientStore.clientsList.find(val => val.id === client.id)?.index;
+      client.index = store
+        .getState()
+        .clientStore.clientsList.find((val) => val.id === client.id)?.index;
       client.name = `${client.first_name} ${client.last_name} ${
         client.middle_name ? client.middle_name : ""
       }`;
       client.sum = "-";
       delete client.first_name;
       delete client.last_name;
-      delete client.middle_name
-      return {client, etag}
+      delete client.middle_name;
+      return { client, etag };
     }
   }
 }
 
-async function employeeLoader({params}:any) {
-  const id = params.id_browse.slice(params.id_browse.indexOf('=') + 1)
+async function employeeLoader({ params }: any) {
+  const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
@@ -206,16 +250,17 @@ async function employeeLoader({params}:any) {
       console.log(response.status === 401);
       return redirect("/auth");
     } else {
-      const etag = response.headers.etag.slice(2).replaceAll("\\", "")
-      const user = {...response.data};
+      const etag = response.headers.etag.slice(2).replaceAll("\\", "");
+      const user = { ...response.data };
       user.key = user.id;
-      user.index = store.getState().employeeStore.allEmployees.find(val => val.id === user.id)?.index;      
+      user.index = store
+        .getState()
+        .employeeStore.allEmployees.find((val) => val.id === user.id)?.index;
       user.workterm = 1;
       user.fprint = 10;
       user.seekdays = "Воскресенье";
       user.grade = 5;
-      return {user, etag}
+      return { user, etag };
     }
   }
 }
-

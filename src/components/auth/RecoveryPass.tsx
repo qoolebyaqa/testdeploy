@@ -4,13 +4,19 @@ import ButtonComponent from "../UI/ButtonComponent";
 import { motion } from "framer-motion";
 import CustomInput from "../UI/CustomInput";
 import ConfirmationCode from "./ConfirmationCode";
-/* import { ApiService } from "../../helpers/API/ApiSerivce"; */
+import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useLoaderData } from "react-router";
+import useActions from "../../helpers/hooks/useActions";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import ErrorMessage from "../UI/ErrorMessage";
+import { createPortal } from "react-dom";
 
 function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () => void, restoreStep?: number }) {
   const [recoveryPassStep, setRecoveryPassStep] = useState(restoreStep || 0);
   const [code, setCode] = useState<string[]>(new Array(6).fill(""));
   const [passInputs, setPassInputs] = useState({newPass: '', repeatNewPass: ''})
+  const errorStateMsg = useAppSelector((state) => state.auth.authError);
+  const dispatch = useActions();
   const OTP: any = useLoaderData();
   console.log(OTP);
   function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
@@ -23,24 +29,38 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
 
   async function verifyOTP() {
     try {
-      /* await ApiService.verifyOTP(OTP.data.token, Number(code.join(''))); */
+      await ApiService.verifyOTP(OTP.data.token, Number(code.join('')));
       setRecoveryPassStep(3)
     } catch (err) {
       console.log(err);
+      dispatch.setAuthError('Please try another code')
     }
   }
 
   async function setNewPass() {
     try {
       console.log(passInputs)
-      /* await ApiService.setNewPass(OTP.data.token, passInputs.newPass, passInputs.repeatNewPass); */
+      await ApiService.setNewPass(OTP.data.token, passInputs.newPass, passInputs.repeatNewPass);
       window.location.href = '/'
     } catch (err) {
       console.log(err);
+      dispatch.setAuthError('Password must be confirmed by the same value');
     }
   }
 
+  const clearPageAfterTimeOut = () => {
+    setRecoveryPassStep(0);
+    showRecoveryPass();
+    window.location.href = '/'
+  }
+
   return (
+    <>
+    {errorStateMsg && (createPortal(<ErrorMessage
+          shownMessage={errorStateMsg}
+          setShownMessage={(msg) => dispatch.setAuthError(msg)}
+        />, document.body)        
+      )}
     <form
       onSubmit={handleAuthSubmit}
       className="mx-auto h-[647px] flex flex-col justify-around w-[420px] rounded-[40px] p-[48px] bg-black text-white"
@@ -53,10 +73,11 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
           Восстановить доступ
         </h3>
         <p className="text-center my-6">
-          {recoveryPassStep === 2
-            ? "Введите новый пароль"
-            : recoveryPassStep === 0 || recoveryPassStep === 1 ? "для восстановления пароля вам будет отправлена ссылка по" 
-            : recoveryPassStep === 3 ? "для подтверждения вам отправлен код на номер" : ''}
+          {recoveryPassStep === 3
+            ? "Установите пароль"
+            : recoveryPassStep === 0 ? "Введите номер телефона" 
+            : recoveryPassStep === 1 ? "Для восстановления пароля Вам будет отправлена ссылка" 
+            :  'Введите код из СМС'}
         </p>
         {recoveryPassStep === 3 ? (
           <div className="py-4 px-[2px]">
@@ -79,14 +100,21 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               handleChange={valueChangeHandler}
             />
           </div>
-        ) : recoveryPassStep === 2 ? <ConfirmationCode code={code} setCode={setCode}/> : (
+        ) : recoveryPassStep === 2 ? <ConfirmationCode code={code} setCode={setCode} clearFn={clearPageAfterTimeOut}/> : (
           <motion.div
-            className="text-center rounded-2xl border-[1px] border-lombard-btn-grey py-10 overflow-hidden h-[140px]"
-            animate={recoveryPassStep === 1 && { height: [180, 180, 190, 210] }}
+            className="text-center rounded-2xl py-10 px-2 overflow-hidden h-[140px]"
+            animate={recoveryPassStep === 1 ? { height: [180, 180, 190, 210], border: '1px solid white' } : { height: [160], border: "none"}}
           >
-            <motion.div animate={recoveryPassStep === 1 && { y: [0, -40, -80, -100] }}>
-              <p>Номеру телефона</p>
-              <strong>+998 (99) 08*-**-60</strong>
+            <motion.div animate={recoveryPassStep === 1 ? { y: [0, -40, -80, -120] } : { y: [-120, -80, -40, 0] } }>
+            <CustomInput
+              label="Номер телефона"
+              type="phone"
+              name="phone_number"
+              placeholder="998 (__) ___-__-__"
+              labelStyles="text-white text-left"
+              className="bg-black"
+              required
+            />
               <motion.div
                 className="bg-lombard-btn-green w-[100px] h-[100px] rounded-full mx-auto mt-16 text-[68px] flex items-center justify-center"
                 animate={recoveryPassStep === 1 && { scale: [1, 1.3, 1.2, 1] }}
@@ -98,12 +126,20 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
         )}
       </div>
       {recoveryPassStep === 1 ? (
+        <>
         <button
           className="authButton text-white font-bold"
           onClick={() => setRecoveryPassStep(2)}
         >
           Авторизация
-        </button>
+        </button>        
+        <ButtonComponent
+          color="bg-lombard-btn-grey"
+          titleBtn="Закрыть"
+          className="bg-lombard-text-black"
+          clickHandler={() => {setRecoveryPassStep(0); showRecoveryPass()}}
+        />
+        </>
       ) : (
         <>
           {recoveryPassStep === 2 || recoveryPassStep === 3? (
@@ -117,13 +153,19 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               <div className="flex flex-col gap-2">
                 <ButtonComponent
                   color="bg-lombard-btn-green"
-                  titleBtn="Отправить"
+                  titleBtn="Восстановить"
+                  clickHandler={() => setRecoveryPassStep(2)}
+                />
+                <ButtonComponent
+                  color="bg-lombard-btn-grey"
+                  titleBtn="Запросить код"
+                  className="bg-lombard-main-blue"
                   clickHandler={() => setRecoveryPassStep(1)}
                 />
                 <ButtonComponent
                   color="bg-lombard-btn-grey"
-                  titleBtn="Отменить"
-                  className="text-black"
+                  titleBtn="Закрыть"
+                  className="bg-lombard-text-black"
                   clickHandler={showRecoveryPass}
                 />
               </div>
@@ -131,7 +173,7 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
           )}
         </>
       )}
-    </form>
+    </form></>
   );
 }
 

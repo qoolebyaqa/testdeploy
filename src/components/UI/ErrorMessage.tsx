@@ -15,6 +15,7 @@ function ErrorMessage({ shownMessage, setShownMessage }: IErrorMessage) {
     if(!shownMessage) {
       clearTimeout(closeMessage)
     }
+    return () => clearTimeout(closeMessage)
   }, []);
   return (
     <>

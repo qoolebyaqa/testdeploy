@@ -1,6 +1,6 @@
 import { useRef, useState, ClipboardEvent, ChangeEvent, useEffect, KeyboardEvent } from "react";
 
-const ConfirmationCode = ({code, setCode}:{code: string[], setCode: any}) => {
+const ConfirmationCode = ({code, setCode, clearFn}:{code: string[], setCode: any, clearFn: () => void}) => {
   const [seconds, setSeconds] = useState(59);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -8,7 +8,11 @@ const ConfirmationCode = ({code, setCode}:{code: string[], setCode: any}) => {
     const timeOut = setTimeout(() => {
       setSeconds(prev => prev-1);
     }, 1000)
-    if (seconds === 0) clearInterval(timeOut);
+    if (seconds === 0) {
+      clearInterval(timeOut);
+      clearFn();
+    }
+    return () => clearInterval(timeOut);
   }, [seconds])
 
   const handleChange = (value: string, index: number) => {

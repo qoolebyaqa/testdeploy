@@ -141,7 +141,7 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
               label="Номер телефона"
               type="phone"
               name="phone_number"
-              placeholder="+998 (99) 123-45-67"
+              placeholder="998 (99) 123-45-67"
               required
               value={formValues.phone_number}
               handleChange={onInputChange}

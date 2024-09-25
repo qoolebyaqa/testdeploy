@@ -1,4 +1,4 @@
-import DottedBtn from "../../NewClient/DepositDetails/DottedBtn";
+/* import DottedBtn from "../../NewClient/DepositDetails/DottedBtn"; */
 import ButtonComponent from "../../UI/ButtonComponent";
 import CustomInput from "../../UI/CustomInput";
 import DialogComponent from "../../UI/DialogComponent";
@@ -143,7 +143,7 @@ function Modals({
                   { key: 2, label: "30%" },
                 ]}
               />
-              <DottedBtn id={""}/>
+              {/* <DottedBtn id={""}/> */}
             </div>
             <div className="flex justify-end mt-5 gap-[6px]">
               <ButtonComponent

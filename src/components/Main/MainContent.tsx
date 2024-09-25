@@ -15,7 +15,7 @@ function MainContent() {
   const dataClients = useAppSelector(state => state.clientStore.clientsList);
   const clients : any = useLoaderData();
   console.log('loaderData', clients);
-  useEffect(() => {dispatch.setClientsList(clients)},[])
+  useEffect(() => {dispatch.setClientsList(clients); dispatch.setAuthLoading(false)},[])
 
   function selectClientHandler (...args: IDataClientType[]) {
     dispatch.setClientChoosenOne(args[0]);

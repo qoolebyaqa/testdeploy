@@ -34,7 +34,7 @@ function setAuthInterceptors(client: Axios) {
       const originalRequest = error.config;
       // Errors handling
       const { response } = error;
-      if (response && response.status === 401 && !isRefreshingToken && !originalRequest.url.includes('/v1/auth/refresh')) {
+      if (response && response.status === 401 && !isRefreshingToken && !originalRequest.url.includes('/v1/auth/refresh') && !originalRequest.url.includes('/v1/auth/login')) {
         isRefreshingToken = true;
         try {
           const res = await ApiService.refreshToken(localStorage.getItem('rt') as string); 

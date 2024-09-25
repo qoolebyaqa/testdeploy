@@ -11,11 +11,12 @@ function HeaderMainNav() {
   const currentKATM = useAppSelector(state => state.katmStore.katmChoosenOne)
   const currentClient = useAppSelector(state => state.clientStore.clientChoosenOne)  
   const currentUser = useAppSelector(state => state.employeeStore.employeeChoosenOne)
+  const userCreds = useAppSelector(state => state.auth.currentUser)
   const navList = [
     { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
     { titleBtn: "Сотрудники", svgCase: "employees", path: "/employees" },
     { titleBtn: "КАТМ", svgCase: "KATM", path: "/katm" },
-    { titleBtn: "Касса", svgCase: "cash", path: "/cash" },
+    userCreds.role_id === 'ADMIN' && { titleBtn: "Касса", svgCase: "cash", path: "/accountant/operations/debet" },
     { titleBtn: "Уведомления", svgCase: "sms", path: "/sms" },
     { titleBtn: "Филиалы", svgCase: "filials", path: "/filials" },
   ];
@@ -52,8 +53,9 @@ function HeaderMainNav() {
               </i>
             </div>
             <nav>
-              <ul className="flex">
+              <ul className="flex mx-1">
                 {navList.map((navItem) => (
+                  navItem &&
                   <HeaderNavItem
                     titleBtn={navItem.titleBtn}
                     svgCase={navItem.svgCase}

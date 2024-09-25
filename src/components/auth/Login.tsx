@@ -45,10 +45,16 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
         if (result.status === 200) {
           dispatch.setCurToken(result.data.access_token);
           localStorage.setItem("rt", result.data.refresh_token);
+          /* const users = await ApiService.getUsers();
+          const userCreds = users.data.content.find((person:any) => person.login === user.login);
+          dispatch.setCurrentUser(userCreds);
+          console.log(userCreds); */
           navigate("/");
+          dispatch.setAuthLoading(true)
         }
       } catch (error: any) {
         dispatch.setAuthError(error.response.data.message);
+        dispatch.setAuthLoading(false)
       } finally {
         setLoading(false);
       }

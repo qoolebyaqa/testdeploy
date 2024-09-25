@@ -3,12 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface IAuthState {
   access_token: string |  null, 
   authLoading: boolean,
-  authError: string
+  authError: string,
+  currentUser: any
 }
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: { access_token: null, authLoading: false, authError: '' } as IAuthState,
+  initialState: { access_token: null, authLoading: false, authError: '', currentUser: {role_id: "ADMIN"} } as IAuthState,
   reducers: {
     setCurToken(state, access) {
       state.access_token = access.payload
@@ -18,6 +19,9 @@ const authSlice = createSlice({
     },
     setAuthError(state, message) {
       state.authError = message.payload;
+    },
+    setCurrentUser(state, userCred) {
+      state.currentUser = userCred.payload
     }
   },
 });

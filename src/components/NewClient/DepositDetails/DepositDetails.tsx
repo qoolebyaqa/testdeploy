@@ -11,9 +11,27 @@ import { createPortal } from "react-dom";
 import DealInfoPopup from "./DealInfoPopup";
 
 function DepositDetails() {
-  const formDepositItems = useAppSelector(state => state.clientStore.depositCommentForm)
+  const [formDepositItems, setFormDepositItems] = useState([{ id: Math.random().toFixed(8) }]);
   const clientRegStep = useAppSelector(state => state.clientStore.regClientStep);
   const [showDialog, setShowDialog] = useState(false);
+
+  function pushIndexToDepositItems() {
+    let newID = Math.random().toFixed(8);
+    while(formDepositItems.map(val => val.id).includes(newID)){
+      newID = Math.random().toFixed(8);
+    }
+    setFormDepositItems(prev => ([...prev, {id: newID}]))
+  }
+  function deleteFromDepositItems(id:string) {
+    const filtredIndexes = formDepositItems.filter(item => item.id !== id)
+    setFormDepositItems(filtredIndexes);
+  }
+
+  function handleAddDataInputsToID(inputData:{[key:string]: string | string[]}) {
+    const updatedFormDepositItems = formDepositItems.map((item) => 
+    item.id === inputData.id ? {...item, ...inputData} : item);
+    setFormDepositItems(updatedFormDepositItems)
+  }
 
   return (
     <div className="flex flex-col gap-3 pr-4">
@@ -23,7 +41,7 @@ function DepositDetails() {
       <CollapseWrapper title="Залог" page="newClient" notActive={clientRegStep < 2}>
         <ul>
           {formDepositItems.map(item =>
-            <DepositItem item={item} key={item.id} />
+            <DepositItem item={item} key={item.id} formDepositItems={formDepositItems} pushNewIndex={pushIndexToDepositItems} deleteIndex={deleteFromDepositItems} submitInputData={handleAddDataInputsToID}/>
           )}
         </ul>
         <div className="flex items-center my-5">
