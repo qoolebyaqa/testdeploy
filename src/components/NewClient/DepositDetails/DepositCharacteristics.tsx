@@ -33,8 +33,8 @@ function DepositCharacteristics({
         <DropDown
           title="Выбрать"
           listOfItems={[
-            { label: "Золото", key: 1, enumValue: "GOLD" },
-            { label: "Серебро", key: 2, enumValue: "SILVER"  },
+            { label: "Золото", key: 1, enumvalue: "GOLD" },
+            { label: "Серебро", key: 2, enumvalue: "SILVER"  },
           ]}
           triggerType="click"
           name="creditType"
@@ -45,8 +45,8 @@ function DepositCharacteristics({
         <DropDown
           title="Выбрать"
           listOfItems={[
-            { label: "583", key: 1, enumValue: "583" },
-            { label: "585", key: 2, enumValue: "585" },
+            { label: "583", key: 1, enumvalue: "583" },
+            { label: "585", key: 2, enumvalue: "585" },
           ]}
           triggerType="click"
           name="quality"

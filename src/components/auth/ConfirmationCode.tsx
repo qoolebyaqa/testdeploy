@@ -75,6 +75,7 @@ const ConfirmationCode = ({code, setCode, clearFn}:{code: string[], setCode: any
           />
         ))}
       </div>
+      <button className="text-lombard-text-black p-0">Повторить отправку</button>
     </>
   );
 };

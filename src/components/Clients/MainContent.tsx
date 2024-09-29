@@ -29,9 +29,10 @@ function MainContent() {
           <DropDown
             title="Статус"
             name="status"
-            listOfItems={[
-              { label: "Заключен", key: 1 },
-              { label: "Не заключен", key: 2 }
+            triggerType="click"
+            listOfItems={[              
+              { label: "Активный", key: 1, enumvalue: 'ID_CARD_LOCAL'},
+              { label: "Не активный", key: 2, enumvalue: 'PASSPORT_LOCAL' }
             ]}
           />
           <RangeFilter titleFilter="Сумма" iconInput="arrow" />

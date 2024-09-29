@@ -5,7 +5,7 @@ import { useState } from "react";
 
 interface ISelect {
   label: string;
-  enumValue?: string | number;
+  enumvalue?: string | number;
   key: number;
 }
 
@@ -42,7 +42,7 @@ function DropDown({
     )?.label;
     const newSelectedEnum = listOfItems.find(
       (item: ISelect) => item?.key?.toString() === e.key
-    )?.enumValue;
+    )?.enumvalue;
     if (newSelect) {
       setSelected(newSelect.toString());
       if(newSelectedEnum) 
@@ -65,7 +65,7 @@ function DropDown({
         trigger={triggerType === "hover" ? ["hover"] : ["click"]}
       >
         <Button className={`flex justify-between  ${className}`}>
-          {listOfItems.find(val => val.enumValue === value)?.label || selected}
+          {listOfItems.find(val => val.enumvalue === value)?.label || selected}
           <i>
             <SVGComponent title="arrow" />
           </i>

@@ -1,5 +1,5 @@
 function Bills() {
-  return ( <h2>Bills under development</h2> );
+  return ( <h2>Under development</h2> );
 }
 
 export default Bills;

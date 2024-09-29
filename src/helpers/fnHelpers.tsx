@@ -14,6 +14,31 @@ export function Copier<T extends { index?: number; key?: number }>(obj: T, quant
   return arr;
 }
 
+export function getUserNav(user:string) {
+  if(user === 'ADMIN') {
+    return [
+      { titleBtn: "Сотрудники", svgCase: "employees", path: "/employees" },
+      { titleBtn: "Рассылка", svgCase: "sms", path: "/sms" },
+      { titleBtn: "Управления", svgCase: "filials", path: "/filials" },
+      { titleBtn: "Мониторинг", svgCase: "sms", path: "/monitoring" },
+    ]
+  }
+  if (user === 'ACCOUNTANT') {
+    return [
+      { path: "/accountant/operations/debet", svgCase: "filials", titleBtn: "Операции", cashRoot: 'operations' },
+      { path: "/accountant/bills", svgCase: "filials", titleBtn: "Счета"  },
+      { path: "/accountant/deals", svgCase: "filials", titleBtn: "Сделки" },
+      { path: "/accountant/proccess", svgCase: "filials", titleBtn: "Процессы" },
+      { path: "/accountant/reports", svgCase: "filials", titleBtn: "Отчёты" },
+      { path: "/accountant/monitoring", svgCase: "filials", titleBtn: "Управления" },
+    ];
+  } return [
+      { titleBtn: "Клиенты", svgCase: "contracts", path: "/clients" },
+      { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
+      { titleBtn: "КАТМ", svgCase: "KATM", path: "/katm" },
+      { titleBtn: "Рассылка", svgCase: "sms", path: "/sms" },
+    ]
+}
 
 export function toDefineItemsPerPage(length: number) {
   if (length < 50) {
@@ -334,7 +359,9 @@ export const itemClient = {
   key: 15,
   index: 2,
   id: "14",
-  name: "Zukhriddinov Jamoliddin Azimjonovich",
+  first_name: "Jamoliddin Azimjonovich",
+  last_name: "Zukhriddinov",
+  middle_name: "Azimjonovich",
   pin: "123456789012345",
   passport: "AD 1234567",
   phone_number: "+998 (__) ___-__-__",

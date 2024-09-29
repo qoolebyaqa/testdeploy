@@ -13,6 +13,7 @@ import DealInfoPopup from "./DealInfoPopup";
 function DepositDetails() {
   const [formDepositItems, setFormDepositItems] = useState([{ id: Math.random().toFixed(8) }]);
   const clientRegStep = useAppSelector(state => state.clientStore.regClientStep);
+  const [formValues, setFormValues] = useState<{[key:string]: string}>({})
   const [showDialog, setShowDialog] = useState(false);
 
   function pushIndexToDepositItems() {
@@ -32,6 +33,45 @@ function DepositDetails() {
     item.id === inputData.id ? {...item, ...inputData} : item);
     setFormDepositItems(updatedFormDepositItems)
   }
+
+  const paymentTypeChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
+    setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
+  }
+
+  const additionalFields = formValues.creditType !== 'CASH' ? 
+      (<div className="bg-lombard-bg-inactive-grey flex flex-col rounded-lg p-3 my-2">
+        <div className="flex gap-3">
+        <CustomInput
+          type="number"
+          name="bankCode"
+          label="Код Банка"
+          placeholder="0"
+        />
+        <CustomInput
+          type="number"
+          name="accountN"
+          label="Номер счета"
+          placeholder="0"
+        />
+        <CustomInput
+          type="number"
+          name="cardN"
+          label="Номер карты"
+          placeholder="0"
+        /></div>
+        {formValues.creditType === 'COMPLEX' && <div className="flex gap-3"><CustomInput
+          type="number"
+          name="toCard"
+          label="На карту"
+          placeholder="0"
+        />
+        <CustomInput
+          type="number"
+          name="byCash"
+          label="Наличные"
+          placeholder="0"
+        /></div>}
+      </div>) : <></>
 
   return (
     <div className="flex flex-col gap-3 pr-4">
@@ -94,35 +134,17 @@ function DepositDetails() {
           <DropDown
             title="Выбрать"
             listOfItems={[
-              { label: "Наличные", key: 1 },
-              { label: "Перечисление", key: 2 },
+              { label: "Наличные", key: 1, enumvalue: 'CASH' },
+              { label: "На карту", key: 2, enumvalue: 'CARD' },
+              { label: "Смешанная", key: 3, enumvalue: 'COMPLEX' },
             ]}
             triggerType="click"
             name="creditType"
             label="Тип выдачи"
-            className="h-[41px]"
+            handleSelect={paymentTypeChangeHandler}
           />
         </div>
-        <div className="bg-lombard-bg-inactive-grey flex h-[95px] my-2 rounded-lg gap-3 px-3">
-          <CustomInput
-            type="number"
-            name="bankCode"
-            label="Код Банка"
-            placeholder="0"
-          />
-          <CustomInput
-            type="number"
-            name="accountN"
-            label="Номер счета"
-            placeholder="0"
-          />
-          <CustomInput
-            type="number"
-            name="cardN"
-            label="Номер карты"
-            placeholder="0"
-          />
-        </div>
+        {additionalFields}
       </CollapseWrapper>
       <CollapseWrapper title="Данные сделки" page="newClient" handleClick={() => setShowDialog(true)} notActive={clientRegStep < 4}>
         <DealInfo />

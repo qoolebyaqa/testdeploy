@@ -24,34 +24,34 @@ const regDropDowns = [
     label: "Родной язык",
     name: "language",
     items: [
-      { label: "Узбекский", key: 1, enumValue: "UZ" },
-      { label: "Русский", key: 2, enumValue: "RU" },
+      { label: "Узбекский", key: 1, enumvalue: "UZ" },
+      { label: "Русский", key: 2, enumvalue: "RU" },
     ],
   },
   {
     label: "Должность",
     name: "job_title",
     items: [
-      { label: "Директор", key: 1, enumValue: "DIRECTOR" },
-      { label: "Бухгалтер", key: 2, enumValue: "ACCOUNTANT" },
-      { label: "Специалист", key: 3, enumValue: "SPECIALIST" },
+      { label: "Директор", key: 1, enumvalue: "DIRECTOR" },
+      { label: "Бухгалтер", key: 2, enumvalue: "ACCOUNTANT" },
+      { label: "Специалист", key: 3, enumvalue: "SPECIALIST" },
     ],
   },
   {
     label: "Пользователь",
     name: "role_id",
     items: [
-      { label: "Пользователь", key: 1, enumValue: "USER" },
-      { label: "Админ", key: 2, enumValue: "ADMIN" },
+      { label: "Пользователь", key: 1, enumvalue: "USER" },
+      { label: "Админ", key: 2, enumvalue: "ADMIN" },
     ],
   },
   {
     label: "Филиалы",
     name: "filial_id",
     items: [
-      { label: "Мирабад", key: 1, enumValue: 1 },
-      { label: "Чиланзар", key: 2, enumValue: 2 },
-      { label: "Юнусабад", key: 3, enumValue: 3 },
+      { label: "Мирабад", key: 1, enumvalue: 1 },
+      { label: "Чиланзар", key: 2, enumvalue: 2 },
+      { label: "Юнусабад", key: 3, enumvalue: 3 },
     ],
   },
   /* {

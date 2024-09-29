@@ -3,14 +3,12 @@ import HeaderMainNav from "../components/HeaderMainNav/HeaderMainNav";
 import { useEffect, useState } from "react";
 import { ApiService } from "../helpers/API/ApiSerivce";
 import useActions from "../helpers/hooks/useActions";
-import { useAppSelector } from "../helpers/hooks/useAppSelector";
 import Loader from "../components/UI/Loader";
 
 function RootLayout() {
   const dispatch = useActions();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const accessTKN = useAppSelector(state => state.auth.access_token);
   async function fetchRefreshTKN() {  
     const refreshToken = localStorage.getItem('rt')
     setLoading(true);
@@ -34,7 +32,7 @@ function RootLayout() {
     }
   }
   useEffect(() => {    
-    !accessTKN && fetchRefreshTKN();
+    fetchRefreshTKN();
   }, [])
   if(loading) {
     return (<Loader />)

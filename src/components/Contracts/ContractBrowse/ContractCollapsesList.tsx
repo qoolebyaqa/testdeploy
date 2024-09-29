@@ -77,8 +77,8 @@ function ContractCollapsesList() {
             <DropDown
               title={"Выбрать"}
               listOfItems={[
-                { label: "Наличные", key: 1, enumValue: "CASH" },
-                { label: "Перечисление", key: 2, enumValue: "CARD" },
+                { label: "Наличные", key: 1, enumvalue: "CASH" },
+                { label: "Перечисление", key: 2, enumvalue: "CARD" },
               ]}
               name={"type of payment"}
               label="Тип оплаты"

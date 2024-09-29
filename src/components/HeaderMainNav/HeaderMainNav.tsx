@@ -3,30 +3,23 @@ import HeaderNavItem from "./HeaderNavItem";
 import HeaderUserBlock from "./HeaderUserBlock";
 import SVGComponent from "../UI/SVGComponent";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import { getUserNav } from "../../helpers/fnHelpers";
 function HeaderMainNav() {
   const {pathname} = useLocation();
-  console.log(pathname)
   const currentFilial = useAppSelector(state => state.filialStore.filialChoosenOne)
   const currentContract = useAppSelector(state => state.contractStore.contractChoosenOne)
   const currentKATM = useAppSelector(state => state.katmStore.katmChoosenOne)
   const currentClient = useAppSelector(state => state.clientStore.clientChoosenOne)  
   const currentUser = useAppSelector(state => state.employeeStore.employeeChoosenOne)
   const userCreds = useAppSelector(state => state.auth.currentUser)
-  const navList = [
-    { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
-    { titleBtn: "Сотрудники", svgCase: "employees", path: "/employees" },
-    { titleBtn: "КАТМ", svgCase: "KATM", path: "/katm" },
-    userCreds.role_id === 'ADMIN' && { titleBtn: "Касса", svgCase: "cash", path: "/accountant/operations/debet" },
-    { titleBtn: "Уведомления", svgCase: "sms", path: "/sms" },
-    { titleBtn: "Филиалы", svgCase: "filials", path: "/filials" },
-  ];
+  const navList = getUserNav(userCreds.role_id)
   const specialLayouts = [
     {path: "/new-employee", navTo: '/employees', breadCrumb: '/ Регистрация сотрудника', linkWording: 'Сотрудники'},
-    {path: "/new-client", navTo: '/', breadCrumb: '/ Регистрация клиента', linkWording: 'Клиенты'},
+    {path: "/new-client", navTo: '/clients', breadCrumb: '/ Регистрация клиента', linkWording: 'Клиенты'},
     {path: "/filials/browse", navTo: '/filials', breadCrumb: `/ ${currentFilial?.filial}`, linkWording: 'Филиалы'},    
     {path: "/contracts/browse", navTo: '/contracts', breadCrumb: `/ ${currentContract?.name}`, linkWording: 'Договоры'},
     {path: "/katm/browse", navTo: '/katm', breadCrumb: `/ ${currentKATM?.name}`, linkWording: 'КАТМ Запросы'},
-    {path: "/clients/browse", navTo: '/', breadCrumb: `/ ${currentClient?.name}`, linkWording: 'Клиенты'},
+    {path: "/clients/browse", navTo: '/clients', breadCrumb: `/ ${currentClient?.name}`, linkWording: 'Клиенты'},
     {path: "/employees/browse", navTo: '/employees', breadCrumb: `/ ${currentUser?.name}`, linkWording: 'Сотрудники'},
   ]
   return (
@@ -61,6 +54,7 @@ function HeaderMainNav() {
                     svgCase={navItem.svgCase}
                     path={navItem.path}
                     key={navItem.path}
+                    cashRoot={navItem.cashRoot}
                   />
                 ))}
               </ul>

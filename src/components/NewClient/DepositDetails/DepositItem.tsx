@@ -16,14 +16,14 @@ function DepositItem({item, pushNewIndex, deleteIndex, formDepositItems, submitI
       <div className="flex gap-1 items-center">
         <DropDown
           title="Выбрать"
-          className="flex h-[41px]"
           listOfItems={[
-            { label: "Золото", key: 1, enumValue: "GOLD" },
-            { label: "Другое", key: 2, enumValue: "OTHER" },
+            { label: "Золото", key: 1, enumvalue: "GOLD" },
+            { label: "Другое", key: 2, enumvalue: "OTHER" },
           ]}
           label="Тип залога"
           name="typeDeposit"
           triggerType="click"
+          className="h-[40px]"
         />
         <button className="self-end p-0 m-0 flex max-w-[280px] overflow-hidden text-lg" onClick={() => setShowDialog(true)}><i>
           <SVGComponent title="message" />
@@ -33,7 +33,7 @@ function DepositItem({item, pushNewIndex, deleteIndex, formDepositItems, submitI
     </div>
     <div className="grow mr-12">
       <div className="flex gap-1">
-        <CustomInput type="number" label="Цена" name="price" /> 
+        <CustomInput type="number" label="Цена" name="price" className="h-[40px]" /> 
         <DottedBtn id={item.id} pushNewIndex={pushNewIndex} deleteIndex={deleteIndex} items={formDepositItems}/>
       </div>
     </div>    

@@ -1,20 +1,18 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import ContractBrowse from "../components/Contracts/ContractBrowse/ContractBrowse";
 import KATMBrowseContent from "../components/Katm/KATMBrowse/KATMBrowseContent";
-import Cash from "../pages/Cash/Cash";
 import Contracts from "../pages/Contracts";
 import Employees from "../pages/Eployees";
 import FilialBrowse from "../pages/FilialBrowse";
 import Filials from "../pages/Filials";
 import KATM from "../pages/KATM";
-import MainPage from "../pages/MainPage";
 import NewClient from "../pages/NewClient";
 import NewEmployeePage from "../pages/NewEmployeePage";
 import Notification from "../pages/Notification";
 import Authentification from "../pages/Authentification";
 import RootLayout from "../pages/RootLayout";
 import { ApiService } from "./API/ApiSerivce";
-import ClientBrowse from "../components/Main/ClientBrowse/ClientBrowse";
+import ClientBrowse from "../components/Clients/ClientBrowse/ClientBrowse";
 import store from "../store";
 import EmployeeBrowse from "../components/Employees/EmployeeBrowse/EmployeeBrowse";
 import Password from "../pages/Password";
@@ -25,25 +23,78 @@ import General from "../components/Cash/General";
 import Received from "../components/Cash/Received";
 import Lowcost from "../components/Cash/Lowcost";
 import Bills from "../pages/Cash/Bills";
+import { RouteProtector } from "../components/UI/RouteProtector";
+import Main from "../pages/Main";
+import Clients from "../pages/Clients";
+import Monitoring from "../pages/Monitoring";
+import NotFound from "../pages/NotFound";
+
+const childrenCashOperationsRoutes = [
+  { path: "debet", element: <CashDebet /> },
+  { path: "credit", element: <CashCredit /> },
+  { path: "general", element: <General /> },
+  { path: "received", element: <Received /> },
+  { path: "lowcost", element: <Lowcost /> },
+];
 
 const childrenRoutes = [
   {
-    path: "/",
+    path: "",
+    element: <RouteProtector allowedRoles={['USER', 'ADMIN', 'ACCOUNTANT']}><Main /></RouteProtector>,
     title: "Главная страница",
+  },
+  {
+    path: "/clients",
+    children: [{
+      path: "",
+      element: <RouteProtector allowedRoles={['USER']}><Clients /></RouteProtector>,
+      title: "Клиенты",
+      loader: clientsLoader,
+    },{
+      path: ":id_browse",
+      element: <RouteProtector allowedRoles={['USER']}><ClientBrowse /></RouteProtector>,
+      title: "Обзор клиента",
+      loader: clientLoader,
+    }],
+  },
+  {
+    path: "/contracts",
+    title: "Контракты",
     children: [
+      { path: "", 
+        element: <RouteProtector allowedRoles={['USER']}><Contracts /></RouteProtector>, 
+        title: "Контракты" },
       {
-        path: "/",
-        element: <MainPage />,
-        title: "Главная страница",
-        loader: clientsLoader,
-      },
-      {
-        path: "/clients/:id_browse",
-        element: <ClientBrowse />,
-        title: "Обзор клиента",
-        loader: clientLoader,
+        path: ":id_browse",
+        element: <RouteProtector allowedRoles={['USER']}><ContractBrowse /></RouteProtector>,
+        title: "Обзор договора",
       },
     ],
+  },
+  {
+    path: "/katm",
+    title: "КАТМ",
+    children: [
+      { 
+        path: "", 
+        element: <RouteProtector allowedRoles={['USER']}><KATM /></RouteProtector>, 
+        title: "КАТМ" },
+      {
+        path: ":id_browse",
+        element: <RouteProtector allowedRoles={['USER']}><KATMBrowseContent /></RouteProtector>,
+        title: "выбранный КАТМ",
+      },
+    ],
+  },  
+  { 
+    path: "/sms", 
+    element: <RouteProtector allowedRoles={['USER', 'ADMIN']}><Notification /></RouteProtector>, 
+    title: "Уведомления" 
+  },
+  { 
+    path: "/monitoring", 
+    element: <RouteProtector allowedRoles={['ADMIN']}><Monitoring /></RouteProtector>, 
+    title: "Мониторинг" 
   },
   {
     path: "/employees",
@@ -51,27 +102,15 @@ const childrenRoutes = [
     children: [
       {
         path: "",
-        element: <Employees />,
+        element: <RouteProtector allowedRoles={['ADMIN']}><Employees /></RouteProtector>,
         title: "Сотрудники",
         loader: employeesLoader,
       },
       {
         path: ":id_browse",
-        element: <EmployeeBrowse />,
+        element: <RouteProtector allowedRoles={['ADMIN']}><EmployeeBrowse /></RouteProtector>,
         title: "Обзор сотрудника",
         loader: employeeLoader,
-      },
-    ],
-  },
-  {
-    path: "/contracts",
-    title: "Контракты",
-    children: [
-      { path: "", element: <Contracts />, title: "Контракты" },
-      {
-        path: ":id_browse",
-        element: <ContractBrowse />,
-        title: "Обзор договора",
       },
     ],
   },
@@ -79,72 +118,49 @@ const childrenRoutes = [
     path: "/filials",
     title: "Филиалы",
     children: [
-      { path: "", element: <Filials />, title: "Филиалы" },
-      { path: ":id_browse", element: <FilialBrowse />, title: "Обзор филиала" },
-    ],
-  },
-  { path: "/", element: null, title: "Касса" },
-  { path: "/sms", element: <Notification />, title: "Уведомления" },
-  {
-    path: "/katm",
-    title: "КАТМ",
-    children: [
-      { path: "", element: <KATM />, title: "КАТМ" },
-      {
-        path: ":id_client",
-        element: <KATMBrowseContent />,
-        title: "выбранный КАТМ",
-      },
+      { path: "", element: <RouteProtector allowedRoles={['ADMIN']}><Filials /></RouteProtector>, title: "Филиалы" },
+      { path: ":id_browse", element: <RouteProtector allowedRoles={['ADMIN']}><FilialBrowse /></RouteProtector>, title: "Обзор филиала" },
     ],
   },
   {
     path: "/new-employee",
-    element: <NewEmployeePage />,
+    element: <RouteProtector allowedRoles={['ADMIN']}><NewEmployeePage /></RouteProtector>,
     title: "Регистрация сотрудника",
   },
-  { path: "/new-client", element: <NewClient />, title: "Регистрация Клиента" },
-];
-
-const childrenCashOperationsRoutes = [
-  { path: "/accountant/operations/debet", element: <CashDebet /> },
-  { path: "/accountant/operations/credit", element: <CashCredit /> },
-  { path: "/accountant/operations/general", element: <General /> },
-  { path: "/accountant/operations/received", element: <Received /> },
-  { path: "/accountant/operations/lowcost", element: <Lowcost /> },
-];
-
-const childrenCashRoutes = [
+  { path: "/new-client", element: <RouteProtector allowedRoles={['USER']}><NewClient /></RouteProtector>, title: "Регистрация Клиента" },
   {
-    path: "/accountant/operations",
-    element: <DebitCreditLayout />,
-    children: childrenCashOperationsRoutes,
-  },
-  { path: "/accountant/bills", element: <Bills /> },
-  { path: "/accountant/deals", element: <Bills /> },
-  { path: "/accountant/proccess", element: <Bills /> },
-  { path: "/accountant/reports", element: <Bills /> },
-  { path: "/accountant/monitoring", element: <Bills /> },
+    path: "/accountant/",
+    children: [
+      { 
+        path: "operations/", 
+        element: <RouteProtector allowedRoles={['ACCOUNTANT']}><DebitCreditLayout /></RouteProtector>,
+        children: childrenCashOperationsRoutes 
+      },     
+      { path: "/accountant/bills", element: <RouteProtector allowedRoles={['ACCOUNTANT']}><Bills /></RouteProtector> },
+      { path: "/accountant/deals", element: <RouteProtector allowedRoles={['ACCOUNTANT']}><Bills /></RouteProtector> },
+      { path: "/accountant/proccess", element: <RouteProtector allowedRoles={['ACCOUNTANT']}><Bills /></RouteProtector> },
+      { path: "/accountant/reports", element: <RouteProtector allowedRoles={['ACCOUNTANT']}><Bills /></RouteProtector> },
+      { path: "/accountant/monitoring", element: <RouteProtector allowedRoles={['ACCOUNTANT']}><Bills /></RouteProtector> },]
+  }
 ];
+
 
 export const router = createBrowserRouter([
   {
     path: "/auth",
     element: <Authentification />,
+    errorElement: <NotFound />
   },
   {
     path: "/",
     element: <RootLayout />,
     children: childrenRoutes,
+    errorElement: <NotFound />
   },
   {
     path: "/password/:tkn",
     element: <Password />,
     loader: passReset,
-  },
-  {
-    path: "/accountant",
-    element: <Cash />,
-    children: childrenCashRoutes,
   },
 ]);
 
@@ -185,7 +201,7 @@ async function clientsLoader() {
           delete client.middle_name;
           return client;
         })
-        .sort((a: any, b: any) => a.id - b.id);
+        .sort((a: any, b: any) => a.index - b.index);
     }
   }
 }
@@ -208,7 +224,7 @@ async function employeesLoader() {
           user.index = index + 1;
           return user;
         })
-        .sort((a: any, b: any) => a.id - b.id);
+        .sort((a: any, b: any) => a.index - b.index);
     }
   }
 }
@@ -228,13 +244,7 @@ async function clientLoader({ params }: any) {
       client.index = store
         .getState()
         .clientStore.clientsList.find((val) => val.id === client.id)?.index;
-      client.name = `${client.first_name} ${client.last_name} ${
-        client.middle_name ? client.middle_name : ""
-      }`;
       client.sum = "-";
-      delete client.first_name;
-      delete client.last_name;
-      delete client.middle_name;
       return { client, etag };
     }
   }

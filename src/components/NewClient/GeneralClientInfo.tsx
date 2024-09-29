@@ -12,29 +12,29 @@ const regDropDowns = [
     label: "Тип документ",
     name: "passport_type",
     items: [
-      { label: "ID Карта РУз", key: 1, enumValue: 'ID_CARD_LOCAL'},
-      { label: "Паспорт РУз", key: 2, enumValue: 'PASSPORT_LOCAL' },
-      { label: "Биопаспорт РУз", key: 3, enumValue: 'BIO_PASSPORT_LOCAL' },
-      { label: "Водительские права РУз", key: 4,  enumValue: 'DRIVER_LICENSE_LOCAL' },
+      { label: "ID Карта РУз", key: 1, enumvalue: 'ID_CARD_LOCAL'},
+      { label: "Паспорт РУз", key: 2, enumvalue: 'PASSPORT_LOCAL' },
+      { label: "Биопаспорт РУз", key: 3, enumvalue: 'BIO_PASSPORT_LOCAL' },
+      { label: "Водительские права РУз", key: 4,  enumvalue: 'DRIVER_LICENSE_LOCAL' },
     ],
   },
   {
     label: "Трудовой статус",
     name: "work_capacity",
     items: [
-      { label: "Трудоустроенный", key: 1, enumValue: 'EMPLOYED' },
-      { label: "Трудоустроенный пенсионер", key: 2, enumValue: 'RETIREE_EMPLOYED' },
-      { label: "Пенсионер", key: 3, enumValue: 'RETIREE' },
-      { label: "Нетрудоустроенный", key: 4, enumValue: 'INCAPABLE' },
-      { label: "Другой", key: 5, enumValue: 'OTHER' },
+      { label: "Трудоустроенный", key: 1, enumvalue: 'EMPLOYED' },
+      { label: "Трудоустроенный пенсионер", key: 2, enumvalue: 'RETIREE_EMPLOYED' },
+      { label: "Пенсионер", key: 3, enumvalue: 'RETIREE' },
+      { label: "Нетрудоустроенный", key: 4, enumvalue: 'INCAPABLE' },
+      { label: "Другой", key: 5, enumvalue: 'OTHER' },
     ],
   }, 
   {
     label: "Гражданство",
     name: "citizenship_id",
     items: [
-      { label: "Узбекистан", key: 1, enumValue: 'Ozb' },
-      { label: "Другое", key: 2, enumValue: 'Other' },
+      { label: "Узбекистан", key: 1, enumvalue: 'Ozb' },
+      { label: "Другое", key: 2, enumvalue: 'Other' },
     ],
   },
   /* {
@@ -79,9 +79,6 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
     e.preventDefault();
     dispatch.setClientLoading(true);
     const clientDataToPost = {...inputsValues};
-    const nameArr = ['first_name', 'last_name', 'middle_name'];
-    inputsValues.name.split(' ').forEach((val, i) => clientDataToPost[nameArr[i]] = val);
-    delete clientDataToPost.name;
     clientDataToPost.tax_id = '2931323'
     clientDataToPost.type = 'CLIENT';
     console.log(clientDataToPost);
@@ -118,7 +115,7 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
         id={formId || 'someID'}
         onSubmit={submitHandler}
       >
-        <div className="flex justify-between gap-[1px]">
+        <div className="flex justify-between gap-x-[1px]">
           <CustomInput
             type="text"
             name="pin"
@@ -133,15 +130,37 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
             <SVGComponent title="search" className="w-[45px] h-[32px]"/>
           </i>
         </div>
+        <div className="flex flex-col gap-2">
+        <label htmlFor='FIO' className="font-bold text-black text-[14px]">
+            ФИО
+          </label>
+        <div className="flex gap-2 mb-1"> 
+          <CustomInput
+            type="text"
+            name="first_name"
+            required
+            placeholder="Фамилия"
+            handleChange={handleInput}
+            value={inputsValues.first_name}
+          />         
+          <CustomInput
+            type="text"
+            name="last_name"
+            required
+            placeholder="Имя"
+            handleChange={handleInput}
+            value={inputsValues.last_name}
+          />
+        </div>
         <CustomInput
           type="text"
-          name="name"
-          label="ФИО"
+          name="middle_name"
           required
-          placeholder="Фамилия Имя Отчество"
+          placeholder="Отчество"
           handleChange={handleInput}
-          value={inputsValues.name}
+          value={inputsValues.middle_name}
         />
+        </div>
         <div className="flex justify-between items-center">
           <CustomInput
             type="date"

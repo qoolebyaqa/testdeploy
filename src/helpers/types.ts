@@ -1,3 +1,10 @@
+
+export enum ROLE_ENUM {
+  USER = 'Сотрудник',
+  ADMIN = 'Админ',
+  ACCOUNTANT = 'Бухгалтер'
+} 
+
 export interface IDataContractType {
   key: React.Key;
   index: number;
@@ -14,7 +21,9 @@ export interface IDataClientType {
   key: React.Key,
   index: number,
   id: string,
-  name: string,
+  first_name: string,
+  last_name: string,
+  middle_name?: string,
   pin: string,
   passport: string,
   phone_number: string,
