@@ -18,7 +18,6 @@ const employeeSlice = createSlice({
   reducers: {
     setEmployeeChoosenOne(state, selection) {      
       state.employeeChoosenOne = selection.payload;
-      console.log(state.employeeChoosenOne);
     },
     setEmployeeList(state, employeeList) {
       state.allEmployees = employeeList.payload

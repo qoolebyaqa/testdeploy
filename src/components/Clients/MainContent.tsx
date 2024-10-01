@@ -18,7 +18,6 @@ function MainContent() {
   useEffect(() => {dispatch.setClientsList(clients); dispatch.setAuthLoading(false)},[])
 
   function selectClientHandler (...args: IDataClientType[]) {
-    dispatch.setClientChoosenOne(args[0]);
     navigate(`/clients/browse=${args[0].id}`)
   }
   return (

@@ -32,7 +32,6 @@ function EmployeesContent() {
     render: (_: string, record: IDataEmployeeType) => <Checkbox onChange={() => {console.log(record); dispatch.setEmployeeSelectedOne(record.id)}} onClick={(e) => e.stopPropagation()} checked={selectedRowIds.includes(record.id)}/>    
   }
   function selectEmployeeHandler(...args: IDataEmployeeType[]) {
-    dispatch.setEmployeeChoosenOne(args[0]);
     navigate(`/employees/browse=${args[0].id}`);
   }
   async function deleteEmployee() {

@@ -20,12 +20,7 @@ const clientSlice = createSlice({
   },
   reducers: {
     setClientChoosenOne(state, selection) {
-      const modifiedSelection = {...selection.payload};
-      modifiedSelection.passport_series = selection.payload.passport.split(' ')[0];
-      modifiedSelection.passport_number = selection.payload.passport.split(' ')[1];
-      
-      state.clientChoosenOne = modifiedSelection;
-      console.log(modifiedSelection);
+      state.clientChoosenOne = selection.payload;
     },
     setClientLoading(state, bool){
       state.clientLoading = bool.payload

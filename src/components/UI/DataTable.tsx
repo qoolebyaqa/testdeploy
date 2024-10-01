@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { ConfigProvider, Table } from "antd";
 import type {  TableColumnsType, TableProps } from "antd";
 import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IdataKATMrequestDialog, IDataKatmType, IKatmDialogType, ISMSDataType } from "../../../src/helpers/types";
 import { toDefineItemsPerPage } from "../../helpers/fnHelpers";
@@ -23,6 +23,13 @@ function DataTable({columns, data, selectHandler, classes, pagination}: IDataTab
   }, [data.length]);
   return (
     <div className={`px-3 ${pagination ? 'bg-[#EFF2F4]' : ''}  relative`}>
+    <ConfigProvider theme={{
+      components: {
+        Table: {
+          rowHoverBg: "#F4F5FF"
+        }
+      }
+    }}>
       <Table
         columns={columns}
         dataSource={data}
@@ -32,6 +39,7 @@ function DataTable({columns, data, selectHandler, classes, pagination}: IDataTab
         bordered
         onRow={(record) => {return {onClick: () => selectHandler && selectHandler(record)}}}
       />
+    </ConfigProvider>
     </div>
   );
 }

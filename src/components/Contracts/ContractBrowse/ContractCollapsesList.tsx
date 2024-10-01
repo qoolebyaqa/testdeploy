@@ -37,25 +37,27 @@ function ContractCollapsesList() {
           pagination={false}
           size="small"
           virtual
-          scroll={{ y: 160 - 60 }}
-          className="drop-shadow-2xl hover:cursor-pointer"
+          scroll={{ y: 260 - 60 }}
+          className="hover:cursor-pointer"
           bordered
           onRow={(_record) => {
             return { onClick: () => {} };
           }}
         />
       </CollapseWrapper>
+      <CollapseWrapper title="Залог">
+        <></>
+      </CollapseWrapper>
       <CollapseWrapper title="Данные сделки">
         <></>
       </CollapseWrapper>
-      <CollapseWrapper title="Оплата">
+      <CollapseWrapper title="Оплата" page="contract">
         <div className="flex flex-col gap-[8px] pb-12">
           <div className="flex flex-row gap-[10px] justify-start items-start w-[600px]">
             <CustomInput
               type={"date"}
               name={"calendar"}
               label="Дата оплаты"
-              className="h-[41px]"
             />
             <CustomInput
               type="number"
@@ -78,10 +80,12 @@ function ContractCollapsesList() {
               title={"Выбрать"}
               listOfItems={[
                 { label: "Наличные", key: 1, enumvalue: "CASH" },
-                { label: "Перечисление", key: 2, enumvalue: "CARD" },
+                { label: "C карты UzCard", key: 2, enumvalue: "UZCARD" },
+                { label: "C карты HUMO", key: 2, enumvalue: "HUMOCARD" },
               ]}
               name={"type of payment"}
               label="Тип оплаты"
+              triggerType="click"
               className="h-[41px]"
               handleSelect={handleAddDataInputsToID}
               id={item.id}
@@ -91,7 +95,7 @@ function ContractCollapsesList() {
               name={"amount of payment"}
               label="Сумма оплаты"
               placeholder="16 000 000"
-              className="  placeholder:text-[#3B3B3B]"
+              className=" placeholder:text-[#3B3B3B] h-[41px]"
               handleChange={handleAddDataInputsToID}
               id={item.id}
             />

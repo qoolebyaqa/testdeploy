@@ -19,9 +19,10 @@ function HeaderMainNav() {
     {path: "/filials/browse", navTo: '/filials', breadCrumb: `/ ${currentFilial?.filial}`, linkWording: 'Филиалы'},    
     {path: "/contracts/browse", navTo: '/contracts', breadCrumb: `/ ${currentContract?.name}`, linkWording: 'Договоры'},
     {path: "/katm/browse", navTo: '/katm', breadCrumb: `/ ${currentKATM?.name}`, linkWording: 'КАТМ Запросы'},
-    {path: "/clients/browse", navTo: '/clients', breadCrumb: `/ ${currentClient?.name}`, linkWording: 'Клиенты'},
+    {path: "/clients/browse", navTo: '/clients', breadCrumb: `/ ${currentClient?.first_name} ${currentClient?.last_name} ${currentClient?.middle_name ? currentClient?.middle_name : ''}`, linkWording: 'Клиенты'},
     {path: "/employees/browse", navTo: '/employees', breadCrumb: `/ ${currentUser?.name}`, linkWording: 'Сотрудники'},
   ]
+  
   return (
     <header className="flex pt-2 px-4 justify-between items-center">
       <div className="flex py-[12px]">
@@ -41,9 +42,11 @@ function HeaderMainNav() {
                 placeholder="Поиск"
                 className="text-black px-2 placeholder:text-lombard-text-black bg-lombard-bg-inactive-grey h-[40px]  rounded-md"
               />
-              <i>
-                <SVGComponent title="search" className="w-[57px] h-[40px]"/>
-              </i>
+              <button className="p-0 m-0 mr-2">
+                <i>
+                  <SVGComponent title="search" className="w-[57px] h-[40px]"/>
+                </i>
+              </button>
             </div>
             <nav>
               <ul className="flex mx-1">

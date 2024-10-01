@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import SVGComponent from "./SVGComponent";
 import { ReactNode, useEffect, useState } from "react";
 import ButtonComponent from "./ButtonComponent";
+import UsualSwitch from "./UsualSwitch";
 
 
 
@@ -26,6 +27,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
           <div className="flex items-center gap-2">
             <h3 className={`p-4 ${notActive ? 'text-lombard-borders-grey' : ''}`}>{title}</h3>
             {(handleClick && page === 'newClient' && !notActive) && <ButtonComponent titleBtn="График погашения" clickHandler={handleClick} color="bg-lombard-main-blue" />}
+            {(page === 'contract' && !notActive) && <UsualSwitch title="Платит третье лицо" switchFirst={true}/>}
           </div>
           <div className="flex self-center">
             {page === 'filial' && <ButtonComponent color="bg-lombard-btn-green" titleBtn="Добавить" clickHandler={handleClick} />}

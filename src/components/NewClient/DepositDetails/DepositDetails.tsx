@@ -1,6 +1,6 @@
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
-import DepositSwitch from "./DepositSwitch";
+import UsualSwitch from "../../UI/UsualSwitch";
 import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import DepositItem from "./DepositItem";
 import Deal from "./Deal";
@@ -102,8 +102,8 @@ function DepositDetails() {
             />
           </div>
           <div className="flex self-end h-[31px] translate-x-[-30%]">
-            <DepositSwitch title="Залог" />
-            <DepositSwitch title="Согласие" />
+            <UsualSwitch title="Залог" />
+            <UsualSwitch title="Согласие" />
           </div>
         </div>
       </CollapseWrapper>

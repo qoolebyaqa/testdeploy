@@ -79,6 +79,10 @@ input::placeholder {
   color: white !important;
   text-align: center !important;
 }
+
+.ant-table-row:hover {
+  box-shadow: 0 -5px 3px -3px #304F74, 0 5px 3px -3px #304F74; 
+}
 .customCssTable th:last-child {
   background-color: #1971d8 !important;
 }
