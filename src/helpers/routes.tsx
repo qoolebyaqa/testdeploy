@@ -28,6 +28,8 @@ import Main from "../pages/Main";
 import Clients from "../pages/Clients";
 import Monitoring from "../pages/Monitoring";
 import NotFound from "../pages/NotFound";
+import { clientActions } from "../store/client";
+import { employeeActions } from "../store/employee";
 
 const childrenCashOperationsRoutes = [
   { path: "debet", element: <CashDebet /> },
@@ -245,6 +247,7 @@ async function clientLoader({ params }: any) {
         .getState()
         .clientStore.clientsList.find((val) => val.id === client.id)?.index;
       client.sum = "-";
+      store.dispatch(clientActions.setClientChoosenOne(client))
       return { client, etag };
     }
   }
@@ -270,6 +273,7 @@ async function employeeLoader({ params }: any) {
       user.fprint = 10;
       user.seekdays = "Воскресенье";
       user.grade = 5;
+      store.dispatch(employeeActions.setEmployeeChoosenOne(user))
       return { user, etag };
     }
   }
