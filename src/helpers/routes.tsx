@@ -231,7 +231,8 @@ async function employeesLoader() {
 }
 
 async function clientLoader({ params }: any) {
-  const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);
+  console.log(params)
+  const id = params.id_browse && params.id_browse.slice(params.id_browse.indexOf("=") + 1);
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
