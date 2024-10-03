@@ -28,8 +28,6 @@ import Main from "../pages/Main";
 import Clients from "../pages/Clients";
 import Monitoring from "../pages/Monitoring";
 import NotFound from "../pages/NotFound";
-import { clientActions } from "../store/client";
-import { employeeActions } from "../store/employee";
 
 const childrenCashOperationsRoutes = [
   { path: "debet", element: <CashDebet /> },
