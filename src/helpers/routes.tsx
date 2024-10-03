@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter, defer, redirect } from "react-router-dom";
 import ContractBrowse from "../components/Contracts/ContractBrowse/ContractBrowse";
 import KATMBrowseContent from "../components/Katm/KATMBrowse/KATMBrowseContent";
 import Contracts from "../pages/Contracts";
@@ -28,6 +28,7 @@ import Main from "../pages/Main";
 import Clients from "../pages/Clients";
 import Monitoring from "../pages/Monitoring";
 import NotFound from "../pages/NotFound";
+import { clientActions } from "../store/client";
 
 const childrenCashOperationsRoutes = [
   { path: "debet", element: <CashDebet /> },
@@ -234,6 +235,7 @@ async function clientLoader({ params }: any) {
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
+    try {
     const response = await ApiService.getCustomer(id);
     if (response.status === 401) {
       return redirect("/auth");
@@ -245,8 +247,12 @@ async function clientLoader({ params }: any) {
         .getState()
         .clientStore.clientsList.find((val) => val.id === client.id)?.index;
       client.sum = "-";
-      return { client, etag };
+      store.dispatch(clientActions.setClientChoosenOne(client));
+      return defer ({ client, etag });
     }
+  } catch (err) {
+    console.log(err);
+  }
   }
 }
 

@@ -2,12 +2,8 @@ import { useState } from "react";
 import DepositDetails from "./DepositDetails/DepositDetails";
 import GeneralClientInfo from "./GeneralClientInfo";
 import NewClientBtns from "./NewClientBtns";
-import useActions from "../../helpers/hooks/useActions";
-
 function NewClientContent({currentClient, etag}:{currentClient?: any, etag?:string}) {
   const [formValues, setFormValues] = useState<{[key:string]: string}>(currentClient ? currentClient : {gender: 'MALE'})
-  const dispatch = useActions();
-  dispatch.setClientChoosenOne(currentClient);
 
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
     setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
