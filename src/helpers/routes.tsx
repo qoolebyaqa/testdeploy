@@ -247,7 +247,6 @@ async function clientLoader({ params }: any) {
         .getState()
         .clientStore.clientsList.find((val) => val.id === client.id)?.index;
       client.sum = "-";
-      store.dispatch(clientActions.setClientChoosenOne(client))
       return { client, etag };
     }
   }
@@ -273,7 +272,6 @@ async function employeeLoader({ params }: any) {
       user.fprint = 10;
       user.seekdays = "Воскресенье";
       user.grade = 5;
-      store.dispatch(employeeActions.setEmployeeChoosenOne(user))
       return { user, etag };
     }
   }
