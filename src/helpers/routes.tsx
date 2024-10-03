@@ -231,7 +231,6 @@ async function employeesLoader() {
 }
 
 async function clientLoader({ params }: any) {
-  console.log(params)
   const id = params.id_browse && params.id_browse.slice(params.id_browse.indexOf("=") + 1);
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
@@ -241,16 +240,13 @@ async function clientLoader({ params }: any) {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      let etag = response.headers.etag 
-      if (etag && typeof etag === 'string') {
-        const etagMatch = etag.match(/"(.*)"/); 
-        if (etagMatch && etagMatch[1]) {
-          etag = etagMatch[1]; 
-        } else {
-          console.error("Неверный формат etag");
-        }
+      let etag = response.headers.etag
+      console.log(etag);
+      const etagMatch = etag.match(/"(.*)"/); 
+      if (etagMatch && etagMatch[1]) {
+        etag = etagMatch[1]; 
       } else {
-        console.error("etag отсутствует или не является строкой");
+        console.error("Неверный формат etag");
       }
       const client = { ...response.data };
       client.key = client.id;
