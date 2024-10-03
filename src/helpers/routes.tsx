@@ -240,7 +240,7 @@ async function clientLoader({ params }: any) {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      let etag = String(response.headers.etag)
+      let etag = String(response.headers)
       console.log(etag);
       const etagMatch = etag.match(/"(.*)"/); 
       if (etagMatch && etagMatch[1]) {
