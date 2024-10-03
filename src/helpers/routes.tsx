@@ -241,7 +241,17 @@ async function clientLoader({ params }: any) {
     if (response.status === 401) {
       return redirect("/auth");
     } else {
-      const etag = response.headers.etag.slice(2).replaceAll("\\", "");
+      let etag = response.headers.etag 
+      if (etag && typeof etag === 'string') {
+        const etagMatch = etag.match(/"(.*)"/); 
+        if (etagMatch && etagMatch[1]) {
+          etag = etagMatch[1]; 
+        } else {
+          console.error("Неверный формат etag");
+        }
+      } else {
+        console.error("etag отсутствует или не является строкой");
+      }
       const client = { ...response.data };
       client.key = client.id;
       client.index = store
