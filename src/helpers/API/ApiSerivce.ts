@@ -30,8 +30,8 @@ export const ApiService = {
     const response = await privateAxios.post(endPoints.passwordRest_post, {login, with_sms: true, with_mail: false} );
     return response;
   },
-  getOTP: async(linkTKN: string) => {
-    const response = await privateAxios.post(endPoints.passwordOTPcode_post, {token: linkTKN} );
+  getOTP: async(linkTKN: string, phoneN: string) => {
+    const response = await privateAxios.post(endPoints.passwordOTPcode_post, {token: linkTKN, phone: phoneN} );
     return response;
   },  
   verifyOTP: async(linkTKN: string, code: number) => {

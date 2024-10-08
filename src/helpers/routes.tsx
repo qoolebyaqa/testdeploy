@@ -167,13 +167,14 @@ export const router = createBrowserRouter([
 
 //loaders
 async function passReset({ params }: any) {
-  try {
+  return params;
+  /* try {
     const OTP = await ApiService.getOTP(params.tkn);
     return OTP;
   } catch (err) {
     console.log(err)
     return new Error('Some problem with server')
-  }
+  } */
 }
 
 async function clientsLoader() {
