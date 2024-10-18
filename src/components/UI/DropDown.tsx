@@ -1,7 +1,8 @@
-import type { MenuProps } from "antd";
-import { Button, Dropdown } from "antd";
+import { Select } from "antd";
 import SVGComponent from "./SVGComponent";
-import { useState } from "react";
+import { Controller } from "react-hook-form";
+import { clientFormValue } from "../../helpers/validator";
+import ValidationError from "./ValidationError";
 
 interface ISelect {
   label: string;
@@ -11,68 +12,108 @@ interface ISelect {
 
 interface IDropDownProps {
   title?: string;
-  triggerType?: string;
   listOfItems: ISelect[];
   className?: string;
   label?: string;
   name: string;
-  value?: string
-  handleSelect?: ({id, title, value}: {id: string, title:string, value: string}) => {} | void
-  id?: string;
-  required?: boolean
+  value?: string;
+  control?: any;
+  errorMsg?: string;
+  handleSelect?: ({
+    id,
+    title,
+    value,
+  }: {
+    id?: string;
+    title: string;
+    value: string | string[];
+  }) => void | {};
 }
 
-function DropDown({
+const DropDown = ({
   title,
-  triggerType = "hover",
   listOfItems,
   className,
   label,
   name,
   value,
+  control,
+  errorMsg,
   handleSelect,
-  id,
-  required
-}: IDropDownProps ) {
-  const [selected, setSelected] = useState(value || title);
-
-  const handleMenuClick: MenuProps["onClick"] = (e) => {
-    const newSelect = listOfItems.find(
-      (item: ISelect) => item?.key?.toString() === e.key
-    )?.label;
-    const newSelectedEnum = listOfItems.find(
-      (item: ISelect) => item?.key?.toString() === e.key
-    )?.enumvalue;
-    if (newSelect) {
-      setSelected(newSelect.toString());
-      if(newSelectedEnum) 
-      handleSelect && handleSelect({title: name ? name : '' , id: id ? id : '', value: newSelectedEnum.toString()});
-    }
-  };
-  const menuProps = {
-    items: listOfItems,
-    onClick: handleMenuClick,
+}: IDropDownProps) => {
+  const handleOnChange = (value: string) => {
+    handleSelect && handleSelect({ title: name, value: value });
   };
 
-  return (
-    <div className={`flex flex-col justify-center text-black text-[14px] grow ${label ? 'gap-2' : ''}`}>
-      <label htmlFor={name} className="font-bold text-black text-[14px]">
-        {label}
-        {required && <input name={name} id={name} value={selected === title ? '' : selected} className="w-1 h-1 p-0 m-4 text-white" required onChange={() => {}}/>}
-      </label>
-      <Dropdown
-        menu={menuProps}
-        trigger={triggerType === "hover" ? ["hover"] : ["click"]}
+  if (control) {
+    return (
+      <div
+        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow ${
+          label ? "gap-2" : ""
+        }`}
       >
-        <Button className={`flex justify-between  ${className}`}>
-          {listOfItems.find(val => val.enumvalue === value)?.label || selected}
-          <i>
-            <SVGComponent title="arrow" />
-          </i>
-        </Button>
-      </Dropdown>      
-    </div>
-  );
-}
+        <label
+          htmlFor={name}
+          className="font-bold text-black text-[14px] relative"
+        >
+          {label}
+        </label> 
+        <ValidationError errMsg={errorMsg}/>
+        <Controller
+          name={name as keyof clientFormValue}
+          control={control}
+          render={({ field }) => {
+            const handleOnChange = (value:string) => {
+              field.onChange(value);
+              handleSelect && handleSelect({title: name, value: value });
+            };
+            return (
+              <Select
+                onChange={handleOnChange}
+                value={value || field.value}
+                placeholder={title}
+                suffixIcon={<SVGComponent title="arrow"/>}
+              >
+                {listOfItems.map((select) => (
+                  <Select.Option value={select.enumvalue} key={select.key}>
+                    {select.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            );
+          }}
+        />
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow ${
+          label ? "gap-2" : ""
+        }`}
+      >
+        <label
+          htmlFor={name}
+          className="font-bold text-black text-[14px] relative"
+        >
+          {label}
+        </label>
+        <Select
+          onChange={handleOnChange}
+          value={value}
+          placeholder={title}
+          className={className}
+          suffixIcon={<SVGComponent title="arrow"/>}
+        >
+          {listOfItems.map((select) => (
+            <Select.Option value={select.enumvalue} key={select.key}>
+              {select.label}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
+    );
+  }
+};
 
 export default DropDown;

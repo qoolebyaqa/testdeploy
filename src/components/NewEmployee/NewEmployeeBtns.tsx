@@ -2,16 +2,13 @@ import { createPortal } from "react-dom";
 import ButtonComponent from "../UI/ButtonComponent";
 import Delete from "../UI/Delete";
 import { useState } from "react";
-import { useNavigate } from "react-router";
 
 function NewEmployeeBtns() {
   const [showDialog, setShowDialog] = useState(false);
-  const navigate = useNavigate();
   const buttons = [
-    { title: "Сохранить", color: "bg-lombard-btn-green", form: "userForm", submit: true, shouldBeDisabled: false, },
-    { title: "Отменить", color: "bg-lombard-btn-grey", className: "text-lombard-text-black", handler: () => {navigate('/employees')} },
-    { title: "Удалить", color: "bg-lombard-btn-red", handler: () => {setShowDialog(true)} },
-    { title: "Печать", color: "bg-lombard-btn-yellow", handler: () => {} },
+    { title: "Сохранить", color: "bg-lombard-btn-green", form: "userForm", submit: true, shouldBeDisabled: false},
+    /* { title: "Удалить", color: "bg-lombard-btn-red", handler: () => {setShowDialog(true)} },
+    { title: "Печать", color: "bg-lombard-btn-yellow", handler: () => {} }, */
   ];
 
   return (
@@ -24,8 +21,7 @@ function NewEmployeeBtns() {
               key={btn.title}
               titleBtn={btn.title}
               color={btn.color}
-              clickHandler={btn.handler}
-              className={btn.className}
+              /* clickHandler={btn.handler} */
               form={btn.form}
               submit={btn.submit}
               disabled={btn.shouldBeDisabled}

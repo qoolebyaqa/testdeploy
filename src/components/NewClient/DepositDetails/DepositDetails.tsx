@@ -138,7 +138,6 @@ function DepositDetails() {
               { label: "На карту", key: 2, enumvalue: 'CARD' },
               { label: "Смешанная", key: 3, enumvalue: 'COMPLEX' },
             ]}
-            triggerType="click"
             name="creditType"
             label="Тип выдачи"
             handleSelect={paymentTypeChangeHandler}

@@ -1,13 +1,20 @@
 import { Switch } from "antd";
 import { useState } from "react";
 
+interface IUsualSwitchProps {
+  title: string;
+  className?: string;
+  switchFirst?: boolean;
+  onSwitchChange?: (checked: boolean) => void;
+}
 
-function UsualSwitch({title, className, switchFirst}:{title: string, className?: string, switchFirst?: boolean}) {
+function UsualSwitch({title, className, switchFirst, onSwitchChange}:IUsualSwitchProps) {
   const [turnOn, setTurnOn] = useState(false);
   const onChange = (checked: boolean) => {
-    console.log(`switch to ${checked}`);
-    if(checked) setTurnOn(true)
-    if(!checked) setTurnOn(false)
+    setTurnOn(checked);
+    if (onSwitchChange) {
+      onSwitchChange(checked);
+    }
   };
   if (switchFirst) {
     return (

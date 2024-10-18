@@ -26,16 +26,20 @@ export const ApiService = {
     const response = await privateAxios.post(endPoints.refreshToken_post, {refresh_token: refreshToken});
     return response;
   },
+  getUserInfo: async() => {
+    const response = await privateAxios.get(`${endPoints.users}/me`);
+    return response;
+  },
   getLinktoReset: async(login: string) => {
     const response = await privateAxios.post(endPoints.passwordRest_post, {login, with_sms: true, with_mail: false} );
     return response;
   },
-  getOTP: async(linkTKN: string, phoneN: string) => {
-    const response = await privateAxios.post(endPoints.passwordOTPcode_post, {token: linkTKN, phone: phoneN} );
+  getOTP: async(linkTKN: string) => {
+    const response = await privateAxios.post(endPoints.passwordOTPcode_post, {token: linkTKN} );
     return response;
   },  
-  verifyOTP: async(linkTKN: string, code: number) => {
-    const response = await privateAxios.post(endPoints.passwordVerifyOTP_post, {token: linkTKN, code} );
+  verifyOTP: async(phoneN: string, code: number) => {
+    const response = await privateAxios.post(endPoints.passwordVerifyOTP_post, {phone: phoneN, code} );
     return response;
   },
   setNewPass: async(linkTKN: string, password: string, repeat: string) => {
@@ -43,11 +47,11 @@ export const ApiService = {
     return response;
   },
   //customers:
-  getCustomers: async() => {
-    const response = await privateAxios.get(endPoints.customers);
+  getCustomers: async(page = 0, size = 14) => {
+    const response = await privateAxios.get(`${endPoints.customers}?page=${page}&size=${size}`);
     return response;
   },
-  createCustomer: async(formData: {[key:string]: string}) => {
+  createCustomer: async(formData: {[key:string]: string | number}) => {
     const response = await privateAxios.post(endPoints.customers, formData);
     return response;
   },
@@ -55,8 +59,20 @@ export const ApiService = {
     const response = await privateAxios.get(`${endPoints.customers}/${id}`);
     return response;
   },
-  updateCustomer: async(formData: {[key:string]: string}, etag: string) => {
+  updateCustomer: async(formData: {[key:string]: string | number}, etag: string) => {
     const response = await privateAxios.put(`${endPoints.customers}/${formData.id}`, formData, {headers: {"If-Match": etag}});
+    return response;
+  },
+  addDocument: async(formData: FormData, id: string) => {
+    const response = await privateAxios.post(`${endPoints.customers}/${id}/documents`, formData);
+    return response;
+  },
+  getDocuments: async(customerId: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}/${customerId}/documents`);
+    return response;
+  },
+  deleteDocument: async(customerId: string, docId: string) => {
+    const response = await privateAxios.delete(`${endPoints.customers}/${customerId}/documents/${docId}`);
     return response;
   },
   //users:

@@ -1,5 +1,3 @@
-import useActions from "../../helpers/hooks/useActions";
-import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import CustomInput from "../UI/CustomInput";
 import DropDown from "../UI/DropDown";
 import PassportInputs from "../UI/PassportInputs";
@@ -21,28 +19,12 @@ interface IGeneralUserInfo {
 }
 const regDropDowns = [
   {
-    label: "Родной язык",
-    name: "language",
-    items: [
-      { label: "Узбекский", key: 1, enumvalue: "UZ" },
-      { label: "Русский", key: 2, enumvalue: "RU" },
-    ],
-  },
-  {
     label: "Должность",
     name: "job_title",
     items: [
       { label: "Директор", key: 1, enumvalue: "DIRECTOR" },
       { label: "Бухгалтер", key: 2, enumvalue: "ACCOUNTANT" },
       { label: "Специалист", key: 3, enumvalue: "SPECIALIST" },
-    ],
-  },
-  {
-    label: "Пользователь",
-    name: "role_id",
-    items: [
-      { label: "Пользователь", key: 1, enumvalue: "USER" },
-      { label: "Админ", key: 2, enumvalue: "ADMIN" },
     ],
   },
   {
@@ -101,14 +83,20 @@ const regDropDowns = [
 ];
 
 function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
-  const dispatch = useActions();
-  const gender = useAppSelector(
-    (state) => state.employeeStore.newEmployeeGender
-  );
   return (
     <div>
       <div className="flex  h-[38vh] mx-2 mb-4 bg-white rounded-2xl px-2 border-2">
-        <div className="flex flex-col gap-y-[14px] pt-[10px] overflow-y-scroll scroll p-2">
+        <div className="flex flex-col gap-y-[14px] pt-[10px] overflow-y-scroll scroll px-2">
+          <div className="px-2">
+          <p className="font-bold text-black">Статус</p>
+            <SwitchComponent
+              inputName="role"
+              selectedDefaultTitle="Активный"
+              selectedStyles="bg-[#148F00]"
+              unselectedTitle="Не активный"
+              unselectedStyles="bg-white text-black border-[#D2DBE1]"
+            />
+          </div>
           <div className="flex gap-4 px-2">
             <CustomInput
               type="date"
@@ -124,28 +112,7 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
               passNum={formValues.passport_number}
             />
           </div>
-          <div className="flex flex-col justify-between px-2 gap-[6px]">
-            <p className="font-bold text-black text-[14px]">Пол</p>
-            <SwitchComponent
-              inputName="sex"
-              selectedDefaultTitle="Женский"
-              selectedStyles="text-white bg-[#304F74]"
-              unselectedTitle="Мужской"
-              unselectedStyles="bg-[#fff] text-black border-[#D2DBE1]"
-              inputHandler={dispatch.setNewEmployeeGender}
-              currentSelect={gender}
-            />
-          </div>
           <div className="px-2 flex flex-col gap-y-[12px]">
-            <CustomInput
-              label="Номер телефона"
-              type="phone"
-              name="phone_number"
-              placeholder="998 (99) 123-45-67"
-              required
-              value={formValues.phone_number}
-              handleChange={onInputChange}
-            />
             <CustomInput
               label="Место проживания"
               type="text"
@@ -160,13 +127,11 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
               <li key={dropDown.label}>
                 <DropDown
                   title="Выбрать"
-                  triggerType="click"
                   listOfItems={dropDown.items}
                   label={dropDown.label}
                   name={dropDown.name}
                   handleSelect={onInputChange}
                   value={formValues[dropDown.name]}
-                  required
                 />
               </li>
             ))}

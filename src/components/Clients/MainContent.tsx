@@ -8,6 +8,7 @@ import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import useActions from "../../helpers/hooks/useActions";
 import { useEffect } from "react";
 import { IDataClientType } from "../../helpers/types";
+import { ApiService } from "../../helpers/API/ApiSerivce";
 
 function MainContent() {
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ function MainContent() {
           <DropDown
             title="Статус"
             name="status"
-            triggerType="click"
             listOfItems={[              
               { label: "Активный", key: 1, enumvalue: 'ID_CARD_LOCAL'},
               { label: "Не активный", key: 2, enumvalue: 'PASSPORT_LOCAL' }
@@ -49,7 +49,7 @@ function MainContent() {
           />
         </div>
       </div>
-      <DataTable columns={columnsForClients} data={dataClients} pagination selectHandler={selectClientHandler}/>
+      <DataTable columns={columnsForClients} data={dataClients} pagination selectHandler={selectClientHandler} endPoint={ApiService.getCustomers}/>
     </>
   );
 }

@@ -26,9 +26,9 @@ function NotificationContent() {
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
         <h3 className="text-black font-extrabold text-[18px]">Уведомления</h3>
         <div className="flex gap-2 items-center">
-          <DropDown title="СМС" listOfItems={[{ key: 1, label: 'Отправлено' }, { key: 2, label: 'Ошибка' }, { key: 3, label: 'Ожидание' }]} triggerType="click" name="smsStatus" className="w-[170px]" />
+          <DropDown title="СМС" listOfItems={[{ key: 1, label: 'Отправлено' }, { key: 2, label: 'Ошибка' }, { key: 3, label: 'Ожидание' }]} name="smsStatus" className="w-[170px]" />
           <CustomInput type="date" name="smsSelector" defaultValue={new Date().toLocaleString()} />
-          <DropDown title="Все" listOfItems={[{ key: 1, label: 'Все' }]} triggerType="click" name="smsStatus1" className="w-[170px]" />
+          <DropDown title="Все" listOfItems={[{ key: 1, label: 'Все' }]} name="smsStatus1" className="w-[170px]" />
           <ButtonComponent titleBtn="Применить" color="bg-lombard-main-blue" />
           {selectedRowKeys.length > 0 && <ButtonComponent titleBtn="Удалить" color="bg-lombard-btn-red" />}
           {selectedRowKeys.length > 0 && <ButtonComponent titleBtn="Переотправить" color="bg-lombard-btn-yellow" />}

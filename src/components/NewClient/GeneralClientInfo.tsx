@@ -5,8 +5,12 @@ import PassportInputs from "../UI/PassportInputs";
 import SVGComponent from "../UI/SVGComponent";
 import SwitchComponent from "../UI/SwitchComponent";
 import useActions from "../../helpers/hooks/useActions";
-import { FormEvent } from "react";
 import { ApiService } from "../../helpers/API/ApiSerivce";
+import { FileData } from "../../helpers/types";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { clientFormSchema, clientFormValue } from "../../helpers/validator";
+
 const regDropDowns = [
   {
     label: "Тип документ",
@@ -33,60 +37,64 @@ const regDropDowns = [
     label: "Гражданство",
     name: "citizenship_id",
     items: [
-      { label: "Узбекистан", key: 1, enumvalue: 'Ozb' },
-      { label: "Другое", key: 2, enumvalue: 'Other' },
+      { label: "Узбекистан", key: 1, enumvalue: 'OZB' },
+      { label: "Другое", key: 2, enumvalue: 'OTHER' },
     ],
-  },
-  /* {
-    label: "Номер региона",
-    name: "region_id",
-    items: [
-      { label: "Иностранный паспорт", key: 1 },
-      { label: "Паспорта РУз", key: 2 },
-    ],
-  },
-  {
-    label: "Место рождения",
-    name: "birthPlace",
-    items: [
-      { label: "Tashkent", key: 1 },
-      { label: "Urgench", key: 2 },
-      { label: "Termez", key: 3 },
-    ],
-  },
-  {
-    label: "Место проживания",
-    name: "livePlace",
-    items: [
-      { label: "Tashkent", key: 1 },
-      { label: "Urgench", key: 2 },
-      { label: "Termez", key: 3 },
-    ],
-  }, */
+  }
 ];
 
 interface IGeneralClientInfo {
   formId?: string,
   etag?: string,
   inputsValues: {[key:string]: string},
-  handleInput?: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void
+  handleInput?: ({id, title, value}: {id?: string, title:string, value: string | string[]}) => void,
+  docList?: any[]
 }
-function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralClientInfo) {
-  console.log(inputsValues);
-  console.log(etag)
+function GeneralClientInfo({formId, etag, inputsValues, handleInput, docList}: IGeneralClientInfo) {
   const dispatch = useActions();
-  async function submitHandler(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const {
+    handleSubmit,
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm({ mode: "onChange",
+    resolver: yupResolver(clientFormSchema),
+  });
+  
+  function checkTypePerson () {
+    const requiredFieldsForClient = [
+      'first_name', 'last_name', 'phone_number', 'pin', 'birth_date', 
+      'passport_series', 'passport_number', 'passport_issue_date', 
+      'passport_expire_date', 'passport_issue_place', 'address_reg', 
+      'gender', 'region_id', 'district_id', 'citizenship_id', 
+      'work_capacity', 'passport_type'
+    ];
+  
+    const requiredFieldsForLead = ['first_name', 'last_name', 'phone_number'];
+    const hasAllFields = (fields: string[]) => 
+      fields.every(field => inputsValues[field]);
+  
+    if (hasAllFields(requiredFieldsForClient)) {
+      return 'CLIENT';
+    }
+    if (hasAllFields(requiredFieldsForLead)) {
+      return 'LEAD';
+    }
+    return '';
+  }
+  const submitHandler = async (formData: clientFormValue) => {
     dispatch.setClientLoading(true);
-    const clientDataToPost = {...inputsValues};
+    const clientDataToPost = {...formData};
     clientDataToPost.tax_id = '2931323'
-    clientDataToPost.type = 'CLIENT';
-    console.log(clientDataToPost);
+    clientDataToPost.type = checkTypePerson();
     const random = Math.floor(Math.random() * 10);
     try {
       if (etag) {
+        clientDataToPost.id = inputsValues.id
         await ApiService.updateCustomer(clientDataToPost, etag)
+        console.log('UPDATED:', clientDataToPost)
       } else { 
+        console.log('SUBMITTED:', clientDataToPost)
         await ApiService.createCustomer(clientDataToPost);        
         if (random % 2) {
           dispatch.setKatmRequest({
@@ -108,23 +116,39 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
     }
     dispatch.setClientLoading(false);
   }
+
+  async function isValid() {
+    return (await trigger(['first_name', 'last_name', 'phone_number']));
+  }
+  async function uploadAfterSubmit(fileData: FileData) {    
+    dispatch.setClientLoading(true);
+    const clientDataToPost = {...inputsValues};
+    clientDataToPost.tax_id = '2931323'
+    clientDataToPost.type = checkTypePerson();
+    const idClient = !etag ? (await ApiService.createCustomer(clientDataToPost)).data.id : inputsValues.id 
+    const formData = new FormData();
+    formData.append('file', fileData.file)
+      await ApiService.addDocument(formData, idClient)
+      dispatch.setClientLoading(false);
+  }
   return (
     <div className="ml-2">
       <form
         className={`bg-white flex flex-col gap-[16px] rounded-2xl  h-[85vh] overflow-y-scroll p-[18px] focus-within:border-lombard-main-blue focus-within:border-2 scroll`}
         id={formId || 'someID'}
-        onSubmit={submitHandler}
+        onSubmit={handleSubmit(submitHandler)}
       >
         <div className="flex justify-between gap-x-[1px]">
           <CustomInput
+            control={control}
             type="text"
             name="pin"
             label="JSHIR"
             placeholder="12345678912345"
-            required
             maxLength={14}
             handleChange={handleInput}
             value={inputsValues.pin}
+            errorMsg={errors.pin?.message}
           />
           <i className="self-end flex-none">
             <SVGComponent title="search" className="w-[45px] h-[32px]"/>
@@ -136,26 +160,28 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
           </label>
         <div className="flex gap-2 mb-1"> 
           <CustomInput
+            control={control}
             type="text"
             name="first_name"
-            required
             placeholder="Фамилия"
             handleChange={handleInput}
             value={inputsValues.first_name}
-          />         
+            errorMsg={errors.first_name?.message}
+          />        
           <CustomInput
+            control={control}
             type="text"
             name="last_name"
-            required
             placeholder="Имя"
             handleChange={handleInput}
             value={inputsValues.last_name}
+            errorMsg={errors.last_name?.message}
           />
         </div>
         <CustomInput
+          control={control}
           type="text"
           name="middle_name"
-          required
           placeholder="Отчество"
           handleChange={handleInput}
           value={inputsValues.middle_name}
@@ -167,27 +193,28 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
             name="birth_date"
             label="Дата рождения"
             value={inputsValues.birth_date}
-            handleChange={handleInput}            
-            required
+            handleChange={handleInput}
+            control={control}
           />
         </div>
         <PassportInputs
+          control={control}
           name="clientPassport"
           handleChange={handleInput}
           seriesVal={inputsValues.passport_series}
           passNum={inputsValues.passport_number}
-          required
         />
         <CustomInput
+          control={control}
           type="phone"
           name="phone_number"
           label="Номер телефона"
-          placeholder="+998 (__) ___-__-__"
-          required
+          placeholder="998 (__) ___-__-__"
           handleChange={handleInput}
           value={inputsValues.phone_number}
+          errorMsg={errors.phone_number?.message}
         />
-        <DragNDrop multiple />
+        <DragNDrop multiple uploadFile={uploadAfterSubmit} isValid={isValid} docList={docList}/>
         <div>
           <p className="text-black text-[14px] font-bold mb-2">
             Дата выдачи паспорта и дата истечения его срока
@@ -198,36 +225,37 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
               name="passport_issue_date"
               handleChange={handleInput}
               value={inputsValues.passport_issue_date}
-              required
+              control={control}
             />
             <CustomInput
               type="date"
               name="passport_expire_date"
               handleChange={handleInput}
               value={inputsValues.passport_expire_date}
-              required
+              control={control}
             />
           </div>
         </div>
         <CustomInput
+          control={control}
           name="passport_issue_place"
           type="text"
-          required
           handleChange={handleInput}
           value={inputsValues.passport_issue_place}
           label="Место выдачи паспорта"
         />
         <CustomInput
+          control={control}
           name="address_reg"
           type="text"
           handleChange={handleInput}
           value={inputsValues.address_reg}
           label="Прописка по паспорту"
-          required
         />
         <div className="flex flex-col justify-between gap-y-[8px]">
           <p className="font-bold text-black text-[14px]">Пол</p>
           <SwitchComponent
+            control={control}
             inputName="gender"
             selectedDefaultTitle="Женский"
             selectedStyles="text-white bg-[#304F74]"
@@ -238,41 +266,42 @@ function GeneralClientInfo({formId, etag, inputsValues, handleInput}: IGeneralCl
           />
         </div>
         <CustomInput
+          control={control}
           name="region_id"
           type="number"
           handleChange={handleInput}
           value={inputsValues.region_id}
           label="Номер региона"
-          required
         />
         <CustomInput
+          control={control}
           name="district_id"
           type="number"
           handleChange={handleInput}
           value={inputsValues.district_id}
           label="Номер района"
-          required
         />        
         <CustomInput
+          control={control}
           name="income_amount"
           type="text"
           handleChange={handleInput}
           value={inputsValues.income_amount}
           label="Доходы"
-          required
         />
         <ul className="flex flex-col justify-center gap-y-[10px]">
           {regDropDowns.map((dropDown) => (
             <li key={dropDown.label}>
               <DropDown
                 title="Выбрать"
-                required={true}
-                triggerType="click"
                 listOfItems={dropDown.items}
                 label={dropDown.label}
                 name={dropDown.name}
                 handleSelect={handleInput}
+                control={control}
                 value={inputsValues[dropDown.name]}
+                key={dropDown.label}
+                errorMsg={errors[dropDown.name as keyof clientFormValue]?.message}
               />
             </li>
           ))}

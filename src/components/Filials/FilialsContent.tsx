@@ -24,7 +24,7 @@ function FilialsContent() {
       <h3 className="text-black font-extrabold text-[18px]">Филиалы</h3>
       <div className="flex gap-2 items-center">
         <CustomInput type="date" name="filialsSelector" defaultValue={new Date().toLocaleString()}/>
-        <DropDown title="Все" listOfItems={[{key: 1, label: 'MU'}, {key: 2, label: 'YA'}, {key: 3, label: 'Все'}]} triggerType="click" name="katmType" className="w-[170px]"/>
+        <DropDown title="Все" listOfItems={[{key: 1, label: 'MU'}, {key: 2, label: 'YA'}, {key: 3, label: 'Все'}]} name="katmType" className="w-[170px]"/>
         <ButtonComponent titleBtn="Добавить филиал" color="bg-lombard-btn-green" />
       </div>
     </div>

@@ -422,7 +422,7 @@ export const itemContract = {
   contractStatus: "-",
   sum: 500000,
 };
-export const dataContracts: IDataContractType[] = Copier(itemContract);
+export const dataContracts: IDataContractType[] = Copier(itemContract, 16);
 
 ///KATMRequests short dialog
 export const columnsKatmDialog: TableColumnsType<IKatmDialogType> = [

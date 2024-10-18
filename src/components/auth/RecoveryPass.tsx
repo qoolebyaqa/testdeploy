@@ -1,35 +1,57 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import SVGComponent from "../UI/SVGComponent";
 import ButtonComponent from "../UI/ButtonComponent";
 import { motion } from "framer-motion";
 import CustomInput from "../UI/CustomInput";
 import ConfirmationCode from "./ConfirmationCode";
 import { ApiService } from "../../helpers/API/ApiSerivce";
-import { useLoaderData } from "react-router";
 import useActions from "../../helpers/hooks/useActions";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import ErrorMessage from "../UI/ErrorMessage";
 import { createPortal } from "react-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { passWordPower, passWordPowerSchema } from "../../helpers/validator";
 
 function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () => void, restoreStep?: number }) {
   const [recoveryPassStep, setRecoveryPassStep] = useState(restoreStep || 0);
   const [code, setCode] = useState<string[]>(new Array(6).fill(""));
+  const [token, setToken] = useState('');
   const [passInputs, setPassInputs] = useState({newPass: '', repeatNewPass: ''})
+  const [phoneNumber, setPhoneNumber] = useState({phone_number: ''});
   const errorStateMsg = useAppSelector((state) => state.auth.authError);
   const dispatch = useActions();
-  const OTP: any = useLoaderData();
-  console.log(OTP);
-  function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-  }
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({ mode: "onChange",
+    resolver: yupResolver(passWordPowerSchema),
+  })
+
+  const handleSetPassSubmit = async (formData: passWordPower) => {    
+    try {
+      if(formData.newPass && formData.repeatNewPass){
+        await ApiService.setNewPass(token, formData.newPass, formData.repeatNewPass);
+        window.location.href = '/'
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch.setAuthError('Password must be confirmed by the same value');
+    }
+  }
+  const phoneHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
+    setPhoneNumber(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value}))
+  }
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
     setPassInputs(prev => ({...prev, [inputValue.title]: inputValue.value})) 
   }
 
   async function verifyOTP() {
     try {
-      await ApiService.verifyOTP(OTP.data.token, Number(code.join('')));
+      const response = await ApiService.verifyOTP(phoneNumber.phone_number, Number(code.join('')));
+      setToken(response.data.token)
       setRecoveryPassStep(3)
     } catch (err) {
       console.log(err);
@@ -40,7 +62,7 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
   async function setNewPass() {
     try {
       console.log(passInputs)
-      await ApiService.setNewPass(OTP.data.token, passInputs.newPass, passInputs.repeatNewPass);
+      await ApiService.setNewPass(token, passInputs.newPass, passInputs.repeatNewPass);
       window.location.href = '/'
     } catch (err) {
       console.log(err);
@@ -61,8 +83,7 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
           setShownMessage={(msg) => dispatch.setAuthError(msg)}
         />, document.body)        
       )}
-    <form
-      onSubmit={handleAuthSubmit}
+    <div
       className="mx-auto h-[647px] flex flex-col justify-around w-[420px] rounded-[40px] p-[48px] bg-black text-white"
     >
       <div className="flex justify-center">
@@ -80,7 +101,10 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
             :  'Введите код из СМС'}
         </p>
         {recoveryPassStep === 3 ? (
-          <div className="py-4 px-[2px]">
+          <form 
+            onSubmit={handleSubmit(handleSetPassSubmit)}
+            id="setPassword"
+            className="py-4 px-[2px]">
             <CustomInput
               type="password"
               label="Новый пароль"
@@ -89,6 +113,8 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               labelStyles="text-white mt-[6px]"
               placeholder="********"
               handleChange={valueChangeHandler}
+              control={control}
+              errorMsg={errors.newPass?.message}
             />
             <CustomInput
               type="password"
@@ -98,8 +124,10 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               labelStyles="text-white mt-[6px]"
               placeholder="********"
               handleChange={valueChangeHandler}
+              control={control}
+              errorMsg={errors.repeatNewPass?.message}
             />
-          </div>
+          </form>
         ) : recoveryPassStep === 2 ? <ConfirmationCode code={code} setCode={setCode} clearFn={clearPageAfterTimeOut}/> : (
           <motion.div
             className="text-center rounded-2xl py-10 px-2 overflow-hidden h-[140px]"
@@ -112,7 +140,9 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               name="phone_number"
               placeholder="998 (__) ___-__-__"
               labelStyles="text-white text-left"
-              className="bg-black"
+              className="bg-black text-white"
+              value={phoneNumber.phone_number}
+              handleChange={phoneHandler}
               required
             />
               <motion.div
@@ -146,7 +176,9 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
             <ButtonComponent
               color="bg-lombard-btn-green"
               titleBtn="Подтвердить"
+              disabled={recoveryPassStep === 2 && code.filter(item => !!item).length < 6}
               clickHandler={recoveryPassStep === 2 ? verifyOTP : setNewPass}
+              form={recoveryPassStep !== 2 ? 'setPassword' : ''} 
             />
           ) : (
             <>
@@ -155,12 +187,14 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
                   color="bg-lombard-btn-green"
                   titleBtn="Восстановить"
                   clickHandler={() => setRecoveryPassStep(2)}
+                  disabled={phoneNumber.phone_number.length < 12}
                 />
                 <ButtonComponent
                   color="bg-lombard-btn-grey"
                   titleBtn="Запросить код"
                   className="bg-lombard-main-blue"
                   clickHandler={() => setRecoveryPassStep(1)}
+                  disabled={phoneNumber.phone_number.length < 12}
                 />
                 <ButtonComponent
                   color="bg-lombard-btn-grey"
@@ -173,7 +207,7 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
           )}
         </>
       )}
-    </form></>
+    </div></>
   );
 }
 

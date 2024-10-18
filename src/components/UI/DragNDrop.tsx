@@ -4,13 +4,18 @@ import { RcFile } from "antd/es/upload";
 import { useState } from "react";
 import SVGComponent from "./SVGComponent";
 import Carousel from "./Carousel";
+import { FileData } from "../../helpers/types";
 
 export interface IFileSlide {fileUid: string, convertedSTR: string}
 
-function DragNDrop({ multiple }: { multiple?: boolean }) {
-  const [previewImage, setPreviewImage] = useState<IFileSlide[]>([]);
+function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: boolean, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[] }) {
+  const reFormat = docList && docList.reduce((acc, cur) => {
+    const item = {fileUid: cur.document_id, convertedSTR: cur.document_url}
+      return [...acc, item]
+  },[])
+  const [previewImage, setPreviewImage] = useState<IFileSlide[]>(reFormat || []);
   const { Dragger } = Upload;
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(docList && docList.length - 1 || 0);
 
   function carouselHandlerLeft() {
     setCurrentIndex((prevIndex) =>
@@ -50,11 +55,37 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
   const props: UploadProps = {
     name: "file",
     multiple: !!multiple,
-    showUploadList: !!multiple,
+    showUploadList: !!multiple, 
+    beforeUpload: async () => {
+      const valid = isValid && await isValid();
+      if (!valid) {
+        message.error('Сначала заполните обязательные поля');
+        return Upload.LIST_IGNORE;
+      }
+      return true;
+    },
+    customRequest: async (options) => {
+      const { file, onSuccess, onError } = options;      
+      try {
+        uploadFile && await uploadFile({ file });
+        if (file) await readImage(file as any);
+        if(onSuccess) onSuccess(null, file as any)
+        message.success(`${(file as File).name} has been uploaded successfully.`);
+      } catch (error) {
+        if(onError) onError(new Error('Ошибка загрузки файла'))
+        message.error(`${(file as File).name} upload failed.`);
+        console.error(error);
+      }
+    },
+    
     async onRemove(e) {   
       if (e.originFileObj) {await readImage(e.originFileObj, true)}
     },
-    async onChange(info) {
+    /* async onChange(info) {
+      const valid = await isValid();
+      if (!valid) {
+        return;
+      }
       const { status } = info.file;
       if (status !== "uploading") {
         console.log(info.file, info.fileList);
@@ -62,10 +93,9 @@ function DragNDrop({ multiple }: { multiple?: boolean }) {
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
       } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-        if (info.file.originFileObj) await readImage(info.file.originFileObj); //TODO must be transferred to success case
+        message.error(`${info.file.name} file upload failed.`); 
       }
-    },
+    }, */
     onDrop(_e) {
       /* console.log("Dropped files", e.dataTransfer.files); */
     },

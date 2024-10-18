@@ -8,7 +8,7 @@ function HeaderUserBlock() {
   return ( <div className="flex gap-2">
     <div>
       <h3 className="text-right font-bold text-[16px]">{userCreds.name}</h3>
-      <p className="text-right text-red-600 font-bold text-[12px]">{ROLE_ENUM[userCreds.role_id as 'ADMIN' | 'USER' | 'ACCOUNTANT']}</p>
+      <p className="text-right text-red-600 font-bold text-[12px]">{ROLE_ENUM[userCreds.role_id as 'ADMIN' | 'OPERATOR' | 'ACCOUNTANT']}</p>
     </div>
     <i><SVGComponent title="userIcon"/></i>
     <i><SVGComponent title="notifications"/></i>

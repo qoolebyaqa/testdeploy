@@ -4,10 +4,13 @@ import { columnsForContracts, dataContracts } from "../../../helpers/fnHelpers";
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import DottedBtn from "../../NewClient/DepositDetails/DottedBtn";
+import Modals from "./Modals";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 function ContractCollapsesList() {
   const [paymentOptions, setPaymentOptions] = useState([{ id: Math.random().toFixed(8) }]);
+  const [isOpenModal,setIsModalOpen] = useState(false)
   function pushIndexToPaymentOptions() {
     let newID = Math.random().toFixed(8);
     while(paymentOptions.map(val => val.id).includes(newID)){
@@ -26,6 +29,12 @@ function ContractCollapsesList() {
     item.id === inputData.id ? {...item, ...dataToAdd} : item);
     setPaymentOptions(updatedPaymentOptions)
     console.log(paymentOptions)
+  }
+
+  function handleOpenThirdPeople(){
+    setIsModalOpen(true)
+    console.log("CollapseWrapper");
+    
   }
 
   return (
@@ -51,7 +60,7 @@ function ContractCollapsesList() {
       <CollapseWrapper title="Данные сделки">
         <></>
       </CollapseWrapper>
-      <CollapseWrapper title="Оплата" page="contract">
+      <CollapseWrapper title="Оплата" page="contract" handleClick={handleOpenThirdPeople}>
         <div className="flex flex-col gap-[8px] pb-12">
           <div className="flex flex-row gap-[10px] justify-start items-start w-[600px]">
             <CustomInput
@@ -85,10 +94,8 @@ function ContractCollapsesList() {
               ]}
               name={"type of payment"}
               label="Тип оплаты"
-              triggerType="click"
               className="h-[41px]"
               handleSelect={handleAddDataInputsToID}
-              id={item.id}
             />
             <CustomInput
               type="number"
@@ -121,6 +128,8 @@ function ContractCollapsesList() {
           }}
         />
       </CollapseWrapper>
+
+      {isOpenModal  && createPortal(<Modals handleClick={() => setIsModalOpen(false)} page={"payment"} />, document.body)}
     </div>
   );
 }

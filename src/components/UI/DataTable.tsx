@@ -9,7 +9,8 @@ export interface IDataTable {
   data: IDataContractType[] | IDataEmployeeType[] | IDataClientType[] | IDataKatmType[] | ISMSDataType[] | IDataFilialType[] | IdataKATMrequestDialog[] | IKatmDialogType[],
   selectHandler?: (...args: any[]) => void,
   classes?: string,
-  pagination?: boolean
+  pagination?: boolean,
+  endPoint?: (page:number, size:number) => void
 }
 
 function DataTable({columns, data, selectHandler, classes, pagination}: IDataTable) {
@@ -22,7 +23,7 @@ function DataTable({columns, data, selectHandler, classes, pagination}: IDataTab
     setQuantityPerPage(data.length < 14 ? data.length : 14);
   }, [data.length]);
   return (
-    <div className={`px-3 ${pagination ? 'bg-[#EFF2F4]' : ''}  relative`}>
+    <div className={`px-3 ${pagination ? 'bg-[#EFF2F4]' : ''} h-full  relative`}>
     <ConfigProvider theme={{
       components: {
         Table: {

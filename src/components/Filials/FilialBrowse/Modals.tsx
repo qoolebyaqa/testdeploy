@@ -70,7 +70,6 @@ function Modals({
                 title="Выбрать"
                 label="Названия продукта"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -104,7 +103,6 @@ function Modals({
                 title="Выбрать"
                 label="От"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -115,7 +113,6 @@ function Modals({
                 title="Выбрать"
                 label="До"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -126,7 +123,6 @@ function Modals({
                 title="10%"
                 label="Процентная ставка "
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "15%" },
                   { key: 2, label: "20%" },
@@ -137,7 +133,6 @@ function Modals({
                 title="15%"
                 label="Ставка просрочки"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "25%" },
                   { key: 2, label: "30%" },
@@ -182,7 +177,6 @@ function Modals({
                 title="Выбрать"
                 label="Тип залога"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -195,7 +189,6 @@ function Modals({
                 title="Выбрать"
                 label="Проба"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -214,7 +207,6 @@ function Modals({
                 title="Выбрать"
                 label="Рыночная стоимость"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -225,7 +217,6 @@ function Modals({
                 title="Выбрать"
                 label="Оценочная стоимость"
                 className="h-[40px] text-[14px]"
-                triggerType="click"
                 listOfItems={[
                   { key: 1, label: "Шаблон1" },
                   { key: 2, label: "Шаблон2" },
@@ -276,7 +267,6 @@ function Modals({
               title="Выбрать"
               label="Балансовая строка"
               className="h-[40px] text-[14px]"
-              triggerType="click"
               listOfItems={[
                 { key: 1, label: "Шаблон1" },
                 { key: 2, label: "Шаблон2" },

@@ -1,9 +1,13 @@
 
 export enum ROLE_ENUM {
-  USER = 'Сотрудник',
+  OPERATOR = 'Сотрудник',
   ADMIN = 'Админ',
   ACCOUNTANT = 'Бухгалтер'
 } 
+
+export type FileData = {
+  file: any
+}
 
 export interface IDataContractType {
   key: React.Key;

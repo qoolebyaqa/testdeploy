@@ -18,8 +18,8 @@ function RootLayout() {
         if(result.status === 200) {
           dispatch.setCurToken(result.data.access_token)
           localStorage.setItem('rt', result.data.refresh_token);
-          /* const clients = await ApiService.getCustomers();
-          console.log(clients.data); */
+          const res = await ApiService.getUserInfo();
+          dispatch.setCurrentUser({role_id: res.data.role_id, name: res.data.name})
           setLoading(false);
         }
       } catch (error) {

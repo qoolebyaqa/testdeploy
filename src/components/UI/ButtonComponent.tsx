@@ -1,5 +1,7 @@
+import React from "react";
+
 interface IbuttonProps  {
-  titleBtn: string;
+  titleBtn: string | React.ReactNode;
   color: string;
   disabled?: boolean;
   submit?: boolean;

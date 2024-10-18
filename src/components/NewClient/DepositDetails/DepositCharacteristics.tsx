@@ -36,7 +36,6 @@ function DepositCharacteristics({
             { label: "Золото", key: 1, enumvalue: "GOLD" },
             { label: "Серебро", key: 2, enumvalue: "SILVER"  },
           ]}
-          triggerType="click"
           name="creditType"
           label="Тип"
           value={!Array.isArray(depositCommentForm?.creditType) ? depositCommentForm?.creditType : ''}
@@ -48,7 +47,6 @@ function DepositCharacteristics({
             { label: "583", key: 1, enumvalue: "583" },
             { label: "585", key: 2, enumvalue: "585" },
           ]}
-          triggerType="click"
           name="quality"
           label="Проба"
           value={!Array.isArray(depositCommentForm?.quality) ? depositCommentForm?.quality : ''}

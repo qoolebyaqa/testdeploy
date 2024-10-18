@@ -10,10 +10,10 @@ function Sms({ clickHandler, page }: { clickHandler: () => void, page: string}) 
                 <DialogComponent closeHandler={clickHandler}>
                     <div className="w-[280px] flex flex-col gap-y-[10px]">
                         <p className="mb-1.5 font-bold text-black border-b-2 border-lombard-borders-grey">Отправить СМС</p>
-                        <DropDown name="SMSgroupDD" title="Выбрать" label="Группа" triggerType="click" listOfItems={[{ key: 1, label: 'Группа1' }, { key: 2, label: 'Группа2', }]} />
+                        <DropDown name="SMSgroupDD" title="Выбрать" label="Группа" listOfItems={[{ key: 1, label: 'Группа1' }, { key: 2, label: 'Группа2', }]} />
                         <CustomInput type="date" name="SMSdate" defaultValue={new Date().toLocaleString()} label="Дата и время" />
-                        <DropDown name="SMStemplateDD" title="Выбрать" label="Выбор шаблона" triggerType="click" listOfItems={[{ key: 1, label: 'Шаблон1' }, { key: 2, label: 'Шаблон2', }]} />
-                        <DropDown name="SMStypeDD" title="Выбрать" label="Тип сообщения" triggerType="click" listOfItems={[{ key: 1, label: 'Увдомление' }, { key: 2, label: 'Подтверждение', }]} />
+                        <DropDown name="SMStemplateDD" title="Выбрать" label="Выбор шаблона" listOfItems={[{ key: 1, label: 'Шаблон1' }, { key: 2, label: 'Шаблон2', }]} />
+                        <DropDown name="SMStypeDD" title="Выбрать" label="Тип сообщения" listOfItems={[{ key: 1, label: 'Увдомление' }, { key: 2, label: 'Подтверждение', }]} />
                         <div className="flex justify-end mt-5 gap-[6px]">
                             <ButtonComponent color="bg-lombard-btn-grey" className="text-lombard-text-black" titleBtn="Отмена" clickHandler={clickHandler} />
                             <ButtonComponent color="bg-lombard-btn-green" titleBtn="Отправить" clickHandler={clickHandler} />

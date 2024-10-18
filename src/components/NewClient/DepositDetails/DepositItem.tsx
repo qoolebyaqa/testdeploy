@@ -22,7 +22,6 @@ function DepositItem({item, pushNewIndex, deleteIndex, formDepositItems, submitI
           ]}
           label="Тип залога"
           name="typeDeposit"
-          triggerType="click"
           className="h-[40px]"
         />
         <button className="self-end p-0 m-0 flex max-w-[280px] overflow-hidden text-lg" onClick={() => setShowDialog(true)}><i>

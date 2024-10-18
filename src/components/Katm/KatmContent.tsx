@@ -67,7 +67,6 @@ function KatmContent() {
               { key: 2, label: "Отменён" },
               { key: 3, label: "Все" },
             ]}
-            triggerType="click"
             name="katmType"
             className="w-[170px]"
           />

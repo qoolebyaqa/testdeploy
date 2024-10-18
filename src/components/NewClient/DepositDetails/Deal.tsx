@@ -9,7 +9,6 @@ function Deal() {
                     { label: "583", key: 1 },
                     { label: "585", key: 2 },
                 ]}
-                triggerType="click"
                 name="creditType"
                 label="Код продукта"
             />

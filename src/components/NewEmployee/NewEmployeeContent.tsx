@@ -5,15 +5,13 @@ import GeneralUserInfo from "./GeneralUserInfo";
 import NewEmployeeBtns from "./NewEmployeeBtns";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useNavigate } from "react-router";
-import useActions from "../../helpers/hooks/useActions";
 
 function NewEmployeeContent({currentUser, etag}: {currentUser?: any, etag?: string}) {
   const [formValues, setFormValues] = useState<{[key:string]: string}>(currentUser ? currentUser : {gender: 'MALE'})
   const [etagState, setEtagState] = useState(etag || '')
   const navigate = useNavigate();
-  const dispatch = useActions();
-  dispatch.setClientChoosenOne(currentUser);
-  console.log(currentUser)
+
+ 
 
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
     setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
@@ -32,7 +30,7 @@ function NewEmployeeContent({currentUser, etag}: {currentUser?: any, etag?: stri
         const createdUser = await ApiService.createUser(userDataToPost);
         const userResponse = await ApiService.getUser(createdUser.data.id);
         valueChangeHandler({title: "id", value: createdUser.data.id})
-        setEtagState(userResponse.headers.etag.slice(2).replaceAll("\\", ""))
+        setEtagState(userResponse.headers.etag)
       }
       console.log(userDataToPost)
     } catch (err) {

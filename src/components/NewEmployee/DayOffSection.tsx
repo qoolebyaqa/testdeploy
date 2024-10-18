@@ -10,7 +10,7 @@ import {
 function DayOffSection() {
   return (
     <div className="h-[55vh]">
-      <CollapseWrapper title="Дни отдыха">
+      <CollapseWrapper title="Дни отдыха" page="newEmployee">
         <div className="flex mb-6 gap-4">
           <DropDown
             label="Начало"
