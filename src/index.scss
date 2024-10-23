@@ -132,3 +132,17 @@ input[type="number"] {
   border-radius: 12px;
   -webkit-box-shadow: inset 0 0 6px #a2baca;
 }
+
+.ant-pagination li:last-child {
+  margin-left: auto;
+}
+
+.ant-pagination li:last-child::before {
+  content: "Показать";
+  margin-right: 5px;
+  cursor: default;
+}
+
+.ant-pagination-item-active a {
+  color: white !important;
+}

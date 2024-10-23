@@ -19,7 +19,7 @@ function RootLayout() {
           dispatch.setCurToken(result.data.access_token)
           localStorage.setItem('rt', result.data.refresh_token);
           const res = await ApiService.getUserInfo();
-          dispatch.setCurrentUser({role_id: res.data.role_id, name: res.data.name})
+          dispatch.setCurrentUser({role_id: res.data.role_id, login: res.data.login})
           setLoading(false);
         }
       } catch (error) {

@@ -22,6 +22,10 @@ export const ApiService = {
     const response = await privateAxios.post(endPoints.login_post, {login, password});
     return response;
   },
+  logout: async (rt: string) => {
+    const response = await privateAxios.post(endPoints.logout_post, {refresh_token: rt});
+    return response;
+  },
   refreshToken: async(refreshToken: string) => {
     const response = await privateAxios.post(endPoints.refreshToken_post, {refresh_token: refreshToken});
     return response;

@@ -62,6 +62,7 @@ const DropDown = ({
         <Controller
           name={name as keyof clientFormValue}
           control={control}
+          defaultValue={value}
           render={({ field }) => {
             const handleOnChange = (value:string) => {
               field.onChange(value);

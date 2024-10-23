@@ -1,21 +1,39 @@
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
 import { RcFile } from "antd/es/upload";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SVGComponent from "./SVGComponent";
 import Carousel from "./Carousel";
 import { FileData } from "../../helpers/types";
+import { ApiService } from "../../helpers/API/ApiSerivce";
 
-export interface IFileSlide {fileUid: string, convertedSTR: string}
+export interface IFileSlide {fileId: string, fileUrl: string}
+export type UploadedFile = {document_id: string, document_url: string}
 
-function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: boolean, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[] }) {
+function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multiple?: boolean, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[], clientId?:string }) {
   const reFormat = docList && docList.reduce((acc, cur) => {
-    const item = {fileUid: cur.document_id, convertedSTR: cur.document_url}
+    const item = {fileId: cur.document_id, fileUrl: cur.document_url}
       return [...acc, item]
   },[])
   const [previewImage, setPreviewImage] = useState<IFileSlide[]>(reFormat || []);
   const { Dragger } = Upload;
   const [currentIndex, setCurrentIndex] = useState(docList && docList.length - 1 || 0);
+  const dragger = useRef<HTMLDivElement | null>(null);
+
+  const handleRemoveFile = async () => {
+    const fileToRemove = previewImage[currentIndex];
+    try {
+      if(clientId) await ApiService.deleteDocument(clientId, fileToRemove.fileId);
+      const newFiles = [...previewImage];
+      newFiles.splice(currentIndex, 1);
+      setPreviewImage(newFiles);
+      if (currentIndex >= newFiles.length) {
+        setCurrentIndex(newFiles.length - 1);
+      }
+    } catch (error) {
+      console.error('Ошибка при удалении файла:', error);
+    }
+  };
 
   function carouselHandlerLeft() {
     setCurrentIndex((prevIndex) =>
@@ -29,33 +47,29 @@ function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: bool
     );
   }
 
-  async function readImage(originFile: RcFile, deleteAction?: Boolean) {
-    if(!/\.(jpg|jpeg|png)$/i.test(originFile.name)) {
-      setPreviewImage((prev) => [{fileUid: originFile.uid, convertedSTR: '/dafaultDoc.jpg'}, ...prev])
-    } else {
+  async function readImage(_originFile: RcFile, uploadedFile: UploadedFile, deleteAction?: Boolean) {
+    /* console.log(uploadedFile)
     const reader = new FileReader();
     reader.readAsDataURL(originFile);
-    reader.onload = async () => {
+    reader.onload = async () => { */
       if(deleteAction) {
         console.log(previewImage)
-        const updatedFileList = previewImage.filter(file => file.fileUid !== originFile.uid);
-        setPreviewImage([...updatedFileList]);
         return;
       }
       if (multiple) {
+        setPreviewImage((prev) => [{fileId: uploadedFile.document_id, fileUrl: uploadedFile.document_url}, ...prev]);
         setCurrentIndex(0);
-        setPreviewImage((prev) => [{fileUid: originFile.uid, convertedSTR: reader.result as string}, ...prev]);
       } else {
-        setPreviewImage([{fileUid: originFile.uid, convertedSTR: reader.result as string}]);
+        setPreviewImage([{fileId: uploadedFile.document_id, fileUrl: uploadedFile.document_url}]);
       }
-    };
-    reader.onerror = (error) => console.log(error);
-    }
+   /*  };
+    reader.onerror = (error) => console.log(error); */
   }
+  
   const props: UploadProps = {
     name: "file",
     multiple: !!multiple,
-    showUploadList: !!multiple, 
+    showUploadList: false, 
     beforeUpload: async () => {
       const valid = isValid && await isValid();
       if (!valid) {
@@ -67,19 +81,22 @@ function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: bool
     customRequest: async (options) => {
       const { file, onSuccess, onError } = options;      
       try {
-        uploadFile && await uploadFile({ file });
-        if (file) await readImage(file as any);
+        const uploadedFile = uploadFile && await uploadFile({ file });
+        console.log(uploadedFile)
+        if (file) await readImage(file as any, uploadedFile);
         if(onSuccess) onSuccess(null, file as any)
         message.success(`${(file as File).name} has been uploaded successfully.`);
+        return Upload.LIST_IGNORE;
       } catch (error) {
         if(onError) onError(new Error('Ошибка загрузки файла'))
         message.error(`${(file as File).name} upload failed.`);
         console.error(error);
+        return Upload.LIST_IGNORE;
       }
     },
     
-    async onRemove(e) {   
-      if (e.originFileObj) {await readImage(e.originFileObj, true)}
+    async onRemove(_e) {   
+      /* if (e.originFileObj) {await readImage(e.originFileObj, true)} */
     },
     /* async onChange(info) {
       const valid = await isValid();
@@ -96,8 +113,8 @@ function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: bool
         message.error(`${info.file.name} file upload failed.`); 
       }
     }, */
-    onDrop(_e) {
-      /* console.log("Dropped files", e.dataTransfer.files); */
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
     },
   };
   return (
@@ -126,13 +143,32 @@ function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: bool
                 <SVGComponent title="arrowRight" />
               </i>
             </button>
+            <button
+              className="p-1"
+              id="cart"
+              onClick={handleRemoveFile}
+              type="button"
+            >
+              <i>
+                <SVGComponent title="cart" />
+              </i>
+            </button>
+            <button
+              className="p-1"
+              id="cart"
+              onClick={()=> dragger.current?.click()}
+              type="button"
+            >
+              <i>
+                <SVGComponent title="addButton" />
+              </i>
+            </button>
           </div>
         </div>
       )}
       <Dragger {...props} className="customDragger">
         {previewImage.length > 0 ? (
-          <>
-            <p className="text-[14px] font-bold">Добавленные документы:</p>
+          <div ref={dragger}>
             <img
                 src="/dragIdCard.png"
                 alt="idcard_uploader"
@@ -146,14 +182,11 @@ function DragNDrop({ multiple, uploadFile, isValid, docList }: { multiple?: bool
               }`}
             >
               <Carousel slides={previewImage} currentIndex={currentIndex} />
-              {/* {!multiple && <button className="h-8 hover:bg-lombard-btn-grey" onClick={() => setPreviewImage([])}>
-                <SVGComponent title="cart"/>
-              </button>} */}
             </div>
-          </>
+          </div>
         ) : (
           <>
-            <div className="flex items-center gap-6 justify-center">
+            <div className="flex items-center gap-6 justify-center"  ref={dragger}>
               <img
                 src="/dragPassport.png"
                 alt="passport_uploader"

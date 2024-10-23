@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react";
 import { Controller } from "react-hook-form";
+import ValidationError from "./ValidationError";
 
 interface IPassportInputs {
   name: string;
@@ -16,6 +17,7 @@ interface IPassportInputs {
   passNum?: string;
   required?: boolean;
   control?: any;
+  errorMsg?: string | undefined;
 }
 
 function PassportInputs({
@@ -25,6 +27,7 @@ function PassportInputs({
   passNum,
   required,
   control,
+  errorMsg
 }: IPassportInputs) {
   function hanlderChange(event: ChangeEvent<HTMLInputElement>, field: string) {
     handleChange &&
@@ -37,10 +40,12 @@ function PassportInputs({
         <label htmlFor={name} className="font-bold text-black">
           Серия и номер паспорта
         </label>
+        <ValidationError errMsg={errorMsg}/>
         <div className="flex justify-end  h-[32px]">
           <Controller
             name="passport_series"
             control={control}
+            defaultValue={seriesVal}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
                 field.onChange(value);
@@ -67,6 +72,7 @@ function PassportInputs({
           <Controller
             name="passport_number"
             control={control}
+            defaultValue={passNum}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
                 field.onChange(value);

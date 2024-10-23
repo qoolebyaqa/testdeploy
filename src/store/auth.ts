@@ -9,7 +9,7 @@ interface IAuthState {
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: { access_token: null, authLoading: false, authError: '', currentUser: {role_id: "", name: ""} } as IAuthState,
+  initialState: { access_token: null, authLoading: false, authError: '', currentUser: {role_id: "", login: ""} } as IAuthState,
   reducers: {
     setCurToken(state, access) {
       state.access_token = access.payload

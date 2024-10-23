@@ -51,8 +51,10 @@ function RangeFilter({
             </i>
           </button>
           {visible && (
-            <div className="relative">
-              <Slider range defaultValue={[20, 50]} className="bg-[#304F74] w-[150px] absolute top-4 right-[-20px]" /* onChange={onChange} onChangeComplete={onChangeComplete} *//>
+            <div className="relative top-2 z-10">
+              <div className="h-[60px] w-[100px] absolute bg-lombard-borders-grey rounded-md border-2 border-lombard-text-black top-4 -right-2">
+                <Slider range defaultValue={[20, 50]} className="absolute h-[60px] w-[100px] top-4" /* onChange={onChange} onChangeComplete={onChangeComplete} *//>
+              </div>
             </div>
           )}
         </>
