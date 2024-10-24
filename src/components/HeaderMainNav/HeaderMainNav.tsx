@@ -20,7 +20,7 @@ function HeaderMainNav() {
     {path: "/contracts/browse", navTo: '/contracts', breadCrumb: `/ ${currentContract?.name}`, linkWording: 'Договоры'},
     {path: "/katm/browse", navTo: '/katm', breadCrumb: `/ ${currentKATM?.name}`, linkWording: 'КАТМ Запросы'},
     {path: "/clients/browse", navTo: '/clients', breadCrumb: `/ ${currentClient?.first_name} ${currentClient?.last_name} ${currentClient?.middle_name ? currentClient?.middle_name : ''}`, linkWording: 'Клиенты'},
-    {path: "/employees/browse", navTo: '/employees', breadCrumb: `/ ${currentUser?.name}`, linkWording: 'Сотрудники'},
+    {path: "/employees/browse", navTo: '/employees', breadCrumb: `/ ${currentUser?.first_name} ${currentUser?.last_name} ${currentUser?.middle_name ? currentUser?.middle_name : ''}`, linkWording: 'Сотрудники'},
   ]
   
   return (

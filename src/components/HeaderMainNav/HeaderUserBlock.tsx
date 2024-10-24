@@ -5,11 +5,14 @@ import SVGComponent from "../UI/SVGComponent";
 import ButtonComponent from "../UI/ButtonComponent";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useNavigate } from "react-router";
+import ConfirmatioModal from "../Modals/Confirmation";
+import { createPortal } from "react-dom";
 
 
 function HeaderUserBlock() {
   const userCreds = useAppSelector(state => state.auth.currentUser)
   const [showLogout, setShowLogout] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
   const logout = async () => {
@@ -30,8 +33,10 @@ function HeaderUserBlock() {
       <p className="text-right text-red-600 font-bold text-[12px]">{ROLE_ENUM[userCreds.role_id as 'ADMIN' | 'OPERATOR' | 'ACCOUNTANT']}</p>
     </div>
     <i onMouseEnter={() => setShowLogout(true)}><SVGComponent title="userIcon"/></i>
-    {showLogout && <ButtonComponent titleBtn='Выйти' color="bg-lombard-btn-red" clickHandler={logout}/>}
+    {showLogout && <ButtonComponent titleBtn='Выйти' color="bg-lombard-btn-red" clickHandler={() => {setShowConfirmation(true)}}/>}
     <i><SVGComponent title="notifications"/></i>
+    {showConfirmation && createPortal(
+    <ConfirmatioModal handleSave={logout} handleClose={() => {setShowConfirmation(false)}} title="Подтвердите" textMsg="Вы действительно хотите выйти?" colorReverse={true}/>, document.body)}
   </div> );
 }
 

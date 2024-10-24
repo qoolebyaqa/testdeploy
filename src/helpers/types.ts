@@ -9,6 +9,15 @@ export type FileData = {
   file: any
 }
 
+export type DataTableType = IDataContractType
+  | IDataEmployeeType
+  | IDataClientType
+  | IDataKatmType
+  | ISMSDataType
+  | IDataFilialType
+  | IdataKATMrequestDialog
+  | IKatmDialogType
+
 export interface IDataContractType {
   key: React.Key;
   index: number;
@@ -29,7 +38,8 @@ export interface IDataClientType {
   last_name: string,
   middle_name?: string,
   pin: string,
-  passport: string,
+  passport_series: string,
+  passport_number: string,
   phone_number: string,
   birth_date: string,
   sum: number,
@@ -80,7 +90,9 @@ export interface IDataEmployeeType {
   key: React.Key,
   index: number,
   login: string,
-  name: string,
+  first_name: string,
+  last_name: string,
+  middle_name: string,
   state: string,
   job_title: string,
   workterm: number,

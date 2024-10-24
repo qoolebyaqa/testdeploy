@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { dataClients } from "../helpers/fnHelpers";
+/* import { dataClients } from "../helpers/fnHelpers"; */
 import { IDataClientType } from "../helpers/types";
 
 const clientSlice = createSlice({
   name: "client",
   initialState: {
     clientChoosenOne: null,
-    clientsList: dataClients,
     regClientStep: 0,
+    clientsList: [],
     clientLoading: false,
     katmRequest: {result: 'none', styles: 'text-lombard-text-black border-lombard-borders-grey border-[1px]'}
   } as {
     clientChoosenOne: null | IDataClientType | any;
-    clientsList: IDataClientType[];
+    clientsList: IDataClientType[] | [];
     regClientStep: number;
     depositCommentForm: { [key: string]: string }[];
     clientLoading: boolean;

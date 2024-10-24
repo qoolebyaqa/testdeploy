@@ -58,7 +58,7 @@ function ContractBrowse() {
         </div>
 
       {isOpenModal  && createPortal(<AboutClient closeHandler={() => setIsModalOpen(false)}  />, document.body)}
-      {isOpenConfirmation  && createPortal(<ConfirmatioModal handleClose={() => setOpenConfirmation(false)} handleSave={()=>{}} />, document.body)}
+      {isOpenConfirmation  && createPortal(<ConfirmatioModal handleClose={() => setOpenConfirmation(false)} handleSave={()=>{}} title="Подтвердить" textMsg="Вы действительно хотите создать?"/>, document.body)}
 
       </div>
   );

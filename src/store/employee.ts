@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { dataEmployees } from "../helpers/fnHelpers";
 import { IDataEmployeeType } from "../helpers/types";
 
 const employeeSlice = createSlice({
@@ -7,7 +6,7 @@ const employeeSlice = createSlice({
   initialState: {
     employeeChoosenOne: null,
     employeeSelected: [],
-    allEmployees: dataEmployees,
+    allEmployees: [],
     newEmployeeGender: "MALE",
   } as {
     employeeChoosenOne: null | IDataEmployeeType | any,

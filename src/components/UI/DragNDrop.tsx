@@ -6,6 +6,8 @@ import SVGComponent from "./SVGComponent";
 import Carousel from "./Carousel";
 import { FileData } from "../../helpers/types";
 import { ApiService } from "../../helpers/API/ApiSerivce";
+import { createPortal } from "react-dom";
+import Confirmation from "../Modals/Confirmation";
 
 export interface IFileSlide {fileId: string, fileUrl: string}
 export type UploadedFile = {document_id: string, document_url: string}
@@ -16,6 +18,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       return [...acc, item]
   },[])
   const [previewImage, setPreviewImage] = useState<IFileSlide[]>(reFormat || []);
+  const [showDialog, setShowDialog] = useState(false);
   const { Dragger } = Upload;
   const [currentIndex, setCurrentIndex] = useState(docList && docList.length - 1 || 0);
   const dragger = useRef<HTMLDivElement | null>(null);
@@ -32,6 +35,8 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       }
     } catch (error) {
       console.error('Ошибка при удалении файла:', error);
+    } finally {
+      setShowDialog(false)
     }
   };
 
@@ -146,7 +151,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
             <button
               className="p-1"
               id="cart"
-              onClick={handleRemoveFile}
+              onClick={() => {setShowDialog(true)}}
               type="button"
             >
               <i>
@@ -207,6 +212,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
           </>
         )}
       </Dragger>
+      {showDialog && createPortal(<Confirmation title="Удалить?" textMsg="Вы уверены, что хотите удалить документ?" handleSave={handleRemoveFile} handleClose={() => {setShowDialog(false)}} colorReverse/>, document.body)}
     </>
   );
 }

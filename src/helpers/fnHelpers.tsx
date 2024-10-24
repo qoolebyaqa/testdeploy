@@ -33,7 +33,7 @@ export function getUserNav(user:string) {
       { path: "/accountant/monitoring", svgCase: "filials", titleBtn: "Управления" },
     ];
   } return [
-      { titleBtn: "Клиенты", svgCase: "contracts", path: "/clients" },
+      { titleBtn: "Клиенты", svgCase: "clients", path: "/clients" },
       { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
       { titleBtn: "КАТМ", svgCase: "KATM", path: "/katm" },
       { titleBtn: "Рассылка", svgCase: "sms", path: "/sms" },
@@ -202,65 +202,64 @@ export const dataSMS: ISMSDataType[] = Copier(itemSMS);
 export const columnsForEmployees: TableColumnsType<IDataEmployeeType> = [
   {
     title: "№",
+    key: "index",
     dataIndex: "index",
-    sorter: (a, b) => a.index - b.index,
+    render: (_text, _record, index) => `${index + 1}` 
   },
   {
-    title: "Логин",
+    title: titleWIthIcon("Логин"),
+    key: "login",
     dataIndex: "login",
+    sorter: true,
   },
   {
-    title: "ФИО",
-    dataIndex: "name",
+    title: titleWIthIcon("ФИО"),
+    key: 'firstName',
+    dataIndex: "first_name",
+    render: (_text, record) => `${record.first_name} ${record.last_name} ${record.middle_name || ''}`,
+    sorter: true,
   },
   {
     title: "Статус",
+    key: "state",
     dataIndex: "state",
   },
   {
     title: "Должность",
+    key: "job_title",
     dataIndex: "job_title",
   },
   {
     title: "Ставка",
+    key: "workterm",
     dataIndex: "workterm",
   },
   {
     title: "Пользватель",
+    key: "role_id",
     dataIndex: "role_id",
   },
   {
     title: "Отпечаток пальца",
+    key: "fprint",
     dataIndex: "fprint",
   },
   {
     title: "Язык",
+    key: "language",
     dataIndex: "language",
   },
   {
     title: "Выходные",
+    key: "seekdays",
     dataIndex: "seekdays",
   },
   {
     title: "Оценка",
+    key: "grade",
     dataIndex: "grade",
   }
 ]
-export const itemEmployee = {
-  key: 1,
-  index: 1,
-  login: "Rushana-adm",
-  name: "Narmuratova Rushana Maxmatmurodovna",
-  job_title: "Директор",
-  state: "Актив",
-  workterm: 1,
-  role_id: "Админ",
-  fprint: 10,
-  language: "English",
-  seekdays: "Воскресенье",
-  grade: 5,
-};
-export const dataEmployees: IDataEmployeeType[] = Copier(itemEmployee);
 
 ///katm
 export const columnsForKATM: TableColumnsType<IDataKatmType> = [
@@ -316,62 +315,55 @@ export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 ///main(clients)
 export const columnsForClients: TableColumnsType<IDataClientType> = [
   {
-    title: titleWIthIcon('№'),
-    dataIndex: "index",
-    sorter: (a, b) => a.index - b.index,
+    title: '№',
+    key: 'index',
+    render: (_text, _record, index) => `${index + 1}` 
   },
   {
     title: titleWIthIcon("ID Клиента"),
+    key: 'id',
     dataIndex: "id",
-    sorter: (_a, _b) => 0,
+    sorter: true,
   },
   {
     title: titleWIthIcon("ФИО клиента"),
-    dataIndex: "name",
-    sorter: (_a, _b) => 0,
+    key: 'firstName',
+    dataIndex: "first_name",
+    render: (_text, record) => `${record.first_name} ${record.last_name} ${record.middle_name || ''}`,
+    sorter: true,
   },
   {
     title: "ПИНФЛ",
+    key: 'pin',
     dataIndex: "pin",
   },
   {
     title: "Паспорт",
-    dataIndex: "passport",
+    key: 'passport_series',
+    dataIndex: "passport_series",
+    render: (_text, record) => `${record.passport_series || ''} ${record.passport_number || '-'}`
   },
   {
     title: "Номер телефона",
+    key: 'phone_number',
     dataIndex: "phone_number",
   },
   {
     title: "Дата рождения",
+    key: 'birth_date',
     dataIndex: "birth_date",
   },
   {
     title: "Сумма займа",
+    key: 'sum',
     dataIndex: "sum",
   },
   {
     title: "Статус",
+    key: 'status',
     dataIndex: "status",
   },
 ];
-export const itemClient = {
-  key: 15,
-  index: 2,
-  id: "14",
-  first_name: "Jamoliddin Azimjonovich",
-  last_name: "Zukhriddinov",
-  middle_name: "Azimjonovich",
-  pin: "123456789012345",
-  passport: "AD 1234567",
-  phone_number: "+998 (__) ___-__-__",
-  birth_date: "01.01.2024",
-  sum: 50000000,
-  status: "-",
-  expire_date: '89348',
-  gg: 'something'
-};
-export const dataClients: IDataClientType[] = Copier(itemClient, 1);
 
 ///contracts
 export const columnsForContracts: TableColumnsType<IDataContractType> = [

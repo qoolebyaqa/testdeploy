@@ -7,11 +7,11 @@ import { IDataKatmType } from "../../helpers/types";
 import useActions from "../../helpers/hooks/useActions";
 import { useNavigate } from "react-router";
 import { useRef, useState } from "react";
-import Delete from "../UI/Delete";
 import { createPortal } from "react-dom";
 import { Checkbox } from "antd";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import SVGComponent from "../UI/SVGComponent";
+import Confirmation from "../Modals/Confirmation";
 
 function KatmContent() {
   const dispatch = useActions();
@@ -96,8 +96,7 @@ function KatmContent() {
         pagination
       />
       {showDialog &&
-        createPortal(
-          <Delete clickHandler={() => setShowDialog(false)} />,
+        createPortal(<Confirmation handleClose={() => setShowDialog(false)} handleSave={() => {}} title="Удалить?" textMsg="Вы действительно хотите удалить?"/>,
           document.body
         )}
     </>

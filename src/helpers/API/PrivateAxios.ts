@@ -50,7 +50,7 @@ function setAuthInterceptors(client: Axios) {
             return error
           }   
         } catch (err) {
-          console.log('refresh with error')
+          window.location.href = '/auth'
           return err;
         } finally {
           isRefreshingToken = false;

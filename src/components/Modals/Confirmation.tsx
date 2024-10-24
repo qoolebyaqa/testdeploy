@@ -2,31 +2,34 @@ import ButtonComponent from "../UI/ButtonComponent"
 import DialogComponent from "../UI/DialogComponent"
 
 export interface IConfirmation {
+  title: string
+  textMsg: string
+  colorReverse?: boolean | undefined
   handleClose:() => void
   handleSave:() => void
 }
 
-function ConfirmatioModal ({handleClose,handleSave}:IConfirmation) {
+function ConfirmatioModal ({handleClose,handleSave, title, textMsg, colorReverse}:IConfirmation) {
   return(
     <>
       <DialogComponent closeHandler={handleClose}>
         <div className="w-[400px]  flex flex-col gap-y-[10px]">
           <div className="text-black font-extrabold text-[18px] border-b-[1px] mb-2 pb-2">
-            Подтвердить
+            {title}
           </div>
           <div className="my-6 text-center">
-            Вы действительно хотите создать?
+            {textMsg}
           </div>
 
           <div className="flex justify-center">
             <ButtonComponent
-              color="bg-lombard-btn-green"
+              color={`${colorReverse ? 'bg-lombard-btn-red' : 'bg-lombard-btn-green'}`}
               titleBtn="Да"
               clickHandler={handleSave}
               className="w-full mr-2"
             />
             <ButtonComponent
-              color="bg-lombard-btn-red"
+              color={`${colorReverse ? 'bg-lombard-btn-grey' : 'bg-lombard-btn-red'}`}
               titleBtn="Нет"
               clickHandler={handleClose}
               className="w-full"

@@ -1,9 +1,8 @@
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { columnsForEmployees } from "../../helpers/fnHelpers";
 import ButtonComponent from "../UI/ButtonComponent";
 import DataTable from "../UI/DataTable";
-import { useEffect, useState } from "react";
-import Delete from "../UI/Delete";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { Checkbox } from "antd";
 import { IDataEmployeeType } from "../../helpers/types";
@@ -11,15 +10,12 @@ import useActions from "../../helpers/hooks/useActions";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import RangeFilter from "../Clients/RangeFilter";
+import Confirmation from "../Modals/Confirmation";
 
 function EmployeesContent() {
   const [showDialog, setShowDialog] = useState(false);
-  const dataEmployees = useAppSelector(state => state.employeeStore.allEmployees)
   const dispatch = useActions();
   const navigate = useNavigate()
-  const users = useLoaderData();
-  console.log('users', users)
-  useEffect(() => {dispatch.setEmployeeList(users)},[])
   const selectedRowIds = useAppSelector(state => state.employeeStore.employeeSelected);
   const buttons = [
     {title: "Удалить", color: "bg-lombard-btn-red", handler: () => setShowDialog(true) }, 
@@ -30,6 +26,10 @@ function EmployeesContent() {
     key: 'select',
     render: (_: string, record: IDataEmployeeType) => <Checkbox onChange={() => {dispatch.setEmployeeSelectedOne(record.id)}} onClick={(e) => e.stopPropagation()} checked={selectedRowIds.includes(record.id)}/>    
   }
+  const setUsers = (arr: any) => {
+    dispatch.setEmployeeList(arr)
+  }
+
   function selectEmployeeHandler(...args: IDataEmployeeType[]) {
     navigate(`/employees/browse=${args[0].id}`);
   }
@@ -55,9 +55,9 @@ function EmployeesContent() {
           <RangeFilter iconInput="filters" />
           {buttons.map(btn =>  {if(btn.title === 'Удалить' && !selectedRowIds.length) {return} else return <ButtonComponent key={btn.title} titleBtn={btn.title} color={btn.color} clickHandler={btn.handler}/>})}
         </div>
-        {showDialog && createPortal(<Delete clickHandler={() => setShowDialog(false)} deleteConfirm={deleteEmployee}/>, document.body)}
+        {showDialog && createPortal(<Confirmation handleClose={() => setShowDialog(false)} handleSave={deleteEmployee} title="Удалить?" textMsg="Вы действительно хотите удалить?"/>, document.body)}
       </div>
-      <DataTable columns={[...columnsForEmployees, checkbox]} data={dataEmployees} classes="customCssTable" pagination selectHandler={selectEmployeeHandler}/>
+      <DataTable columns={[...columnsForEmployees, checkbox]} classes="customCssTable" pagination selectHandler={selectEmployeeHandler} endPoint={ApiService.getUsers} setDataToState={setUsers}/>
     </>
    );
 }

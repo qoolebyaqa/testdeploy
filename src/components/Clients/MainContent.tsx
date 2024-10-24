@@ -2,9 +2,8 @@ import ButtonComponent from "../UI/ButtonComponent";
 import RangeFilter from "./RangeFilter";
 import { columnsForClients } from "../../helpers/fnHelpers";
 import DataTable from "../UI/DataTable";
-import { useLoaderData, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import DropDown from "../UI/DropDown";
-import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import useActions from "../../helpers/hooks/useActions";
 import { useEffect } from "react";
 import { IDataClientType } from "../../helpers/types";
@@ -13,10 +12,11 @@ import { ApiService } from "../../helpers/API/ApiSerivce";
 function MainContent() {
   const navigate = useNavigate();
   const dispatch = useActions();
-  const dataClients = useAppSelector(state => state.clientStore.clientsList);
-  const clients : any = useLoaderData();
-  console.log('loaderData', clients);
-  useEffect(() => {dispatch.setClientsList(clients); dispatch.setAuthLoading(false)},[])
+  useEffect(() => {dispatch.setAuthLoading(false)},[])
+
+  const setClients = (arr: any) => {
+    dispatch.setClientsList(arr)
+  }
 
   function selectClientHandler (...args: IDataClientType[]) {
     navigate(`/clients/browse=${args[0].id}`)
@@ -49,7 +49,7 @@ function MainContent() {
           />
         </div>
       </div>
-      <DataTable columns={columnsForClients} data={dataClients} pagination selectHandler={selectClientHandler} endPoint={ApiService.getCustomers}/>
+      <DataTable columns={columnsForClients} pagination selectHandler={selectClientHandler} endPoint={ApiService.getCustomers} setDataToState={setClients}/>
     </>
   );
 }

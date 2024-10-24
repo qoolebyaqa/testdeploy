@@ -60,7 +60,7 @@ const childrenRoutes = [
           </RouteProtector>
         ),
         title: "Клиенты",
-        loader: clientsLoader,
+        /* loader: clientsLoader, */
       },
       {
         path: ":id_browse",
@@ -152,7 +152,7 @@ const childrenRoutes = [
           </RouteProtector>
         ),
         title: "Сотрудники",
-        loader: employeesLoader,
+        /* loader: employeesLoader, */
       },
       {
         path: ":id_browse",
@@ -294,7 +294,7 @@ async function passReset({ params }: any) {
   }
 }
 
-async function clientsLoader() {
+/* async function clientsLoader() {
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
@@ -327,9 +327,9 @@ async function clientsLoader() {
       console.log(err);
     }
   }
-}
+} */
 
-async function employeesLoader() {
+/* async function employeesLoader() {
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
@@ -354,7 +354,7 @@ async function employeesLoader() {
       console.log(err);
     }
   }
-}
+} */
 
 async function clientLoader({ params }: any) {
   const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);

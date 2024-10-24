@@ -52,9 +52,8 @@ function GeneralUserInfo({onInputChange, formValues, existEmployee}:IGeneralUser
           {/* <label htmlFor='FIO' className="font-bold text-black text-[14px]">
             ФИО
           </label> */}
-          <div className="flex flex-col gap-4 mb-1">             
-            <CustomInput type="text" name="name" label="ФИО" required handleChange={onInputChange} value={formValues.name}/>
-            {/* <CustomInput
+          <div className="flex flex-col gap-4 my-2">   
+            <CustomInput
               type="text"
               name="first_name"
               placeholder="Фамилия"
@@ -74,7 +73,7 @@ function GeneralUserInfo({onInputChange, formValues, existEmployee}:IGeneralUser
               placeholder="Отчество"
               handleChange={onInputChange}
               value={formValues.middle_name}
-            />     */}      
+            />          
             <CustomInput
               label="Номер телефона"
               type="phone"

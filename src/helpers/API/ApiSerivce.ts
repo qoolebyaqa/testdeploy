@@ -14,6 +14,11 @@ const endPoints = {
   customers: '/api/v1/customers',
 
   users: '/api/v1/users',
+
+  notificationTemplates: '/api/v1/notification-templates',
+  messages: '/api/v1/messages',
+  notificationQueue: '/api/v1/notification-queue',
+  recipientGroups: '/recipient-groups'
 } 
 
 export const ApiService = {
@@ -51,8 +56,8 @@ export const ApiService = {
     return response;
   },
   //customers:
-  getCustomers: async(page = 0, size = 14) => {
-    const response = await privateAxios.get(`${endPoints.customers}?page=${page}&size=${size}`);
+  getCustomers: async(page:number = 0, size:number = 14, sortField?: string, sortDirection?: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}?page=${page}&size=${size}${sortField ? `&sort=${sortField}:${sortDirection}`: ''}`);
     return response;
   },
   createCustomer: async(formData: {[key:string]: string | number}) => {
@@ -80,8 +85,8 @@ export const ApiService = {
     return response;
   },
   //users:
-  getUsers: async() => {
-    const response = await privateAxios.get(endPoints.users);
+  getUsers: async(page:number = 0, size:number = 14, sortField?: string, sortDirection?: string) => {
+    const response = await privateAxios.get(`${endPoints.users}?page=${page}&size=${size}${sortField ? `&sort=${sortField}:${sortDirection}`: ''}`);
     return response;
   },
   getUser: async (id: string) => {

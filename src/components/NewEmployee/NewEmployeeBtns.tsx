@@ -1,10 +1,6 @@
-import { createPortal } from "react-dom";
 import ButtonComponent from "../UI/ButtonComponent";
-import Delete from "../UI/Delete";
-import { useState } from "react";
 
 function NewEmployeeBtns() {
-  const [showDialog, setShowDialog] = useState(false);
   const buttons = [
     { title: "Сохранить", color: "bg-lombard-btn-green", form: "userForm", submit: true, shouldBeDisabled: false},
     /* { title: "Удалить", color: "bg-lombard-btn-red", handler: () => {setShowDialog(true)} },
@@ -28,7 +24,6 @@ function NewEmployeeBtns() {
             />
           ))}
         </div>
-        {showDialog && createPortal(<Delete clickHandler={() => setShowDialog(false)}/>, document.body)}
       </div> 
     </>
   );
