@@ -67,6 +67,7 @@ const DropDown = ({
           name={name as keyof clientFormValue}
           control={control}
           defaultValue={value}
+          disabled={isDisabled}
           render={({ field }) => {
             const handleOnChange = (value:string) => {
               field.onChange(value);
