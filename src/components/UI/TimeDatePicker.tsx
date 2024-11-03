@@ -23,7 +23,6 @@ const TimeDatePicker = ({
   required,
   className,
   labelStyles,
-  value,
   handleChange,
   errorMsg,
   control
@@ -58,7 +57,8 @@ const TimeDatePicker = ({
               }
               onChange={handleDateChange}
               placeholder="dd/mm/yyyy"
-              value={value ? dayjs(value) : dayjs(field.value)}
+              // @ts-ignore
+              value={dayjs(field.value)}
               required={required}
             />
           )

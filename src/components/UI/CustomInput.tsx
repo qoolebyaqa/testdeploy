@@ -89,6 +89,7 @@ const CustomInput = ({
                     }
                     onChange={handleDateChange}
                     placeholder="dd/mm/yyyy"
+                    // @ts-ignore
                     value={value ? dayjs(value, 'YYYY-MM-DD') : field.value ? dayjs(field.value, 'DD/MM/YYYY') : ''}
                     required={required}
                     disabled={isDisabled}
