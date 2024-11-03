@@ -1,17 +1,43 @@
 import { TableColumnsType } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType } from "./types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType, ICashDebitType, IReceivedType, ILowCostType } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
 
-export function Copier<T extends { index?: number; key?: number }>(obj: T, quantity?: number): T[] {
+export function Copier<T extends { index?: number; key?: number, id: number }>(obj: T, quantity?: number): T[] {
   const arr = [];
   let n = quantity ? quantity : 100
     for (let i = 0; i < n; i++) {
       const obj1 = { ...obj };
       obj1.index = i + 1;
       obj1.key = i + 1;
+      obj1.id = i + 1;
       arr.push(obj1);
     } 
   return arr;
+}
+
+export function getFilter(obj: any) {
+  let totalFilter = '';
+  for (let item in obj) {
+      if (obj[item]) {
+          totalFilter += `&${item}=${obj[item]}`;
+      }
+  }
+  return totalFilter;
+}
+
+export function parseFilters(filterValue: string) {
+  const filterArr = filterValue.slice(1).split('&').map(val => val.split('='));
+  return Object.fromEntries(filterArr);
+}
+
+export function getSort(currentSortQuery: string, field:string) {
+  if(currentSortQuery.includes(field)) {
+    if(currentSortQuery.includes('asc')) {
+      return `sort=${field}:desc`
+    } return '';
+  } else {
+    return `sort=${field}:asc`
+  }
 }
 
 export function getUserNav(user:string) {
@@ -25,11 +51,11 @@ export function getUserNav(user:string) {
   }
   if (user === 'ACCOUNTANT') {
     return [
-      { path: "/accountant/operations/debet", svgCase: "filials", titleBtn: "Операции", cashRoot: 'operations' },
-      { path: "/accountant/bills", svgCase: "filials", titleBtn: "Счета"  },
-      { path: "/accountant/deals", svgCase: "filials", titleBtn: "Сделки" },
-      { path: "/accountant/proccess", svgCase: "filials", titleBtn: "Процессы" },
-      { path: "/accountant/reports", svgCase: "filials", titleBtn: "Отчёты" },
+      { path: "/accountant/operations/debet", svgCase: "operation", titleBtn: "Операции", cashRoot: 'operations' },
+      { path: "/accountant/bills", svgCase: "bills", titleBtn: "Счета"  },
+      { path: "/accountant/deals", svgCase: "bills", titleBtn: "Сделки" },
+      { path: "/accountant/proccess", svgCase: "proccess", titleBtn: "Процессы" },
+      { path: "/accountant/reports", svgCase: "reports", titleBtn: "Отчёты" },
       { path: "/accountant/monitoring", svgCase: "filials", titleBtn: "Управления" },
     ];
   } return [
@@ -71,24 +97,36 @@ export async function convertTo64(file: Blob) {
 }
 
 
-const classesForSortIcon = "flex justify-around";
-const titleWIthIcon = (title: string) => <div className={classesForSortIcon}><p>{title}</p><SVGComponent title="sortArrows" /></div>;
+const classesForSortIcon = "flex justify-around gap-4 items-center";
+const titleWIthIcon = (title: string, setSort?: any, currentSort?: string, key?: string) => {
+  const sort = typeof(currentSort) === 'string' && key && getSort(currentSort, key);
+  const handleClick = () => {
+    setSort(sort);
+  }
+  return (
+    <div className={classesForSortIcon} >
+      <p>{title}</p>
+      <button onClick={handleClick} className="p-0">
+        <SVGComponent title="sortArrows" color={`${key && currentSort?.includes(key) ? 'green' : '#D2DBE1'}`}/>
+      </button>
+    </div>
+)};
 
 ///mockData:
 ///Filials
-export const columnsForFilials: TableColumnsType<IDataFilialType> = [
+export const columnsForFilials:TableColumnsType<IDataFilialType> = [
   {
-    title: titleWIthIcon('№'),
+    title: '№',
     dataIndex: "index",
     sorter: (a, b) => a.index - b.index,
   },
   {
-    title: titleWIthIcon("Филиал"),
+    title: "Филиал",
     dataIndex: "filial",
     sorter: (_a, _b) => 0,
   },
   {
-    title: titleWIthIcon("Директор"),
+    title: "Директор",
     dataIndex: "director",
     sorter: (_a, _b) => 0,
   },
@@ -139,6 +177,7 @@ export const columnsForFilials: TableColumnsType<IDataFilialType> = [
 ];
 const itemFilial = {
   key: 1,
+  id: 1,
   index: 1,
   filial: "Мирабад",
   director: "Каримов Р.",
@@ -157,46 +196,49 @@ const itemFilial = {
 export const dataFilials: IDataFilialType[] = Copier(itemFilial);
 
 ///notification
-export const columnsForSMS: TableColumnsType<ISMSDataType> = [
+export const columnsForSMS = (list:ISMSDataType[]): TableColumnsType<ISMSDataType> => ([
   {
-    title: titleWIthIcon('№'),
+    title: '№',
+    key: 'index',
     dataIndex: "index",
-    sorter: (a, b) => a.index - b.index,
+    render: (_text, _record, index) => `${index + 1}`
   },
   {
-    title: titleWIthIcon('ID'),
-    dataIndex: "id",
-    sorter: (a, b) => a.id - b.id,
+    title: 'ID',
+    key: 'id',
+    dataIndex: "id"
   },
   {
-    title: titleWIthIcon("Номер телефона"),
-    dataIndex: "phoneN",
-    sorter: (_a, _b) => 0,
+    title: "Номер телефона",
+    dataIndex: "recipient_address",
+    key: 'recipient_address',
   },
   {
-    title: titleWIthIcon("Дата и время"),
-    dataIndex: "dateTime",
-    sorter: (_a, _b) => 0,
+    title: "Тип",
+    dataIndex: "channel",
+    key: 'channel',
   },
   {
-    title: "СМС (общий: 402, отправлено: 402, Ожидание: 0)",
-    dataIndex: "SMSConent",
+    title: "Дата и время",
+    dataIndex: "scheduled_at",
+    key: 'scheduled_at'
+  },
+  {
+    title: `СМС (общий: ${list.length}, отправлено: ${list.filter(val => val.status === 'SENT').length}, Ожидание: ${list.filter(val => val.status === 'PENDING').length})`,
+    dataIndex: "message",
+    key: 'message',
   },
   {
     title: "Статус",
     dataIndex: "status",
+    key: 'status',
   },
-];
-export const itemSMS = {
-  key: 1,
-  index: 1,
-  id: 1,
-  phoneN: "+998 (99) 088-80-60",
-  dateTime: "01.01.2024 09:08",
-  SMSConent: "UzLombard. по номеру договора 9/24827 118911000 оплачено. Основная сумма: 11500000, процент: 391000",
-  status: 'Отправлено'
-};
-export const dataSMS: ISMSDataType[] = Copier(itemSMS);
+  {
+    title: "Шаблон",
+    dataIndex: "template_id",
+    key: 'template_id'
+  },
+]);
 
 ///employees
 export const columnsForEmployees: TableColumnsType<IDataEmployeeType> = [
@@ -301,6 +343,7 @@ export const columnsForKATM: TableColumnsType<IDataKatmType> = [
 ];
 export const itemKATM = {
   key: 1,
+  id: 1,
   index: 1,
   time: "54",
   name: "Zukhriddinov Jamoliddin Azimjonovich",
@@ -313,24 +356,22 @@ export const itemKATM = {
 export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 
 ///main(clients)
-export const columnsForClients: TableColumnsType<IDataClientType> = [
+export const getColumnsForClients = (setSort:any, currentSort: string): TableColumnsType<IDataClientType> => [
   {
     title: '№',
     key: 'index',
-    render: (_text, _record, index) => `${index + 1}` 
+    dataIndex: 'index'
   },
   {
-    title: titleWIthIcon("ID Клиента"),
+    title: titleWIthIcon("ID Клиента", setSort, currentSort, 'id'),
     key: 'id',
     dataIndex: "id",
-    sorter: true,
   },
   {
-    title: titleWIthIcon("ФИО клиента"),
-    key: 'firstName',
+    title: titleWIthIcon("ФИО клиента", setSort, currentSort, 'first_name'),
+    key: 'first_name',
     dataIndex: "first_name",
     render: (_text, record) => `${record.first_name} ${record.last_name} ${record.middle_name || ''}`,
-    sorter: true,
   },
   {
     title: "ПИНФЛ",
@@ -370,17 +411,14 @@ export const columnsForContracts: TableColumnsType<IDataContractType> = [
   {
     title: titleWIthIcon('№'),
     dataIndex: "index",
-    sorter: (a, b) => a.index - b.index,
   },
   {
     title: titleWIthIcon("Номер договора"),
     dataIndex: "contract",
-    sorter: (_a, _b) => 0,
   },
   {
     title: titleWIthIcon("ФИО клиента"),
     dataIndex: "name",
-    sorter: (_a, _b) => 0,
   },
   {
     title: "ПИНФЛ",
@@ -405,6 +443,7 @@ export const columnsForContracts: TableColumnsType<IDataContractType> = [
 ];
 export const itemContract = {
   key: 1,
+  id: 1,
   index: 1,
   contract: "10/5505",
   name: "Narmuratova Rushana Maxmatmurodovna",
@@ -440,6 +479,7 @@ export const columnsKatmDialog: TableColumnsType<IKatmDialogType> = [
 ];
 export const itemKatmDialog = {
   key: 1,
+  id: 1,
   index: 1,
   day: "16.03.2024",
   docN: "24071000017",
@@ -480,6 +520,7 @@ export const columnsSeekDaysDialog: TableColumnsType<ISeekDayDialogType> = [
 export const itemSeekDaysDialog = {
   key: 1,
   index: 1,
+  id: 1,
   day: '1, 2, 6, 12, 14, 28, 29',
   month: "Февраль",
   year: "2024",
@@ -512,9 +553,167 @@ export const columnsForKATMrequestDialog: TableColumnsType<IKatmDialogType> = [
 ];
 export const itemKATMrequestDialog = {
   key: 1,
+  id: 1,
   index: 1,
   day: "16.03.2024",
   docN: "24071000017",
   status: "-1"
 };
 export const dataKATMrequestDialog: IKatmDialogType[] = Copier(itemKATMrequestDialog, 2);
+
+
+//cashDebit
+export const columnsForCashDebit: TableColumnsType<IDataKatmType> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("День"),
+    dataIndex: "time",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("ФИО"),
+    dataIndex: "name",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: "Основание",
+    dataIndex: "base",
+  },
+  
+];
+export const itemCashDebit = {
+  key: 1,
+  index: 1,
+  id: 1,
+  time: "01.01.2024",
+  name: "Zukhriddinov Jamoliddin Azimjonovich",
+  base: "TEST"
+};
+export const dataCashDebit: ICashDebitType[] = Copier(itemCashDebit);
+
+//cashCredit
+export const columnsForCashCredit: TableColumnsType<IDataKatmType> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("Номер регистрации"),
+    dataIndex: "index",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("День"),
+    dataIndex: "time",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("ФИО"),
+    dataIndex: "name",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: "Основание",
+    dataIndex: "base",
+  },
+  
+];
+export const itemCashCredit = {
+  key: 1,
+  index: 1,
+  id: 1,
+  time: "01.01.2024",
+  name: "Zukhriddinov Jamoliddin Azimjonovich",
+  base: "TEST"
+};
+export const dataCashCredit: ICashDebitType[] = Copier(itemCashCredit);
+
+//recieved
+export const columnsForReceived: TableColumnsType<IDataKatmType> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("Дата договора"),
+    dataIndex: "dateOfContract",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Дата кредитования"),
+    dataIndex: "dateOfCredit",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Срок окончания кредита"),
+    dataIndex: "creditExpirationDate",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Сумма кредита"),
+    dataIndex: "creditAmount",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Годовой процент (%)"),
+    dataIndex: "annual",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: "Цель кредита",
+    dataIndex: "purposeOfCredit",
+  },
+  
+];
+export const itemReceived = {
+  key: 1,
+  index: 1,
+  id: 1,
+  dateOfContract: "01.01.2024",
+  dateOfCredit: "01.01.2024",
+  creditExpirationDate: "01.01.2024",
+  creditAmount: 1000000000,
+  annual: 22,
+  purposeOfCredit:"AANSNDH№10",
+};
+export const dataReceived: IReceivedType[] = Copier(itemReceived);
+
+//Low Cost
+export const columnsForLowCost: TableColumnsType<IDataKatmType> = [
+  {
+    title: titleWIthIcon('№'),
+    dataIndex: "index",
+    sorter: (a, b) => a.index - b.index,
+  },
+  {
+    title: titleWIthIcon("Дата "),
+    dataIndex: "dateOfContract",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Названия предмета"),
+    dataIndex: "nameOfItem",
+    sorter: (_a, _b) => 0,
+  },
+  {
+    title: titleWIthIcon("Единица измерения"),
+    dataIndex: "measurmentUnit",
+    sorter: (_a, _b) => 0,
+  },
+  
+];
+export const itemLowCost = {
+  key: 1,
+  index: 1,
+  id: 1,
+  dateOfContract: "01.01.2024",
+  nameOfItem:"Названия предмета",
+  measurmentUnit: "01.01.2024",
+};
+export const dataLowCost: ILowCostType[] = Copier(itemLowCost);

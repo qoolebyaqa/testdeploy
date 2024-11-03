@@ -11,6 +11,7 @@ import { ApiService } from "../../helpers/API/ApiSerivce";
 import { userFormSchema } from "../../helpers/validator";
 import { yupResolver } from "@hookform/resolvers/yup"; */
 import DropDown from "../UI/DropDown";
+import FingerPrintRegistration from "./FingerPrintRegistration";
 
 interface IGeneralUserInfo {
   formValues: {[key:string]: string}
@@ -20,6 +21,7 @@ interface IGeneralUserInfo {
 
 function GeneralUserInfo({onInputChange, formValues, existEmployee}:IGeneralUserInfo) {
   const [showDialog, setShowDialog] = useState(false);
+  const [fingerShowDialog, setFingerShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const gender = useAppSelector(
@@ -137,6 +139,10 @@ function GeneralUserInfo({onInputChange, formValues, existEmployee}:IGeneralUser
           titleBtn={<SVGComponent title="userFP"/>}
           color="bg-lombard-main-blue"
           disabled={!existEmployee}
+          clickHandler={() => {
+            console.log(showDialog, "clicked");
+            setFingerShowDialog(true);
+          }}
         />
         {showDialog &&
           createPortal(
@@ -170,6 +176,13 @@ function GeneralUserInfo({onInputChange, formValues, existEmployee}:IGeneralUser
             </DialogComponent>,
             document.body
           )}
+
+        {fingerShowDialog && createPortal(
+          <DialogComponent closeHandler={() => setFingerShowDialog(false)}>
+            <FingerPrintRegistration />
+          </DialogComponent>,
+          document.body
+        )}
       </div>
     </div>
   );

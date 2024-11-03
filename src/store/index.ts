@@ -6,6 +6,7 @@ import smsReducer from "./sms";
 import employeelReducer from "./employee";
 import katmReducer from "./katm";
 import contractsReducer from "./contracts";
+import fingerPrintReducer from "./fingerPrint";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
     smsStore: smsReducer,
     employeeStore: employeelReducer,
     katmStore: katmReducer,
-    contractStore: contractsReducer
+    contractStore: contractsReducer,
+    fingerPrintReducer: fingerPrintReducer,
   },
 });
 

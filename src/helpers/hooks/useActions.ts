@@ -7,6 +7,7 @@ import { employeeActions } from "../../store/employee";
 import { smsActions } from "../../store/sms";
 import { katmActions } from "../../store/katm";
 import { contractsActions } from "../../store/contracts";
+import { fingerPrintStoreActions } from "../../store/fingerPrint";
 
 const actions = {
   ...clientActions,
@@ -15,7 +16,8 @@ const actions = {
   ...authActions,
   ...employeeActions,
   ...smsActions,
-  ...katmActions
+  ...katmActions,
+  ...fingerPrintStoreActions,
 };
 
 export const useActions = () => {

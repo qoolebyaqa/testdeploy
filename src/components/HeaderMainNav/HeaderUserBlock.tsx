@@ -7,6 +7,7 @@ import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useNavigate } from "react-router";
 import ConfirmatioModal from "../Modals/Confirmation";
 import { createPortal } from "react-dom";
+import useActions from "../../helpers/hooks/useActions";
 
 
 function HeaderUserBlock() {
@@ -14,6 +15,7 @@ function HeaderUserBlock() {
   const [showLogout, setShowLogout] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useActions();
 
   const logout = async () => {
     try {
@@ -23,6 +25,8 @@ function HeaderUserBlock() {
     } catch (err) {
       console.log(err);
     } finally {      
+      dispatch.setCurrentUser({role_id: '', login: ''});
+      dispatch.setAuthLoading(false);
       navigate('/auth')
     }
   }

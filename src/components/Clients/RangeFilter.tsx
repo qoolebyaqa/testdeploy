@@ -32,13 +32,6 @@ function RangeFilter({
           style={{ width: "1px", height: '0px', position: "absolute"}}
         /></>
       )}
-      {!titleFilter && (
-        <button className="bg-white rounded-md h-[32px] p-1">
-          <i><SVGComponent title={iconInput} /></i>
-        </button>
-      )}
-      {iconInput === "arrow" && (
-        <>
           <button
             className="flex bg-white text-black rounded-md h-[32px] text-[14px] py-1"
             onClick={() => {
@@ -57,8 +50,6 @@ function RangeFilter({
               </div>
             </div>
           )}
-        </>
-      )}
     </div>
   );
 }

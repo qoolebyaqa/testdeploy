@@ -1,17 +1,14 @@
-import { Table } from "antd";
-import { columnsForKATMrequestDialog, dataKATMrequestDialog } from "../../helpers/fnHelpers";
+import { columnsForCashCredit, dataCashCredit } from "../../helpers/fnHelpers";
+import DataTable from "../UI/DataTable";
 
 function CashCredit() {
   return (     
-    <Table
-    columns={columnsForKATMrequestDialog}
-    dataSource={dataKATMrequestDialog}
-    className="w-10/12 drop-shadow-2xl hover:cursor-pointer"
-    bordered
-    onRow={(_record) => {
-      return { onClick: () => {} };
-    }}
-  /> );
+    <>
+      <div className="">
+        <DataTable columns={columnsForCashCredit} data={dataCashCredit} pagination />
+      </div>
+    </>  
+  );
 }
 
 export default CashCredit;

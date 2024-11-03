@@ -1,14 +1,9 @@
 import { ConfigProvider, Table } from "antd";
-import type { GetProp, TableColumnsType, TablePaginationConfig, TableProps } from "antd";
+import type { TableColumnsType, TablePaginationConfig, TableProps } from "antd";
 import { DataTableType } from "../../../src/helpers/types";
 import { toDefineItemsPerPage } from "../../helpers/fnHelpers";
 import { useEffect, useState } from "react";
 import { SorterResult } from "antd/es/table/interface";
-
-enum SORT_DIRECTIONS {
-  ascend='asc',
-  descend="desc"
-}
 
 export interface IDataTable {
   columns: TableColumnsType;
@@ -16,15 +11,18 @@ export interface IDataTable {
   selectHandler?: (...args: any[]) => void;
   classes?: string;
   pagination?: boolean;
-  endPoint?: (page: number, size: number, sortField: any, sortDirection: string) => Promise<any>;
-  setDataToState?: (arr: any[]) => any 
+  endPoint?: (page: number, size: number, sort?:string, filters?: string) => Promise<any>;
+  setDataToState?: (arr: any[]) => any,
+  settedFilters?: string,
+  sortStr?: string,
+  tableSize?: 'small' | 'large' | 'middle'
 }
 
 interface TableParams {
   pagination?: TablePaginationConfig;
   sortField?: SorterResult<any>['field'] | null;
-  sortOrder?: any;
-  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
+  sortStr?: any;
+  settedFilters?: string;
 }
 
 function DataTable({
@@ -34,7 +32,10 @@ function DataTable({
   classes,
   pagination,
   endPoint,
-  setDataToState
+  setDataToState,
+  settedFilters,
+  sortStr,
+  tableSize
 }: IDataTable) {
 
   const [results, setResults] = useState<DataTableType[]>();
@@ -43,19 +44,22 @@ function DataTable({
     pagination: {
       current: 1,
       pageSize: 14,
-    },
+    }
   });
-
   const fetchData = async () => {
     setLoading(true);
     if(tableParams.pagination?.current && tableParams.pagination?.pageSize) {
       const response = endPoint && await endPoint(
         tableParams.pagination?.current - 1, 
         tableParams.pagination?.pageSize,
-        tableParams.sortField,
-        tableParams.sortOrder
+        sortStr,
+        settedFilters
       );
-      setResults(response.data.content);
+      const dataWithIndexes = response.data.content.map((val: any, index: number) =>{ 
+        val.index = (response.data.pageable.page * response.data.pageable.size) + index + 1   
+      return val
+      })
+      setResults(dataWithIndexes);
       setDataToState && setDataToState(response.data.content);
       setLoading(false);
       setTableParams({
@@ -69,14 +73,10 @@ function DataTable({
     }
   };
 
-  const handleTableChange: TableProps<DataTableType>['onChange'] = (pagination, filters, sorter) => {
-    console.log(sorter)
-    setTableParams({
-      pagination,
-      filters,
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order ? SORT_DIRECTIONS[sorter.order] : null,
-      sortField: Array.isArray(sorter) ? undefined : sorter.order ? sorter.columnKey : null
-    });
+  const handleTableChange: TableProps<DataTableType>['onChange'] = (pagination) => {
+    setTableParams(prev => ({
+      ...prev, pagination,
+    }));
     if (pagination.pageSize !== tableParams.pagination?.pageSize) {
       setResults([]);
     }
@@ -86,9 +86,8 @@ function DataTable({
    useEffect(() => {!data && fetchData()}, [
     tableParams.pagination?.current,
     tableParams.pagination?.pageSize,
-    tableParams?.sortOrder,
-    tableParams?.sortField,
-    JSON.stringify(tableParams.filters),
+    sortStr,
+    settedFilters,
   ]);
 
   const pageSizeToPagination = tableParams.pagination?.pageSize && tableParams.pagination?.total && tableParams.pagination?.total > tableParams.pagination?.pageSize ?
@@ -113,7 +112,9 @@ function DataTable({
           columns={columns}
           dataSource={results || data}
           onChange={handleTableChange}
+          rowKey={record => (record as any).id}
           loading={loading}
+          size={tableSize}
           pagination={
             pagination
               ? {

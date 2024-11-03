@@ -17,6 +17,9 @@ export type DataTableType = IDataContractType
   | IDataFilialType
   | IdataKATMrequestDialog
   | IKatmDialogType
+  | ICashDebitType
+  | IReceivedType
+  | ILowCostType
 
 export interface IDataContractType {
   key: React.Key;
@@ -128,4 +131,29 @@ export interface IdataKATMrequestDialog {
   regN: string,
   Position: string,
   generalSum: string
-};
+}
+
+export interface ICashDebitType {
+  key: React.Key,
+  index: number,
+  time: string,
+  name: string,
+  base: string,
+}
+export interface IReceivedType {
+  key: React.Key,
+  index: number,
+  dateOfContract: string,
+  dateOfCredit: string,
+  creditExpirationDate: string,
+  creditAmount: number,
+  annual: number,
+  purposeOfCredit:string,
+}
+export interface ILowCostType {
+  key: React.Key,
+  index: number,
+  dateOfContract: string,
+  nameOfItem: string,
+  measurmentUnit: string,
+}

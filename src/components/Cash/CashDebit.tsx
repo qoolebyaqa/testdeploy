@@ -1,17 +1,16 @@
-import { Table } from "antd";
-import { columnsForKATMrequestDialog, dataKATMrequestDialog } from "../../helpers/fnHelpers";
+
+import { columnsForCashDebit, dataCashDebit } from "../../helpers/fnHelpers";
+import DataTable from "../UI/DataTable";
 
 function CashDebet() {
-  return (     
-    <Table
-    columns={columnsForKATMrequestDialog}
-    dataSource={dataKATMrequestDialog}
-    className="w-10/12 drop-shadow-2xl hover:cursor-pointer"
-    bordered
-    onRow={(_record) => {
-      return { onClick: () => {} };
-    }}
-  /> );
+  return (   
+    <>
+      <div className="">
+        <DataTable columns={columnsForCashDebit} data={dataCashDebit} pagination />
+
+      </div>
+    </>  
+  );
 }
 
 export default CashDebet;

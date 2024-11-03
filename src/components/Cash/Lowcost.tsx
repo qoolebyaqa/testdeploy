@@ -1,5 +1,15 @@
+import {  columnsForLowCost, dataLowCost } from "../../helpers/fnHelpers";
+import DataTable from "../UI/DataTable";
+
 function Lowcost() {
-  return ( <h1>Lowcost</h1> );
+  return ( 
+    <>
+      <div className="">
+        <DataTable columns={columnsForLowCost} data={dataLowCost} pagination />
+
+      </div>
+    </>  
+  );
 }
 
 export default Lowcost;

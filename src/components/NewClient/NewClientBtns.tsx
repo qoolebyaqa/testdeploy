@@ -3,15 +3,17 @@ import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import useActions from "../../helpers/hooks/useActions";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import Sms from "../UI/Sms";
 import KATMreqPOPup from "./KATMreqPOPup";
 import { useNavigate } from "react-router";
+import DialogComponent from "../UI/DialogComponent";
 
-function NewClientBtns({formId}:{formId?: string}) {
+function NewClientBtns({ formId }: { formId?: string }) {
   const [showDialog, setShowDialog] = useState("");
   const navigate = useNavigate();
   const regStep = useAppSelector((state) => state.clientStore.regClientStep);
-  const clientLoading = useAppSelector((state) => state.clientStore.clientLoading);
+  const clientLoading = useAppSelector(
+    (state) => state.clientStore.clientLoading
+  );
   const katmResponse = useAppSelector((state) => state.clientStore.katmRequest);
   const dispatch = useActions();
   useEffect(() => {
@@ -29,7 +31,7 @@ function NewClientBtns({formId}:{formId?: string}) {
             handler: () => {
               if (regStep === 4) {
                 dispatch.clearNewClientFormData();
-                navigate('/');
+                navigate("/");
               } else {
                 dispatch.addRegClientStep();
               }
@@ -61,7 +63,7 @@ function NewClientBtns({formId}:{formId?: string}) {
           {
             title: "Подтвердить",
             color: "bg-lombard-btn-green",
-            form: formId || 'someID',
+            form: formId || "someID",
             submit: true,
             handler: () => {},
             shouldBeDisabled: clientLoading,
@@ -103,7 +105,30 @@ function NewClientBtns({formId}:{formId?: string}) {
         </div>
         {showDialog === "sms" &&
           createPortal(
-            <Sms clickHandler={() => setShowDialog("")} page={"client"} />,
+            <DialogComponent closeHandler={() => setShowDialog("")}>
+              <div className="w-[280px] flex flex-col gap-y-[10px]">
+                <p className="mb-1.5 font-bold text-[#3B3B3B] border-b-2 border-lombard-borders-grey">
+                  Отправить СМС
+                </p>
+                <p className="font-bold text-black">Номер телефона</p>
+                <p className="font-normal text-[#3B3B3B] border-2 border-[D2DBE1] border-solid rounded-[12px] p-[10px]">
+                  +998 (99) 088-80-60
+                </p>
+                <div className="flex justify-end mt-5 gap-[6px]">
+                  <ButtonComponent
+                    color="bg-lombard-btn-grey"
+                    className="text-lombard-text-black"
+                    titleBtn="Отмена"
+                    clickHandler={() => setShowDialog("")}
+                  />
+                  <ButtonComponent
+                    color="bg-lombard-btn-green"
+                    titleBtn="Отправить"
+                    clickHandler={() => setShowDialog("")}
+                  />
+                </div>
+              </div>
+            </DialogComponent>,
             document.body
           )}
         {showDialog === "katmReq" &&

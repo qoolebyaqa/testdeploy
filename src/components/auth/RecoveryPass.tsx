@@ -61,7 +61,6 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
 
   async function setNewPass() {
     try {
-      console.log(passInputs)
       await ApiService.setNewPass(token, passInputs.newPass, passInputs.repeatNewPass);
       window.location.href = '/'
     } catch (err) {
@@ -140,13 +139,13 @@ function RecoveryPass({ showRecoveryPass, restoreStep }: { showRecoveryPass: () 
               name="phone_number"
               placeholder="998 (__) ___-__-__"
               labelStyles="text-white text-left"
-              className="bg-black text-white"
+              className="bg-black text-white w-full"
               value={phoneNumber.phone_number}
               handleChange={phoneHandler}
               required
             />
               <motion.div
-                className="bg-lombard-btn-green w-[100px] h-[100px] rounded-full mx-auto mt-16 text-[68px] flex items-center justify-center"
+                className="bg-lombard-btn-green w-[100px] h-[100px] rounded-full mx-auto mt-20 text-[68px] flex items-center justify-center"
                 animate={recoveryPassStep === 1 && { scale: [1, 1.3, 1.2, 1] }}
               >
                 <SVGComponent title="achivement" />

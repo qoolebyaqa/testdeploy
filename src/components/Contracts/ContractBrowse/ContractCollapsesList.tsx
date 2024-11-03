@@ -4,9 +4,10 @@ import { columnsForContracts, dataContracts } from "../../../helpers/fnHelpers";
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import DottedBtn from "../../NewClient/DepositDetails/DottedBtn";
-import Modals from "./Modals";
+/* import Modals from "./Modals"; */
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import FindThirdPerson from "./FindThirdPerson";
 
 function ContractCollapsesList() {
   const [paymentOptions, setPaymentOptions] = useState([{ id: Math.random().toFixed(8) }]);
@@ -129,7 +130,7 @@ function ContractCollapsesList() {
         />
       </CollapseWrapper>
 
-      {isOpenModal  && createPortal(<Modals handleClick={() => setIsModalOpen(false)} page={"payment"} />, document.body)}
+      {isOpenModal  && createPortal(<FindThirdPerson handleClick={() => setIsModalOpen(false)} />, document.body)}
     </div>
   );
 }

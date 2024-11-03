@@ -18,7 +18,10 @@ const endPoints = {
   notificationTemplates: '/api/v1/notification-templates',
   messages: '/api/v1/messages',
   notificationQueue: '/api/v1/notification-queue',
-  recipientGroups: '/recipient-groups'
+  recipientGroups: '/api/v1//recipient-groups',
+  registerFinger: '/api/v1/fingerprints/register',
+  preLoginUrl: '/api/v1/fingerprints/pre-login',
+  loginUrl: '/api/v1/fingerprints/login',
 } 
 
 export const ApiService = {
@@ -56,8 +59,8 @@ export const ApiService = {
     return response;
   },
   //customers:
-  getCustomers: async(page:number = 0, size:number = 14, sortField?: string, sortDirection?: string) => {
-    const response = await privateAxios.get(`${endPoints.customers}?page=${page}&size=${size}${sortField ? `&sort=${sortField}:${sortDirection}`: ''}`);
+  getCustomers: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
   createCustomer: async(formData: {[key:string]: string | number}) => {
@@ -85,8 +88,8 @@ export const ApiService = {
     return response;
   },
   //users:
-  getUsers: async(page:number = 0, size:number = 14, sortField?: string, sortDirection?: string) => {
-    const response = await privateAxios.get(`${endPoints.users}?page=${page}&size=${size}${sortField ? `&sort=${sortField}:${sortDirection}`: ''}`);
+  getUsers: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.users}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
   getUser: async (id: string) => {
@@ -103,6 +106,52 @@ export const ApiService = {
   },
   deleteUser: async(userID: string, etag:string) => {
     const response = await privateAxios.delete(`${endPoints.users}/${userID}`, {headers: {"If-Match": etag.slice(2)}});
+    return response;
+  },
+
+  //notification:
+  getMessages: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.messages}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  createGroup: async(name: string, description: string) => {
+    const response = await privateAxios.post(endPoints.recipientGroups, {
+      name, description
+    });
+    return response;
+  },
+  createNotificationTemplate: async(formData: {[key:string]: string}) => {
+    const response = await privateAxios.post(endPoints.notificationTemplates, formData);
+    return response;    
+  },
+  getCroups: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.recipientGroups}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  getTemplates: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.notificationTemplates}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  getQueue: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.notificationQueue}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  addToQueue: async(formData: {template_id: string, scheduled: boolean, recipient_type: string, scheduled_at?: string, recipient_ids: number[]}) => {
+    const response = await privateAxios.post(endPoints.notificationQueue, formData);
+    return response;    
+  },
+
+  //fingerPrint
+  registerFingers: async(agent_id: string, login: string, templates:string[]) => {
+    const response = await privateAxios.post(`${endPoints.registerFinger}`,{agent_id,login,templates});
+    return response;
+  },
+  preLogin: async(login: string,) => {
+    const response = await privateAxios.post(`${endPoints.preLoginUrl}?login=${login}`);
+    return response;
+  },
+  loginWithFingerPrint: async(result: string,agent_id:string) => {
+    const response = await privateAxios.post(`${endPoints.loginUrl}`,{agent_id,result});
     return response;
   },
 }

@@ -120,3 +120,13 @@ export const userFormSchema = yup.object().shape({
   middle_name: yup.string()
 });
 
+
+export const sendQueueReqSchema = yup.object().shape({
+  template_id: yup.string().required(),
+})
+
+export type QueueReq = {
+  template_id: string,
+  scheduled_at?: string,
+/*   recipient_type: 'GROUP' | 'CLIENT' | 'ALL', */
+}

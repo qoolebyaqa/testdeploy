@@ -23,7 +23,6 @@ function ContractsContent() {
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 h-[60px]">
         <h3 className="text-black font-extrabold text-[18px]">Договоры</h3>
         <div className="flex gap-1 items-center">
-          {/* <ButtonComponent color="bg-white" className="text-lombard-btn-red h-8 font-semibold" titleBtn="Очистить фильтр ✕"/> */}
           <RangeFilter iconInput="filters" />
         </div>
       </div>

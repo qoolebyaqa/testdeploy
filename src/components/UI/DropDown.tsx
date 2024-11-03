@@ -15,10 +15,12 @@ interface IDropDownProps {
   listOfItems: ISelect[];
   className?: string;
   label?: string;
+  containedLabel?: string;
   name: string;
   value?: string;
   control?: any;
   errorMsg?: string;
+  isDisabled?: boolean;
   handleSelect?: ({
     id,
     title,
@@ -35,10 +37,12 @@ const DropDown = ({
   listOfItems,
   className,
   label,
+  containedLabel,
   name,
   value,
   control,
   errorMsg,
+  isDisabled,
   handleSelect,
 }: IDropDownProps) => {
   const handleOnChange = (value: string) => {
@@ -48,7 +52,7 @@ const DropDown = ({
   if (control) {
     return (
       <div
-        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow ${
+        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow relative ${
           label ? "gap-2" : ""
         }`}
       >
@@ -69,18 +73,22 @@ const DropDown = ({
               handleSelect && handleSelect({title: name, value: value });
             };
             return (
-              <Select
-                onChange={handleOnChange}
-                value={value || field.value}
-                placeholder={title}
-                suffixIcon={<SVGComponent title="arrow"/>}
-              >
-                {listOfItems.map((select) => (
-                  <Select.Option value={select.enumvalue} key={select.key}>
-                    {select.label}
-                  </Select.Option>
-                ))}
-              </Select>
+              <>
+              {containedLabel && <label className="w-fit absolute z-10 bottom-6 left-2 text-[10px]  rounded-xl bg-white px-[4px]">{containedLabel}</label>}
+                <Select
+                  disabled={isDisabled}
+                  onChange={handleOnChange}
+                  value={value || field.value}
+                  placeholder={title}
+                  suffixIcon={<SVGComponent title="arrow"/>}
+                >
+                  {listOfItems.map((select) => (
+                    <Select.Option value={select.enumvalue} key={select.key}>
+                      {select.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </>
             );
           }}
         />
@@ -89,7 +97,7 @@ const DropDown = ({
   } else {
     return (
       <div
-        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow ${
+        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow relative ${
           label ? "gap-2" : ""
         }`}
       >
@@ -99,6 +107,7 @@ const DropDown = ({
         >
           {label}
         </label>
+        {containedLabel && <label className="w-fit absolute z-10 bottom-6 left-2 text-[10px] rounded-xl bg-white px-[4px]">{containedLabel}</label>}
         <Select
           onChange={handleOnChange}
           value={value}
