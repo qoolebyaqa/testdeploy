@@ -11,7 +11,7 @@ import { createPortal } from "react-dom";
 import { Checkbox } from "antd";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import SVGComponent from "../UI/SVGComponent";
-import Confirmation from "../Modals/Confirmation";
+import Confirmation from "../UI/Confirmation";
 
 function KatmContent() {
   const dispatch = useActions();

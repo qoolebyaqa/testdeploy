@@ -19,8 +19,8 @@ function NewEmployeeContent({currentUser, etag}: {currentUser?: any, etag?: stri
 
   const handleSubmitUser = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { id, name, login, phone_number, language, job_title, role_id, filial_id } = formValues
-    const userDataToPost:any = { id, name, login, phone_number, language, job_title, role_id, filial_id };
+    const { id, first_name, last_name, middle_name, login, phone_number, language, job_title, role_id, filial_id } = formValues
+    const userDataToPost:any = { id, first_name, last_name, middle_name, login, phone_number, language, job_title, role_id, filial_id };
     userDataToPost.type = 'INTERNAL'
     try {
       if (etagState) {

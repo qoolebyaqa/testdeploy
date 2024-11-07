@@ -5,7 +5,7 @@ import ContractCollapsesList from "./ContractCollapsesList";
 import { createPortal } from "react-dom";
 import AboutClient from "../../Clients/AboutClient"
 import { useState } from "react";
-import ConfirmatioModal from "../../Modals/Confirmation";
+import ConfirmatioModal from "../../UI/Confirmation";
 
 function ContractBrowse() {
   const currentContract = useAppSelector(

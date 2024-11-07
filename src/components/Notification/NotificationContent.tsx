@@ -11,11 +11,13 @@ import useActions from "../../helpers/hooks/useActions";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import Filters from "../UI/Filters";
 import NotificationFilters from "./NotificationFilters";
+import Confirmation from "../UI/Confirmation";
 
 function NotificationContent() {
   const [showSendSmsDialog, setShowSendSmsDialog] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [externalFilters, setExternalFilters] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const selectedRowKeys = useAppSelector((state) => state.smsStore.selectedSMS);
   const allSms = useAppSelector((state) => state.smsStore.allSMS);
   const dispatch = useActions();
@@ -46,6 +48,16 @@ function NotificationContent() {
     ]},
   ]
 
+  const handleDelete = async() => {
+    try {
+      const idsToDelete = selectedRowKeys.filter(elem => elem.status !== 'SENT').map(elem => elem.id);
+      await ApiService.deleteFromQueue(idsToDelete);
+      setShowDeleteDialog(false);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const checkbox = {
     title: () => (
       <Checkbox
@@ -56,8 +68,8 @@ function NotificationContent() {
     key: "select",
     render: (_: string, record: ISMSDataType) => (
       <Checkbox
-        onChange={() => dispatch.setSelectOneSms(record.id)}
-        checked={selectedRowKeys.includes(record.id)}
+        onChange={() => dispatch.setSelectOneSms(record)}
+        checked={!!selectedRowKeys.find(elem => elem.id === record.id)}
       />
     ),
   };
@@ -76,15 +88,10 @@ function NotificationContent() {
           />
           {selectedRowKeys.length > 0 && (
             <>
-              <ButtonComponent titleBtn="Удалить" color="bg-lombard-btn-red" />
+              <ButtonComponent titleBtn="Удалить" color="bg-lombard-btn-red" clickHandler={() => setShowDeleteDialog(true)}/>
               <ButtonComponent
                 titleBtn="Переотправить"
                 color="bg-lombard-btn-yellow"
-              />
-              <ButtonComponent
-                titleBtn="Отменить"
-                color="bg-lombard-btn-grey"
-                className="text-lombard-text-black"
               />
             </>
           )}
@@ -106,6 +113,11 @@ function NotificationContent() {
       {showSendSmsDialog &&
         createPortal(
           <Sms closeHandler={() => setShowSendSmsDialog(false)} />,
+          document.body
+        )}
+        {showDeleteDialog &&
+        createPortal(
+          <Confirmation handleClose={() => setShowDeleteDialog(false)}  handleSave={handleDelete} title="Удалить?" textMsg="Вы уверены, что хотите удалить документ?" colorReverse/>,
           document.body
         )}
     </>

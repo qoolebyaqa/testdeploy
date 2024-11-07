@@ -1,5 +1,5 @@
-import ButtonComponent from "../UI/ButtonComponent"
-import DialogComponent from "../UI/DialogComponent"
+import ButtonComponent from "./ButtonComponent"
+import DialogComponent from "./DialogComponent"
 
 export interface IConfirmation {
   title: string
@@ -9,7 +9,7 @@ export interface IConfirmation {
   handleSave:() => void
 }
 
-function ConfirmatioModal ({handleClose,handleSave, title, textMsg, colorReverse}:IConfirmation) {
+function Confirmation ({handleClose,handleSave, title, textMsg, colorReverse}:IConfirmation) {
   return(
     <>
       <DialogComponent closeHandler={handleClose}>
@@ -41,4 +41,4 @@ function ConfirmatioModal ({handleClose,handleSave, title, textMsg, colorReverse
   )
 }
 
-export default ConfirmatioModal
+export default Confirmation

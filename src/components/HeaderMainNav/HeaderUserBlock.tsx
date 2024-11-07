@@ -5,7 +5,7 @@ import SVGComponent from "../UI/SVGComponent";
 import ButtonComponent from "../UI/ButtonComponent";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { useNavigate } from "react-router";
-import ConfirmatioModal from "../Modals/Confirmation";
+import ConfirmatioModal from "../UI/Confirmation";
 import { createPortal } from "react-dom";
 import useActions from "../../helpers/hooks/useActions";
 

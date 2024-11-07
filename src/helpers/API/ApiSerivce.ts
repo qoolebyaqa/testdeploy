@@ -140,6 +140,12 @@ export const ApiService = {
     const response = await privateAxios.post(endPoints.notificationQueue, formData);
     return response;    
   },
+  deleteFromQueue: async(ids: number[]) => {
+    const response = await privateAxios.delete(endPoints.notificationQueue, {
+      data: {notification_ids: ids}
+    });
+    return response;    
+  },
 
   //fingerPrint
   registerFingers: async(agent_id: string, login: string, templates:string[]) => {

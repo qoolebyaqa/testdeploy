@@ -10,7 +10,7 @@ import useActions from "../../helpers/hooks/useActions";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import RangeFilter from "../Clients/RangeFilter";
-import Confirmation from "../Modals/Confirmation";
+import Confirmation from "../UI/Confirmation";
 
 function EmployeesContent() {
   const [showDialog, setShowDialog] = useState(false);

@@ -7,7 +7,7 @@ import Carousel from "./Carousel";
 import { FileData } from "../../helpers/types";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { createPortal } from "react-dom";
-import Confirmation from "../Modals/Confirmation";
+import Confirmation from "./Confirmation";
 
 export interface IFileSlide {fileId: string, fileUrl: string}
 export type UploadedFile = {document_id: string, document_url: string}
