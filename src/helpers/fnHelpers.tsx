@@ -1,5 +1,5 @@
 import { TableColumnsType } from "antd";
-import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType, ICashDebitType, IReceivedType, ILowCostType } from "./types";
+import { IDataClientType, IDataContractType, IDataEmployeeType, IDataFilialType, IDataKatmType, IKatmDialogType, ISeekDayDialogType, ISMSDataType, ICashDebitType, IReceivedType, ILowCostType, NOTIFICATION_STATUS } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
 
 export function Copier<T extends { index?: number; key?: number, id: number }>(obj: T, quantity?: number): T[] {
@@ -232,6 +232,18 @@ export const columnsForSMS = (list:ISMSDataType[]): TableColumnsType<ISMSDataTyp
     title: "Статус",
     dataIndex: "status",
     key: 'status',
+    render: (status: 'SENT' | 'FAILED' | 'PENDING' | 'SENDING') => {
+      const cellStyles = (status:string) => {
+        switch (status) {
+          case 'SENT': return 'text-lombard-btn-green';
+          case 'FAILED': return 'text-lombard-btn-red';
+          case 'PENDING': return 'text-lombard-btn-yellow';
+          case 'SENDING': return 'text-lombard-main-blue';
+          default: return '';
+        }
+      }
+      return <div className={cellStyles(status)}>{NOTIFICATION_STATUS[status]}</div>
+    }
   },
   {
     title: "Шаблон",

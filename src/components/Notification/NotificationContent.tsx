@@ -18,6 +18,7 @@ function NotificationContent() {
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [externalFilters, setExternalFilters] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showReSubmitDialog, setShowReSubmitDialog] = useState(false);
   const selectedRowKeys = useAppSelector((state) => state.smsStore.selectedSMS);
   const allSms = useAppSelector((state) => state.smsStore.allSMS);
   const dispatch = useActions();
@@ -34,29 +35,66 @@ function NotificationContent() {
     setShowFilterDialog(false);
   }
 
-  const supportedFilterList:any =  [
-    { name: 'status', type: 'dropdown', label: 'Статус', items: [
-      { label: "Ожидание", key: 1, enumvalue: "PENDING" },
-      { label: "Отправляется", key: 2, enumvalue: "SENDING" },
-      { label: "Отправлено", key: 3, enumvalue: "SENT" },
-      { label: "Ошибка", key: 4, enumvalue: "FAILED" },
-    ]},
-    { name: 'channel', type: 'dropdown', label: 'Способ отправки', items: [
-      { label: "SMS", key: 1, enumvalue: "SMS" },
-      { label: "Telegram", key: 2, enumvalue: "TELEGRAM" },
-      { label: "E-mail", key: 3, enumvalue: "EMAIL" },
-    ]},
-  ]
+  const supportedFilterList: any = [
+    {
+      name: "status",
+      type: "dropdown",
+      label: "Статус",
+      items: [
+        { label: "Ожидание", key: 1, enumvalue: "PENDING" },
+        { label: "Отправляется", key: 2, enumvalue: "SENDING" },
+        { label: "Отправлено", key: 3, enumvalue: "SENT" },
+        { label: "Ошибка", key: 4, enumvalue: "FAILED" },
+      ],
+    },
+    {
+      name: "channel",
+      type: "dropdown",
+      label: "Способ отправки",
+      items: [
+        { label: "SMS", key: 1, enumvalue: "SMS" },
+        { label: "Telegram", key: 2, enumvalue: "TELEGRAM" },
+        { label: "E-mail", key: 3, enumvalue: "EMAIL" },
+      ],
+    },
+  ];
 
-  const handleDelete = async() => {
+  const classesForStatuses = (record: any) => {
+    switch (record.status) {
+      case "SENT":
+        return "sent-green";
+      case "FAILED":
+        return "failed-red";
+      case "PENDING":
+        return "scheduled-yellow";
+      case "SENDING":
+        return "progress-blue";
+      default:
+        return "";
+    }
+  };
+
+  const handleDelete = async () => {
     try {
-      const idsToDelete = selectedRowKeys.filter(elem => elem.status !== 'SENT').map(elem => elem.id);
+      const idsToDelete = selectedRowKeys.map((elem) => elem.id);
       await ApiService.deleteFromQueue(idsToDelete);
-      setShowDeleteDialog(false);
     } catch (err) {
       console.log(err);
+    } finally {      
+      setShowDeleteDialog(false);
     }
-  }
+  };
+
+  const handleResubmit = async () => {
+    try {
+      const idsToResend = selectedRowKeys.map((elem) => elem.id);
+      await ApiService.retrySendQueue(idsToResend);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setShowReSubmitDialog(false);
+    }
+  };
 
   const checkbox = {
     title: () => (
@@ -69,7 +107,7 @@ function NotificationContent() {
     render: (_: string, record: ISMSDataType) => (
       <Checkbox
         onChange={() => dispatch.setSelectOneSms(record)}
-        checked={!!selectedRowKeys.find(elem => elem.id === record.id)}
+        checked={!!selectedRowKeys.find((elem) => elem.id === record.id)}
       />
     ),
   };
@@ -79,22 +117,39 @@ function NotificationContent() {
         <h3 className="text-black font-extrabold text-[18px]">Уведомления</h3>
         <div className="flex gap-2 items-center">
           <Filters
-            filters={<NotificationFilters setFilters={filterSubmit} activeFilter={externalFilters}/>}
+            filters={
+              <NotificationFilters
+                setFilters={filterSubmit}
+                activeFilter={externalFilters}
+              />
+            }
             isVisible={showFilterDialog}
             setVisibility={setShowFilterDialog}
             activeFilter={externalFilters}
-            clearFilters={() => setExternalFilters('')}
+            clearFilters={() => setExternalFilters("")}
             supportedFilters={supportedFilterList}
           />
-          {selectedRowKeys.length > 0 && (
-            <>
-              <ButtonComponent titleBtn="Удалить" color="bg-lombard-btn-red" clickHandler={() => setShowDeleteDialog(true)}/>
+          {selectedRowKeys.length > 0 &&
+            selectedRowKeys.filter((elem) => elem.status === "SENT").length ===
+              0 && (
+              <ButtonComponent
+                titleBtn="Отменить"
+                color="bg-lombard-main-blue"
+                clickHandler={() => setShowDeleteDialog(true)}
+              />
+            )}
+          {selectedRowKeys.length > 0 &&
+            selectedRowKeys.filter((elem) => elem.status === "SENDING")
+              .length === 0 &&
+            selectedRowKeys.filter((elem) => elem.status === "PENDING")
+              .length === 0 && (
               <ButtonComponent
                 titleBtn="Переотправить"
                 color="bg-lombard-btn-yellow"
+                clickHandler={() => setShowReSubmitDialog(true)}
               />
-            </>
-          )}
+            )}
+
           <ButtonComponent
             titleBtn="Отправить СМС"
             color="bg-lombard-btn-green"
@@ -104,6 +159,7 @@ function NotificationContent() {
       </div>
       <DataTable
         columns={[...columns(), checkbox]}
+        rowClasses={classesForStatuses}
         endPoint={ApiService.getQueue}
         classes="customCssTable"
         pagination
@@ -115,9 +171,25 @@ function NotificationContent() {
           <Sms closeHandler={() => setShowSendSmsDialog(false)} />,
           document.body
         )}
-        {showDeleteDialog &&
+      {showDeleteDialog &&
         createPortal(
-          <Confirmation handleClose={() => setShowDeleteDialog(false)}  handleSave={handleDelete} title="Удалить?" textMsg="Вы уверены, что хотите удалить документ?" colorReverse/>,
+          <Confirmation
+            handleClose={() => setShowDeleteDialog(false)}
+            handleSave={handleDelete}
+            title="Отменить?"
+            textMsg="Вы уверены, что хотите отменить отправку уведомления?"
+            colorReverse
+          />,
+          document.body
+        )}
+      {showReSubmitDialog &&
+        createPortal(
+          <Confirmation
+            handleClose={() => setShowReSubmitDialog(false)}
+            handleSave={handleResubmit}
+            title="Переотправить?"
+            textMsg="Вы уверены, что хотите переотправить выбранные уведомления?"
+          />,
           document.body
         )}
     </>

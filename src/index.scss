@@ -145,3 +145,19 @@ input[type="number"] {
 .ant-pagination-item-active a {
   color: white !important;
 }
+
+.sent-green {
+  background-color: #F4FEF3;
+}
+
+.failed-red {
+  background-color: #FCF5F5;
+}
+
+.scheduled-yellow {
+  background-color: #E9E8C5;
+}
+
+.progress-blue {
+  background-color: #F8F9FA;
+}

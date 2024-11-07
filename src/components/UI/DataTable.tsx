@@ -14,6 +14,7 @@ export interface IDataTable {
   endPoint?: (page: number, size: number, sort?:string, filters?: string) => Promise<any>;
   setDataToState?: (arr: any[]) => any,
   settedFilters?: string,
+  rowClasses?: (record: any) => string, 
   sortStr?: string,
   tableSize?: 'small' | 'large' | 'middle'
 }
@@ -35,7 +36,8 @@ function DataTable({
   setDataToState,
   settedFilters,
   sortStr,
-  tableSize
+  tableSize,
+  rowClasses
 }: IDataTable) {
 
   const [results, setResults] = useState<DataTableType[]>();
@@ -115,6 +117,7 @@ function DataTable({
           rowKey={record => (record as any).id}
           loading={loading}
           size={tableSize}
+          rowClassName={rowClasses}
           pagination={
             pagination
               ? {

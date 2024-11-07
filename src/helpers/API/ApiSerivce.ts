@@ -75,6 +75,10 @@ export const ApiService = {
     const response = await privateAxios.put(`${endPoints.customers}/${formData.id}`, formData, {headers: {"If-Match": etag}});
     return response;
   },
+  searchCustomers: async(query: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}/search?query=${query}`);
+    return response;
+  },
   addDocument: async(formData: FormData, id: string) => {
     const response = await privateAxios.post(`${endPoints.customers}/${id}/documents`, formData);
     return response;
@@ -142,6 +146,12 @@ export const ApiService = {
   },
   deleteFromQueue: async(ids: number[]) => {
     const response = await privateAxios.delete(endPoints.notificationQueue, {
+      data: {notification_ids: ids}
+    });
+    return response;    
+  },
+  retrySendQueue: async(ids: number[]) => {
+    const response = await privateAxios.post(`${endPoints.notificationQueue}/retry`, {
       data: {notification_ids: ids}
     });
     return response;    

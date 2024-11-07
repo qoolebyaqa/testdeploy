@@ -5,6 +5,13 @@ export enum ROLE_ENUM {
   ACCOUNTANT = 'Бухгалтер'
 } 
 
+export enum NOTIFICATION_STATUS {
+  SENT = 'Отправлено',
+  FAILED = 'Ошибка',
+  SENDING = 'Отправляется',
+  PENDING = 'Запланировано',
+}
+
 export type FileData = {
   file: any
 }
