@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface IAuthState {
+export interface IAuthState {
   access_token: string |  null, 
   authLoading: boolean,
   authError: string,

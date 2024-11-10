@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DialogComponent from "./DialogComponent";
 import { createPortal } from "react-dom";
 import useActions from "../../helpers/hooks/useActions";
 import { toast } from "react-toastify";
 import SVGComponent from "./SVGComponent";
 import { motion } from "framer-motion";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
 
 const LeftHand = () =>{
+  const dataLeftFingers:any = useAppSelector(state => state.fingerPrintReducer.leftHandFingers)
+  useEffect(() => {
+    setPreviousFingers(dataLeftFingers);
+  }, [dataLeftFingers]);
   const [selectedFingerId,setSelectedFingerId] = useState<number | null>(null);
   const [previousFingers,setPreviousFingers] = useState<{ index: number|null; templates: string[] }[]>([])
   const [isActive,setIsActive] = useState(false);
-  const [_errorMessage,setErrorMessage] = useState<string>("")
   const dispatch = useActions();
   
 
@@ -35,8 +39,7 @@ const LeftHand = () =>{
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error:", errorData.error); // Log the error message
-        setErrorMessage(errorData.error)
+        console.error("Error:", errorData.error);
         setIsActive(false)
 
       } else {
@@ -68,10 +71,22 @@ const LeftHand = () =>{
         setIsActive(false)
       }
     } catch (error) {
-      console.log(error);
-      
+      console.log(error); 
     }
   };
+  const requestKiller = ()=>{
+    try{
+      const response = fetch("http://localhost:9090/api/v1/cancel")
+      console.log(response);
+    }catch(error:any){
+      console.log(error);
+    }
+  }
+
+  const closeHendler= () =>{
+    setIsActive(false)
+    requestKiller()
+  }
   const openDialog=(id:number)=>{
     setSelectedFingerId(id)
     setIsActive(true)
@@ -116,7 +131,7 @@ const LeftHand = () =>{
   return(
     <>
     {isActive && createPortal(
-      <DialogComponent closeHandler={() => setIsActive(false)}>
+      <DialogComponent closeHandler={closeHendler}>
         <div className="overflow-hidden">
               <p className="text-center text-slate-700">
                 сканируйте отпечаток пальца

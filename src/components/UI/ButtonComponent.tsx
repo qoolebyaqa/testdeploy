@@ -2,7 +2,7 @@ import React from "react";
 
 interface IbuttonProps  {
   titleBtn: string | React.ReactNode;
-  color: string;
+  color?: string;
   disabled?: boolean;
   submit?: boolean;
   form?: string;

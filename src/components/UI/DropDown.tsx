@@ -52,16 +52,18 @@ const DropDown = ({
   if (control) {
     return (
       <div
-        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow relative ${
+        className={`w-full flex flex-col justify-center text-black text-[14px] grow relative ${
           label ? "gap-2" : ""
+        } ${
+          containedLabel ? "mt-6" : ""
         }`}
       >
-        <label
+        {label && <label
           htmlFor={name}
           className="font-bold text-black text-[14px] relative"
         >
           {label}
-        </label> 
+        </label>} 
         <ValidationError errMsg={errorMsg}/>
         <Controller
           name={name as keyof clientFormValue}

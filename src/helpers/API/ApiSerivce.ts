@@ -83,8 +83,8 @@ export const ApiService = {
     const response = await privateAxios.post(`${endPoints.customers}/${id}/documents`, formData);
     return response;
   },
-  getDocuments: async(customerId: string) => {
-    const response = await privateAxios.get(`${endPoints.customers}/${customerId}/documents`);
+  getDocuments: async(customerId: string, type?: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}/${customerId}/documents?type=${type}`);
     return response;
   },
   deleteDocument: async(customerId: string, docId: string) => {
@@ -152,7 +152,7 @@ export const ApiService = {
   },
   retrySendQueue: async(ids: number[]) => {
     const response = await privateAxios.post(`${endPoints.notificationQueue}/retry`, {
-      data: {notification_ids: ids}
+      notification_ids: ids
     });
     return response;    
   },

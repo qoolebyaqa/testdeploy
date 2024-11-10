@@ -128,6 +128,7 @@ function NotificationContent() {
             activeFilter={externalFilters}
             clearFilters={() => setExternalFilters("")}
             supportedFilters={supportedFilterList}
+            isDisabled
           />
           {selectedRowKeys.length > 0 &&
             selectedRowKeys.filter((elem) => elem.status === "SENT").length ===

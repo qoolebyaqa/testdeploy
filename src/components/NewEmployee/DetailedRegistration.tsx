@@ -1,12 +1,12 @@
+import { useForm } from "react-hook-form";
+import ButtonComponent from "../UI/ButtonComponent";
 import CustomInput from "../UI/CustomInput";
 import DropDown from "../UI/DropDown";
 import PassportInputs from "../UI/PassportInputs";
 import SwitchComponent from "../UI/SwitchComponent";
-import DayOffSection from "./DayOffSection";
-import FilesContainer from "./FilesContainer";
 
 interface IGeneralUserInfo {
-  formValues: { [key: string]: string };
+  formValues?: { [key: string]: string };
   onInputChange: ({
     id,
     title,
@@ -36,61 +36,31 @@ const regDropDowns = [
       { label: "Юнусабад", key: 3, enumvalue: 3 },
     ],
   },
-  /* {
-    label: "Ставка",
-    name: "workterm",
-    items: [
-      { label: "0.25", key: 1 },
-      { label: "0.5", key: 2 },
-      { label: "1", key: 3 },
-    ],
-  },
-  {
-    label: "Место рождения",
-    name: "birthPlace",
-    items: [
-      { label: "Tashkent", key: 1 },
-      { label: "Urgench", key: 2 },
-      { label: "Termez", key: 3 },
-    ],
-  },
-  {
-    label: "Гражданство",
-    name: "citizenship_id",
-    items: [
-      { label: "Узбекистан", key: 1 },
-      { label: "Экспат", key: 2 },
-    ],
-  },
-  {
-    label: "Выходные дни",
-    name: "seekday",
-    items: [
-      { label: "Воскресенье", key: 1 },
-      { label: "Суббота", key: 2 },
-      { label: "Суббота, Воскресенье", key: 3 },
-    ],
-  },
-  {
-    label: "Оценка",
-    name: "rate",
-    items: [
-      { label: "5", key: 1 },
-      { label: "4", key: 2 },
-      { label: "3", key: 3 },
-    ],
-  }, */
 ];
 
 function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
+  
+  const {
+    control,
+    formState: { errors, isValid, isDirty },
+  } = useForm({ mode: "onChange" });
+
   return (
-    <div>
-      <div className="flex  h-[38vh] mx-2 mb-4 bg-white rounded-2xl px-2 border-2">
-        <div className="flex flex-col gap-y-[14px] pt-[10px] overflow-y-scroll scroll px-2">
+      <div className="flex">
+        <form className="flex flex-col gap-y-[14px] pt-[10px]  bg-white rounded-2xl px-2">
           <div className="px-2">
+          <div className="flex justify-between items-center border-b-2 pb-2 border-lombard-borders-grey">
+            <h4 className="text-black">Анкетные данные</h4>
+            <ButtonComponent
+              className={`${isValid && isDirty ? 'bg-lombard-btn-green text-white' : 'bg-lombard-btn-grey text-black' }`}
+              titleBtn="Сохранить"
+              submit
+            />
+          </div>
           <p className="font-bold text-black">Статус</p>
             <SwitchComponent
               inputName="role"
+              control={control}
               selectedDefaultTitle="Активный"
               selectedStyles="bg-[#148F00]"
               unselectedTitle="Не активный"
@@ -102,14 +72,17 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
               type="date"
               name="birth_date"
               label="Дата рождения"
-              value={formValues.birth_date}
+              control={control}
+              value={formValues?.birth_date}
               handleChange={onInputChange}
+              errorMsg={errors.root?.message}
             />
             <PassportInputs
               name="employeePassport"
               handleChange={onInputChange}
-              seriesVal={formValues.passport_series}
-              passNum={formValues.passport_number}
+              control={control}
+              seriesVal={formValues?.passport_series}
+              passNum={formValues?.passport_number}
             />
           </div>
           <div className="px-2 flex flex-col gap-y-[12px]">
@@ -118,7 +91,8 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
               type="text"
               name="address"
               placeholder="район ____, ул. ____, д.__, кв.__"
-              value={formValues.address}
+              value={formValues?.address}
+              control={control}
               handleChange={onInputChange}
             />
           </div>
@@ -131,16 +105,14 @@ function DetailedRegistration({ onInputChange, formValues }: IGeneralUserInfo) {
                   label={dropDown.label}
                   name={dropDown.name}
                   handleSelect={onInputChange}
-                  value={formValues[dropDown.name]}
+                  control={control}
+                  value={formValues?.[dropDown.name]}
                 />
               </li>
             ))}
           </ul>
-        </div>
-        <FilesContainer />
+        </form>
       </div>
-      <DayOffSection />
-    </div>
   );
 }
 

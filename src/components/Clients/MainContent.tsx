@@ -42,7 +42,7 @@ function MainContent() {
   }
 
   const columnsForClients = useCallback(() => {
-    return getColumnsForClients(setCurrentSort, currestSort);
+    return getColumnsForClients(setCurrentSort, currestSort, setExternalFilters);
   }, [currestSort]);
 
   async function filterSubmit(formData: any) {
@@ -62,6 +62,7 @@ function MainContent() {
             activeFilter={externalFilters}
             clearFilters={() => setExternalFilters('')}
             supportedFilters={supportedFilterList}
+            isDisabled
           />
           <ButtonComponent
             titleBtn="Создать"

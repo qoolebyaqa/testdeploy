@@ -12,10 +12,11 @@ type FilterProps = {
   activeFilter: string,
   setVisibility: (state: boolean) => void,
   clearFilters: () => void,
-  supportedFilters: any[]
+  supportedFilters: any[],
+  isDisabled: boolean | undefined,
 }
 
-function Filters({ filters, isVisible, setVisibility, activeFilter, clearFilters, supportedFilters }: FilterProps) {
+function Filters({ filters, isVisible, setVisibility, activeFilter, clearFilters, supportedFilters, isDisabled }: FilterProps) {
   const appliedFilters = parseFilters(activeFilter);
   const showFilters = supportedFilters.filter((val:any) => Object.keys(appliedFilters).includes(val.name)).map((val:any) => {
     val.value = appliedFilters[val.name]
@@ -43,7 +44,7 @@ function Filters({ filters, isVisible, setVisibility, activeFilter, clearFilters
               containedLabel={field.label}
               listOfItems={field.items}
               value={field.value}
-              isDisabled={true}
+              isDisabled={isDisabled}
             />
           );
         } else {
@@ -54,7 +55,7 @@ function Filters({ filters, isVisible, setVisibility, activeFilter, clearFilters
               type={field.type}
               containedLabel={field.label}
               value={field.value}
-              isDisabled={true}
+              isDisabled={isDisabled}
             />
           );
         }

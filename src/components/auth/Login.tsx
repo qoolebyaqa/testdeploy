@@ -67,13 +67,10 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
   const [inputBorder,setInputBorder]=useState(false)
   
   async function openFingerPrint(){
-    
-    
     if(user.login!==""){
       setFingerPrintState(true)
       setResetPass(false)
-      setInputBorder(false)
-
+      
       try{
         setLoading(true);
         const result = await ApiService.preLogin(user.login)
@@ -83,12 +80,16 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
       }finally {
         setLoading(false);
       }
+      setInputBorder(false)
     }else{
       toast.error("Пожалуйста, введите свой логин")
       setInputBorder(true)
+      console.log(inputBorder);
+      
     }
   }
 
+  const [showMoreTimeBtn,setShowMoreTimeBtn]=useState(false)
   async function preLoginAgent(data:any){
     try{
       const response = await fetch("http://localhost:9090/api/v1/verify", {
@@ -101,7 +102,7 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
+        setShowMoreTimeBtn(true)
       }
     
       const processdate = await response.json();
@@ -111,9 +112,10 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
         toast.error("Отпечаток пальца пользователя не найден")
       }
       
-    }catch(error){
+    }catch(error:any){
       console.log(error);
-      
+      setShowMoreTimeBtn(true)
+      toast.error(error.toString())
     }
   }
 
@@ -155,7 +157,7 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
           </h3>
           
           <div>
-            <div className={`border-2 border-white  rounded-md relative flex items-center ${inputBorder?'border-red-500':''}`}>
+            <div className={`border-2 border-white  rounded-md relative flex items-center ${inputBorder?'border-red-600':''}`}>
               <label htmlFor="login" />
               <input
                 type="text"
@@ -227,20 +229,25 @@ function Login({ showRecoveryPass }: { showRecoveryPass: () => void }) {
               />
           </div>
             <div className="flex flex-col justify-center">
+              
               <button
                 type="button"
                 className="text-lombard-bg-inactive-grey underline text-center"
-                onClick={openFingerPrint}
-              >
-                Попробуйте еще раз
-              </button>
-              <button
-                type="button"
-                className="text-lombard-bg-inactive-grey underline text-center"
-                onClick={()=>{setFingerPrintState(false)}}
+                onClick={()=>{setFingerPrintState(false); setShowMoreTimeBtn(false)}}
               >
                 Вернуться на страницу авторизации
               </button>
+              {
+                showMoreTimeBtn && (
+                  <button
+                    type="button"
+                    className="text-lombard-bg-inactive-grey underline text-center"
+                    onClick={openFingerPrint}
+                  >
+                    Попробуйте еще раз
+                  </button>
+                )
+              }
             </div>
       </div>
 

@@ -29,7 +29,7 @@ function ClientFilters({
 
   return (
     <form
-      className="flex gap-4 items-end mt-4"
+      className="flex gap-4 items-end mt-4 flex-col"
       onSubmit={handleSubmit(setFilters)}
     >
       <CustomInput name="first_name" type="text" control={control} containedLabel="Фамилия" value={appliedFilters.first_name}/>

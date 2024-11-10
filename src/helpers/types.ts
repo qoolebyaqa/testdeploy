@@ -16,6 +16,9 @@ export type FileData = {
   file: any
 }
 
+export interface IFileSlide {fileId: string, fileUrl: string}
+export interface IBase64Slide {fileId: string, fileUrl: string, fileData: string}
+
 export type DataTableType = IDataContractType
   | IDataEmployeeType
   | IDataClientType

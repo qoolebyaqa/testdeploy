@@ -1,25 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DialogComponent from "./DialogComponent";
 import { createPortal } from "react-dom";
-import ErrorMessage from "./ErrorMessage";
 import 'react-toastify/dist/ReactToastify.css';
 import useActions from "../../helpers/hooks/useActions";
 import { toast } from "react-toastify";
 import SVGComponent from "./SVGComponent";
 import { motion } from "framer-motion";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
 
 
-interface IRightHand {
-  fingerDialogFunc: () => void
-}
 
-const RightHand = ({fingerDialogFunc}:IRightHand) => {
-  console.log(fingerDialogFunc)
+
+const RightHand = () => {
+  const dataRightFingers:any = useAppSelector(state => state.fingerPrintReducer.rightHandFingers)
+  useEffect(() => {
+    setPreviousFingers(dataRightFingers);
+  }, [dataRightFingers]);
   const [selectedFingerId,setSelectedFingerId] = useState<number | null>(null);
-  const [previousFingers,setPreviousFingers] = useState<{ index: number|null; templates: string[] }[]>([])
+  const [previousFingers,setPreviousFingers] = useState<{ index: number|null; templates: string[] }[]>(dataRightFingers)
   const [isActive,setIsActive] = useState(false);
-  const [errorMessage,setErrorMessage] = useState<string>("")
   const dispatch = useActions();
 
   const sendFingerprint = async (id:number) => {
@@ -42,7 +42,6 @@ const RightHand = ({fingerDialogFunc}:IRightHand) => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error:", errorData.error);
-        setErrorMessage(errorData.error)
         setIsActive(false)
 
       } else {
@@ -76,6 +75,21 @@ const RightHand = ({fingerDialogFunc}:IRightHand) => {
       console.log(error);
     }
   };
+
+  const requestKiller = ()=>{
+    try{
+      const response = fetch("http://localhost:9090/api/v1/cancel")
+      console.log(response);
+      
+    }catch(error:any){
+      console.log(error);
+    }
+  }
+
+  const closeHendler= () =>{
+    setIsActive(false)
+    requestKiller()
+  }
   const openDialog=(id:number)=>{
     setSelectedFingerId(id)
     setIsActive(true)
@@ -122,7 +136,7 @@ const RightHand = ({fingerDialogFunc}:IRightHand) => {
   return(
     <>
     {isActive && createPortal(
-      <DialogComponent closeHandler={() => setIsActive(false)}>
+      <DialogComponent closeHandler={closeHendler}>
        <div className="overflow-hidden">
               <p className="text-center text-slate-700">
                 сканируйте отпечаток пальца
@@ -143,13 +157,6 @@ const RightHand = ({fingerDialogFunc}:IRightHand) => {
       </DialogComponent>,
       document.body
     )}
-
-  {errorMessage && (
-        <ErrorMessage
-          shownMessage={errorMessage}
-          setShownMessage={(message) => setErrorMessage(message)}
-        />
-  )}
 
 <svg id="eQqcvXFls951" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 353 482" shapeRendering="geometricPrecision" textRendering="geometricPrecision" project-id="8711970987d7421ba4b6f952bb395a34" export-id="177f280971764f9685c329b8e620bad7">
   

@@ -1,12 +1,27 @@
-import {  useEffect, useRef } from "react";
+import {  useEffect, useRef, useState } from "react";
 import SVGComponent from "../UI/SVGComponent";
 import {motion} from 'framer-motion'
 import CollapseWrapper from "../UI/CollapseWrapper";
 import ButtonComponent from "../UI/ButtonComponent";
 import CustomInput from "../UI/CustomInput";
+import { ApiService } from "../../helpers/API/ApiSerivce";
+import { useParams } from "react-router";
+
+interface IDocumentList{
+  customer_id:number,
+  document_id:number,
+  document_url:string,
+  version:number,
+  title?:string,
+}
+
 
 function AboutClient({closeHandler}:{closeHandler: () => void,}) {
   const modalRef = useRef<HTMLDivElement>(null);
+ const params=useParams()
+ const id = params.id_browse ? params.id_browse.slice(params.id_browse.indexOf("=") + 1):"";
+ const [docList,setDocList] = useState<IDocumentList[]>([]) 
+ 
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -21,12 +36,30 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
     };
   }, [closeHandler]);
 
-  const documentsList=[
-    {title:"Кредит№001.pdf", src:"Кредит№001.pdf"},
-    {title:"Кредит№001.pdf", src:"Кредит№001.pdf"},
-    {title:"Кредит№001.pdf", src:"Кредит№001.pdf"},
-    {title:"Кредит№001.pdf", src:"Кредит№001.pdf"},
-  ];
+  useEffect(()=>{
+    ApiService.getDocuments(id,"document")
+    .then((response)=>{
+      setDocList(response.data)
+    })
+  },[id])
+  function downloadFile(fileUrl:string) {
+    const filename = fileUrl.split('/').pop();
+    fetch(fileUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename?filename:"file");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error('Error downloading file:', error);
+      });
+  }
 
   const userList=[
     {name:"Равшан Азимжонов", role:"Админ", date:"01.01.2024", time:"09:08", comment:"“Постоянный клиент, регулярно обращается. Надежный, всегда вовремя выкупает имущество.”", gender:"FEMALE"},
@@ -39,12 +72,12 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
         <CollapseWrapper title="Документы  (4)" >
           <>
           <ul className="list-none">
-            {documentsList.map((item,idx)=>{
+            {docList.map((item,idx)=>{
               return(
                 <li className="bg-transparent/5 py-2 px-6 mb-2 rounded-lg text-sm flex items-center justify-between" key={idx} >
-                  {item.title}
+                  {item.title ? item.title : "Кредит№001.pdf"}
                   
-                <button className="hover:scale-125 transition-all duration-300 rounded-full ml-2 cursor-pointer" type="button" ><SVGComponent title="uploadFile"/></button>
+                <button className="hover:scale-125 transition-all duration-300 rounded-full ml-2 cursor-pointer" onClick={() => downloadFile(item.document_url)} type="button" ><SVGComponent title="uploadFile"/></button>
 
                 </li>
               )

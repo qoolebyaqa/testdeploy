@@ -1,50 +1,31 @@
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import DetailedRegistration from "./DetailedRegistration";
 import GeneralUserInfo from "./GeneralUserInfo";
-import NewEmployeeBtns from "./NewEmployeeBtns";
-import { ApiService } from "../../helpers/API/ApiSerivce";
-import { useNavigate } from "react-router";
+import NewEmployeeAccessBtns from "./NewEmployeeAccessBtns";
+import { userFormValue } from "../../helpers/validator";
+import FilesContainer from "./FilesContainer";
+import DayOffSection from "./DayOffSection";
 
 function NewEmployeeContent({currentUser, etag}: {currentUser?: any, etag?: string}) {
-  const [formValues, setFormValues] = useState<{[key:string]: string}>(currentUser ? currentUser : {gender: 'MALE'})
-  const [etagState, setEtagState] = useState(etag || '')
-  const navigate = useNavigate();
-
+  const [generalUserForm, setgeneralUserForm] = useState<userFormValue>(currentUser ? currentUser : {})
  
 
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
-    setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
-  }
-
-  const handleSubmitUser = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const { id, first_name, last_name, middle_name, login, phone_number, language, job_title, role_id, filial_id } = formValues
-    const userDataToPost:any = { id, first_name, last_name, middle_name, login, phone_number, language, job_title, role_id, filial_id };
-    userDataToPost.type = 'INTERNAL'
-    try {
-      if (etagState) {
-        await ApiService.updateUser(userDataToPost, etagState);
-        navigate('/employees')
-      } else {
-        const createdUser = await ApiService.createUser(userDataToPost);
-        const userResponse = await ApiService.getUser(createdUser.data.id);
-        valueChangeHandler({title: "id", value: createdUser.data.id})
-        setEtagState(userResponse.headers.etag)
-      }
-      console.log(userDataToPost)
-    } catch (err) {
-      console.log(err);
-    }
+    setgeneralUserForm(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
   }
 
   return (
     <>
-      <NewEmployeeBtns />         
-      <form className="flex bg-[#EFF2F4] justify-center gap-5 py-2" id="userForm" onSubmit={handleSubmitUser}>
-        <GeneralUserInfo onInputChange={valueChangeHandler} formValues={formValues} existEmployee={!!etagState}/>
-        <DetailedRegistration onInputChange={valueChangeHandler} formValues={formValues}/>
-      </form>
+      <NewEmployeeAccessBtns generalFormValues={generalUserForm}/>         
+      <div className="flex bg-[#EFF2F4] justify-center gap-2 py-2">
+        <GeneralUserInfo formValues={generalUserForm} existEmployee={etag}/>
+        <DetailedRegistration onInputChange={valueChangeHandler} /* formValues={formValues} *//>        
+        <div className="flex flex-col gap-2">        
+          <FilesContainer />
+          <DayOffSection />
+        </div>
+      </div>
     </>
   );
 }

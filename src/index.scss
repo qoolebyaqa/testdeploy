@@ -45,8 +45,6 @@ button {
   border-radius: 9px;
 }
 button:disabled {
-  color: rgb(189, 188, 188);
-  opacity: 0.7;
   cursor: not-allowed;
 }
 input::placeholder {

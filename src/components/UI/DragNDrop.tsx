@@ -4,13 +4,15 @@ import { RcFile } from "antd/es/upload";
 import { useRef, useState } from "react";
 import SVGComponent from "./SVGComponent";
 import Carousel from "./Carousel";
-import { FileData } from "../../helpers/types";
+import { FileData, IFileSlide } from "../../helpers/types";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import { createPortal } from "react-dom";
 import Confirmation from "./Confirmation";
 
-export interface IFileSlide {fileId: string, fileUrl: string}
-export type UploadedFile = {document_id: string, document_url: string}
+export type UploadedFile = {document_id: string, document_url: string};
+
+
+const formats = ['jpg', 'png', 'jpeg', 'pdf'];
 
 function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multiple?: boolean, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[], clientId?:string }) {
   const reFormat = docList && docList.reduce((acc, cur) => {
@@ -53,10 +55,6 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
   }
 
   async function readImage(_originFile: RcFile, uploadedFile: UploadedFile, deleteAction?: Boolean) {
-    /* console.log(uploadedFile)
-    const reader = new FileReader();
-    reader.readAsDataURL(originFile);
-    reader.onload = async () => { */
       if(deleteAction) {
         console.log(previewImage)
         return;
@@ -67,8 +65,6 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       } else {
         setPreviewImage([{fileId: uploadedFile.document_id, fileUrl: uploadedFile.document_url}]);
       }
-   /*  };
-    reader.onerror = (error) => console.log(error); */
   }
   
   const props: UploadProps = {
@@ -84,7 +80,12 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       return true;
     },
     customRequest: async (options) => {
-      const { file, onSuccess, onError } = options;      
+      const { file, onSuccess, onError } = options;
+      const fileName = (file as File).name.toString();
+      if(!formats.includes(fileName.slice(fileName.lastIndexOf('.') + 1))) {
+        message.error(`${(file as File).name} wrong format`);
+        return Upload.LIST_IGNORE
+      }
       try {
         const uploadedFile = uploadFile && await uploadFile({ file });
         console.log(uploadedFile)
@@ -101,23 +102,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
     },
     
     async onRemove(_e) {   
-      /* if (e.originFileObj) {await readImage(e.originFileObj, true)} */
     },
-    /* async onChange(info) {
-      const valid = await isValid();
-      if (!valid) {
-        return;
-      }
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`); 
-      }
-    }, */
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
     },
@@ -126,7 +111,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
     <>
       {multiple && (
         <div className="flex items-center justify-between">
-          <p className="text-lombard-text-black font-bold">Копия документов</p>
+          <h4 className="text-lombard-text-black">Копия документов</h4>
           <div className="flex">
             <button
               className="p-1"
@@ -174,12 +159,12 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       <Dragger {...props} className="customDragger">
         {previewImage.length > 0 ? (
           <div ref={dragger}>
-            <img
+            {/* <img
                 src="/dragIdCard.png"
                 alt="idcard_uploader"
                 className="w-[51px] h-[30px] mx-auto"
               />
-            <p className="text-[10px] font mb-4">Загрузите файл или перетащите файл</p>
+            <p className="text-[10px] font mb-4">Загрузите файл или перетащите файл</p> */}
             <div
               onClick={(e) => e.stopPropagation()}
               className={`${

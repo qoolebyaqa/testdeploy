@@ -228,7 +228,7 @@ const CustomInput = ({
         />
       </div>
       ) : (
-        <div className="relative">
+        <div className="relative flex flex-col">
           {label && <label htmlFor={name} className={`font-bold ${labelStyles ? labelStyles : ''}`}>
             {label}
           </label>}
