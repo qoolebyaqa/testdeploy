@@ -461,7 +461,7 @@ export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 export const getColumnsForClients = (
   setSort: any,
   currentSort: string,
-  setExternalFilters?: any
+  _setExternalFilters?: any
 ): TableColumnsType<IDataClientType> => [
   {
     title: "№",
@@ -477,11 +477,11 @@ export const getColumnsForClients = (
     title: titleWIthIcon("ФИО клиента", setSort, currentSort, "first_name"),
     key: "first_name",
     dataIndex: "first_name",
-    onHeaderCell: () => {
+    /* onHeaderCell: () => {
       return {
         onClick: () => setExternalFilters(),
       };
-    },
+    }, */
     render: (_text, record) =>
       `${record.first_name} ${record.last_name} ${record.middle_name || ""}`,
   },
