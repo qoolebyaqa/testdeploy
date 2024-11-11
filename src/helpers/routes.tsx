@@ -363,7 +363,7 @@ async function clientLoader({ params }: any) {
   } else {
     try {
       const response = await ApiService.getCustomer(id);
-      const documentsResponse = await ApiService.getDocuments(id);
+      const documentsResponse = await ApiService.getDocuments(id, 'passport');
       if (response.status === 401 || documentsResponse.status === 401) {
         return redirect("/auth");
       } else {
