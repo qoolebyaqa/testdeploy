@@ -30,6 +30,7 @@ import Monitoring from "../pages/Monitoring";
 import NotFound from "../pages/NotFound";
 import { clientActions } from "../store/client";
 import { employeeActions } from "../store/employee";
+import Profile from "../pages/Profile";
 
 const childrenCashOperationsRoutes = [
   { path: "debet", element: <CashDebet /> },
@@ -48,6 +49,15 @@ const childrenRoutes = [
       </RouteProtector>
     ),
     title: "Главная страница",
+  },
+  {
+    path: "/profile",
+    element: (
+      <RouteProtector allowedRoles={["OPERATOR", "ADMIN", "ACCOUNTANT"]}>
+        <Profile />
+      </RouteProtector>
+    ),
+    title: "Профиль",
   },
   {
     path: "/clients",

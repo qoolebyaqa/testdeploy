@@ -187,7 +187,7 @@ function GeneralClientInfo({
         <div className="flex justify-between gap-x-[1px]">
           <CustomInput
             control={control}
-            type="text"
+            type="number"
             name="pin"
             label="JSHIR"
             placeholder="12345678912345"
@@ -255,8 +255,9 @@ function GeneralClientInfo({
         />
         <CustomInput
           control={control}
-          type="phone"
+          type="number"
           name="phone_number"
+          maxLength={12}
           label="Номер телефона"
           placeholder="998 (__) ___-__-__"
           handleChange={handleInput}

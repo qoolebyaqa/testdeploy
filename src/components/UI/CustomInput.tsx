@@ -147,8 +147,9 @@ const CustomInput = ({
             defaultValue={value}
             render={({field}) => {              
               const handleInputChange = (value:string) => {
-                field.onChange(value);
-                handleChange && handleChange({title: name, value: value });
+                const modifiedValue = value.trim().slice(0, maxLength)
+                field.onChange(modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1) : modifiedValue);
+                handleChange && handleChange({title: name, value: modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1) : modifiedValue});
               };
               return (
                 <>

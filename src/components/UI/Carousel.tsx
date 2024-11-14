@@ -20,12 +20,13 @@ function Carousel({
   currentIndex: number;
 }) {
   const formats = ['jpg', 'png', 'jpeg'];
-  const [loading ,setLoading] = useState(true);
+  const [loading ,setLoading] = useState(false);
   const [blobSlides, setBlobSlides] = useState<IBase64Slide[]>([]);
   const [previewPdf, setPreviewPdf] = useState('');
   useEffect(() => {
     async function convertor() {
       try {
+        setLoading(true)
         const blobs = await convertSlides(slides);
         setBlobSlides(blobs);
       } catch (err) {

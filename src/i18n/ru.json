@@ -1,0 +1,41 @@
+{
+  "locales": {
+    "uz": "Узбекский",
+    "ru": "Русский"
+  },
+  "roles": {
+    "operator": "Сотрудник",
+    "admin": "Администратор",
+    "accountant": "Бухглатер"
+  },
+  "allbtns": {
+    "save": "Сохранить",
+    "changePass": "Изменить пароль",
+    "logout": "Выйти из системы"
+  },
+  "navigation": {
+    "operator": {
+      "clients": "Клиенты",
+      "contracts": "Договоры",
+      "katm": "КАТМ",
+      "messaging": "Рассылка"
+    }
+  },
+  "profile": {
+    "language": "Язык интерфейса",
+    "logoutMsg": "Вы действительно хотите выйти?",
+    "logoutmsgTitle": "Подтвердите"
+  },
+  "clients": {
+    "columns": {
+      "id": "ID Клиента",
+      "fio": "ФИО Клиента",
+      "jshir": "ПИНФЛ",
+      "passport": "Паспортные данные",
+      "phone": "Телефонный номер",
+      "birthday": "Дата рождения",
+      "sum": "Сумма займа",
+      "status": "Статус"
+    }
+  }
+}

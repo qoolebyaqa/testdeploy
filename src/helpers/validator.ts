@@ -52,7 +52,8 @@ export const clientFormSchema = yup.object().shape({
   phone_number: yup.number().typeError('Заполните номер телефона клиента').test('length', 'Введите действительный телефонный номер', (val:number | undefined) => val?.toString().length === 12).required('Заполните номер телефона клиента'),
   pin: yup.string(),
   birth_date: yup.string(),
-  passport_series: yup.string().required('Укажите серию паспорта'),
+  passport_series: yup.string().required('Укажите серию паспорта')
+  .matches(/^[a-zA-Z]+$/, 'Введите действительную серию паспорта'),
   passport_number: yup.number().required('Укажите номер паспорта'),
   passport_issue_date: yup.string(),
   passport_expire_date: yup.string(),
@@ -97,10 +98,12 @@ export const userFormSchema = yup.object().shape({
 
 export const sendQueueReqSchema = yup.object().shape({
   template_id: yup.string().required(),
+  group_id: yup.string().required(),
 })
 
 export type QueueReq = {
   template_id: string,
+  group_id: string,
   scheduled_at?: string,
 /*   recipient_type: 'GROUP' | 'CLIENT' | 'ALL', */
 }

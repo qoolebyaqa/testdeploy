@@ -15,6 +15,9 @@ const smsSlice = createSlice({
       state.selectedSMS = state.selectedSMS.length > 0 ?
       [] : state.allSMS
     },
+    clearSMSSelection(state){
+      state.selectedSMS = []
+    },
     setAllSmsList(state, smsList) {
       state.allSMS = smsList.payload
     }

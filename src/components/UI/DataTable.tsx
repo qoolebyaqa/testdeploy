@@ -16,7 +16,8 @@ export interface IDataTable {
   settedFilters?: string,
   rowClasses?: (record: any) => string, 
   sortStr?: string,
-  tableSize?: 'small' | 'large' | 'middle'
+  tableSize?: 'small' | 'large' | 'middle',
+  triggerUpdate?: boolean
 }
 
 interface TableParams {
@@ -37,7 +38,8 @@ function DataTable({
   settedFilters,
   sortStr,
   tableSize,
-  rowClasses
+  rowClasses,
+  triggerUpdate
 }: IDataTable) {
 
   const [results, setResults] = useState<DataTableType[]>();
@@ -50,6 +52,7 @@ function DataTable({
   });
   const fetchData = async () => {
     setLoading(true);
+    try {
     if(tableParams.pagination?.current && tableParams.pagination?.pageSize) {
       const response = endPoint && await endPoint(
         tableParams.pagination?.current - 1, 
@@ -63,7 +66,6 @@ function DataTable({
       })
       setResults(dataWithIndexes);
       setDataToState && setDataToState(response.data.content);
-      setLoading(false);
       setTableParams({
         ...tableParams,
         pagination: {
@@ -71,7 +73,11 @@ function DataTable({
           total: response.data.pageable.total_elements,
         },
       });
-
+      }
+    } catch (err){
+      console.log(err)
+    } finally {      
+      setLoading(false);
     }
   };
 
@@ -90,6 +96,7 @@ function DataTable({
     tableParams.pagination?.pageSize,
     sortStr,
     settedFilters,
+    triggerUpdate
   ]);
 
   const pageSizeToPagination = tableParams.pagination?.pageSize && tableParams.pagination?.total && tableParams.pagination?.total > tableParams.pagination?.pageSize ?

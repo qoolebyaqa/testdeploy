@@ -19,6 +19,7 @@ function NotificationContent() {
   const [externalFilters, setExternalFilters] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReSubmitDialog, setShowReSubmitDialog] = useState(false);
+  const [updateTable, setUpdateTable] = useState(false);
   const selectedRowKeys = useAppSelector((state) => state.smsStore.selectedSMS);
   const allSms = useAppSelector((state) => state.smsStore.allSMS);
   const dispatch = useActions();
@@ -78,6 +79,8 @@ function NotificationContent() {
     try {
       const idsToDelete = selectedRowKeys.map((elem) => elem.id);
       await ApiService.deleteFromQueue(idsToDelete);
+      dispatch.clearSMSSelection();
+      setUpdateTable(prev => !prev);
     } catch (err) {
       console.log(err);
     } finally {      
@@ -89,6 +92,8 @@ function NotificationContent() {
     try {
       const idsToResend = selectedRowKeys.map((elem) => elem.id);
       await ApiService.retrySendQueue(idsToResend);
+      dispatch.clearSMSSelection();
+      setUpdateTable(prev => !prev);
     } catch (err) {
       console.log(err);
     } finally {
@@ -166,6 +171,7 @@ function NotificationContent() {
         pagination
         setDataToState={setSMS}
         settedFilters={externalFilters}
+        triggerUpdate={updateTable}
       />
       {showSendSmsDialog &&
         createPortal(

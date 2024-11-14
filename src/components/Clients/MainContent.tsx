@@ -42,7 +42,7 @@ function MainContent() {
   }
 
   const columnsForClients = useCallback(() => {
-    return getColumnsForClients(setCurrentSort, currestSort, setExternalFilters);
+    return getColumnsForClients(setCurrentSort, currestSort);
   }, [currestSort]);
 
   async function filterSubmit(formData: any) {

@@ -4,8 +4,10 @@ import HeaderUserBlock from "./HeaderUserBlock";
 import SVGComponent from "../UI/SVGComponent";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import { getUserNav } from "../../helpers/fnHelpers";
+import { useTranslation } from "react-i18next";
 function HeaderMainNav() {
-  const {pathname} = useLocation();
+  const {pathname} = useLocation();  
+  const { t } = useTranslation()
   const currentFilial = useAppSelector(state => state.filialStore.filialChoosenOne)
   const currentContract = useAppSelector(state => state.contractStore.contractChoosenOne)
   const currentKATM = useAppSelector(state => state.katmStore.katmChoosenOne)
@@ -53,7 +55,7 @@ function HeaderMainNav() {
                 {navList.map((navItem) => (
                   navItem &&
                   <HeaderNavItem
-                    titleBtn={navItem.titleBtn}
+                    titleBtn={t(navItem.titleBtn)}
                     svgCase={navItem.svgCase}
                     path={navItem.path}
                     key={navItem.path}

@@ -48,9 +48,10 @@ function PassportInputs({
             defaultValue={seriesVal}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
-                field.onChange(value);
+                const modifiedValue = value.trim().slice(0, 2)
+                field.onChange(modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1).toUpperCase() : modifiedValue.toUpperCase());
                 handleChange &&
-                  handleChange({ title: "passport_series", value: value });
+                  handleChange({ title: "passport_series", value: modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1).toUpperCase() : modifiedValue.toUpperCase() });
               };
               return (
                 <input
@@ -59,11 +60,10 @@ function PassportInputs({
                   id={name + "1"}
                   placeholder="AA"
                   required={required}
-                  maxLength={2}
                   value={
                     seriesVal !== undefined ? seriesVal : field.value || ""
                   }
-                  className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey w-10 mr-2 px-[8px]"
+                  className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey w-[46px] mr-2 px-[8px]"
                   onChange={(e) => handleOnChange(e.target.value)}
                 />
               );
@@ -75,9 +75,9 @@ function PassportInputs({
             defaultValue={passNum}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
-                field.onChange(value);
+                field.onChange(value.slice(0, 7));
                 handleChange &&
-                  handleChange({ title: "passport_number", value: value });
+                  handleChange({ title: "passport_number", value: value.slice(0, 7) });
               };
               return (
                 <input

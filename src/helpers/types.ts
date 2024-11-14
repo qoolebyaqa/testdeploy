@@ -1,8 +1,8 @@
 
 export enum ROLE_ENUM {
-  OPERATOR = 'Сотрудник',
-  ADMIN = 'Админ',
-  ACCOUNTANT = 'Бухгалтер'
+  OPERATOR = 'roles.operator',
+  ADMIN = 'roles.admin',
+  ACCOUNTANT = 'roles.accountant'
 } 
 
 export enum NOTIFICATION_STATUS {

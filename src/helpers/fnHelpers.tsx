@@ -16,6 +16,9 @@ import {
   IBase64Slide,
 } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
+import i18next from '../i18n.js'
+
+
 
 export async function convertSlides(
   slides: IFileSlide[]
@@ -125,10 +128,10 @@ export function getUserNav(user: string) {
     ];
   }
   return [
-    { titleBtn: "Клиенты", svgCase: "clients", path: "/clients" },
-    { titleBtn: "Договоры", svgCase: "contracts", path: "/contracts" },
-    { titleBtn: "КАТМ", svgCase: "KATM", path: "/katm" },
-    { titleBtn: "Рассылка", svgCase: "sms", path: "/sms" },
+    { titleBtn: 'navigation.operator.clients', svgCase: "clients", path: "/clients", },
+    { titleBtn: "navigation.operator.contracts", svgCase: "contracts", path: "/contracts" },
+    { titleBtn: "navigation.operator.katm", svgCase: "KATM", path: "/katm" },
+    { titleBtn: "navigation.operator.messaging", svgCase: "sms", path: "/sms" },
   ];
 }
 
@@ -461,7 +464,7 @@ export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 export const getColumnsForClients = (
   setSort: any,
   currentSort: string,
-  _setExternalFilters?: any
+  /* setExternalFilters?: any */
 ): TableColumnsType<IDataClientType> => [
   {
     title: "№",
@@ -469,12 +472,12 @@ export const getColumnsForClients = (
     dataIndex: "index",
   },
   {
-    title: titleWIthIcon("ID Клиента", setSort, currentSort, "id"),
+    title: titleWIthIcon(i18next.t('clients.columns.id'), setSort, currentSort, "id"),
     key: "id",
     dataIndex: "id",
   },
   {
-    title: titleWIthIcon("ФИО клиента", setSort, currentSort, "first_name"),
+    title: titleWIthIcon(i18next.t('clients.columns.fio'), setSort, currentSort, "first_name"),
     key: "first_name",
     dataIndex: "first_name",
     /* onHeaderCell: () => {
@@ -486,34 +489,34 @@ export const getColumnsForClients = (
       `${record.first_name} ${record.last_name} ${record.middle_name || ""}`,
   },
   {
-    title: "ПИНФЛ",
+    title: i18next.t('clients.columns.jshir'),
     key: "pin",
     dataIndex: "pin",
   },
   {
-    title: "Паспорт",
+    title: i18next.t('clients.columns.passport'),
     key: "passport_series",
     dataIndex: "passport_series",
     render: (_text, record) =>
       `${record.passport_series || ""} ${record.passport_number || "-"}`,
   },
   {
-    title: "Номер телефона",
+    title: i18next.t('clients.columns.phone'),
     key: "phone_number",
     dataIndex: "phone_number",
   },
   {
-    title: "Дата рождения",
+    title: i18next.t('clients.columns.birthday'),
     key: "birth_date",
     dataIndex: "birth_date",
   },
   {
-    title: "Сумма займа",
+    title: i18next.t('clients.columns.sum'),
     key: "sum",
     dataIndex: "sum",
   },
   {
-    title: "Статус",
+    title: i18next.t('clients.columns.status'),
     key: "status",
     dataIndex: "status",
   },

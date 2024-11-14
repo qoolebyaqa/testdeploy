@@ -1,0 +1,41 @@
+{
+  "locales": {
+    "uz": "O'zbekcha",
+    "ru": "Ruscha"
+  },
+  "roles": {
+    "operator": "Operator",
+    "admin": "Admin",
+    "accountant": "Hisobchi"
+  },
+  "allbtns": {
+    "save": "Saqlash",
+    "changePass": "Parolni o'zgartirish",
+    "logout": "Chiqish"
+  },
+  "navigation": {
+    "operator": {
+      "clients": "Klientlar",
+      "contracts": "Kontraktlar",
+      "katm": "KATM",
+      "messaging": "Axborot"
+    }
+  },
+  "profile": {
+    "language": "Interfeys tili",
+    "logoutMsg": "Haqiqatan ham tizimni tark etmoqchimisiz?",
+    "logoutmsgTitle": "Tasdiqlang"
+  },
+  "clients": {
+    "columns": {
+      "id": "ID Klient",
+      "fio": "Ismi Klient",
+      "jshir": "PINFL",
+      "passport": "Passport raqami",
+      "phone": "Telephone raqami",
+      "birthday": "Tug'ilgan kun",
+      "sum": "Kredit miqdori",
+      "status": "status"
+    }
+  }
+}
