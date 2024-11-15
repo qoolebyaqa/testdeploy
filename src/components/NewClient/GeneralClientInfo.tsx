@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { clientFormSchema, clientFormValue } from "../../helpers/validator";
 import { useRef } from "react";
+import { nonNumberValue } from "../../helpers/fnHelpers";
 
 const regDropDowns = [
   {
@@ -212,6 +213,7 @@ function GeneralClientInfo({
               placeholder="Фамилия"
               handleChange={handleInput}
               value={inputsValues.first_name}
+              modificator={nonNumberValue}
               errorMsg={errors.first_name?.message}
             />
             <CustomInput
@@ -220,6 +222,7 @@ function GeneralClientInfo({
               name="last_name"
               placeholder="Имя"
               handleChange={handleInput}
+              modificator={nonNumberValue}
               value={inputsValues.last_name}
               errorMsg={errors.last_name?.message}
             />
@@ -230,6 +233,7 @@ function GeneralClientInfo({
             name="middle_name"
             placeholder="Отчество"
             handleChange={handleInput}
+            modificator={nonNumberValue}
             value={inputsValues.middle_name}
           />
         </div>

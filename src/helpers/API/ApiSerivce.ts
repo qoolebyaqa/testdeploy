@@ -13,6 +13,8 @@ const endPoints = {
   
   customers: '/api/v1/customers',
 
+  loans: '/api/v1/loans',
+
   users: '/api/v1/users',
 
   notificationTemplates: '/api/v1/notification-templates',
@@ -91,6 +93,17 @@ export const ApiService = {
     const response = await privateAxios.delete(`${endPoints.customers}/${customerId}/documents/${docId}`);
     return response;
   },
+
+  //contracts: 
+  getLoanProducts: async() => {
+    const response = await privateAxios.get(`${endPoints.loans}/products`);
+    return response;
+  },
+  postLoanProduct: async(formData: {[key:string]: string}) => {
+    const response = await privateAxios.post(endPoints.loans, formData);
+    return response;
+  },
+  
   //users:
   getUsers: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
     const response = await privateAxios.get(`${endPoints.users}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);

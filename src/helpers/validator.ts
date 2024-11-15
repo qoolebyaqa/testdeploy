@@ -54,7 +54,7 @@ export const clientFormSchema = yup.object().shape({
   birth_date: yup.string(),
   passport_series: yup.string().required('Укажите серию паспорта')
   .matches(/^[a-zA-Z]+$/, 'Введите действительную серию паспорта'),
-  passport_number: yup.number().required('Укажите номер паспорта'),
+  passport_number: yup.number().typeError('Укажите номер паспорта').required('Укажите номер паспорта'),
   passport_issue_date: yup.string(),
   passport_expire_date: yup.string(),
   passport_issue_place: yup.string(),

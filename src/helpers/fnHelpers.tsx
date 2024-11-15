@@ -18,7 +18,14 @@ import {
 import SVGComponent from "../components/UI/SVGComponent";
 import i18next from '../i18n.js'
 
+export function nonSpacedNonSymbols(value: string) {
+  const nonSpaced = value.trim()
+  return nonSpaced.match(/[^\w]/) ? nonSpaced.slice(0, nonSpaced.length - 1) : nonSpaced
+} 
 
+export function nonNumberValue(value: string) {
+  return value.match(/[0-9]/) ? value.slice(0, value.length - 1) : value
+} 
 
 export async function convertSlides(
   slides: IFileSlide[]

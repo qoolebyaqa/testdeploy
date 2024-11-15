@@ -5,6 +5,7 @@ import SVGComponent from "./SVGComponent";
 import { ChangeEvent } from "react";
 import ValidationError from "./ValidationError";
 import { Controller } from "react-hook-form";
+import { nonSpacedNonSymbols } from "../../helpers/fnHelpers";
 // @ts-nocheck
 interface ICustomInput {
   id?: string;
@@ -25,7 +26,8 @@ interface ICustomInput {
   control?: any;
   showTime?: boolean | undefined;
   containedLabel?: string;
-  isDisabled?: boolean
+  isDisabled?: boolean;
+  modificator?: (val: string) => string
 }
 
 const CustomInput = ({
@@ -47,7 +49,8 @@ const CustomInput = ({
   control,
   showTime,
   containedLabel,
-  isDisabled
+  isDisabled,
+  modificator
 }: ICustomInput) => {
   const dateFormatList = ["DD/MM/YYYY", "YYYY-MM-DD"]
   dayjs.extend(customParseFormat);
@@ -147,9 +150,9 @@ const CustomInput = ({
             defaultValue={value}
             render={({field}) => {              
               const handleInputChange = (value:string) => {
-                const modifiedValue = value.trim().slice(0, maxLength)
-                field.onChange(modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1) : modifiedValue);
-                handleChange && handleChange({title: name, value: modifiedValue.match(/[^\w]/) ?  modifiedValue.slice(0, modifiedValue.length - 1) : modifiedValue});
+                const modifiedValue = modificator ? modificator(nonSpacedNonSymbols(value).slice(0, maxLength)) : nonSpacedNonSymbols(value).slice(0, maxLength)
+                field.onChange(modifiedValue);
+                handleChange && handleChange({title: name, value: modifiedValue});
               };
               return (
                 <>

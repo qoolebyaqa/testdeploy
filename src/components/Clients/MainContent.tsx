@@ -16,21 +16,31 @@ function MainContent() {
   const [externalFilters, setExternalFilters] = useState("");
   const [currestSort, setCurrentSort] = useState("");
 
-  const supportedFilterList:any =  [
-    { name: 'first_name', type: 'text', label: 'Фамилия' },
-    { name: 'last_name', type: 'text', label: 'Имя' },
-    { name: 'pinfl', type: 'text', label: 'ПИНФЛ' },
-    { name: 'passport', type: 'text', label: 'Паспорт' },
-    { name: 'phone_number', type: 'number', label: 'Номер телефона' },
-    { name: 'type', type: 'dropdown', label: 'Тип', items: [
-      { label: "Потенциальный клиент", key: 1, enumvalue: 'LEAD'}, 
-      { label: "Клиент", key: 2, enumvalue: 'CLIENT'},
-      { label: "Сотрудник", key: 3, enumvalue: 'EMPLOYEE'}
-    ]}
-  ]
-  
+  const supportedFilterList: any = [
+    { name: "first_name", type: "text", label: "Фамилия" },
+    { name: "last_name", type: "text", label: "Имя" },
+    { name: "pinfl", type: "text", label: "ПИНФЛ" },
+    { name: "passport", type: "text", label: "Паспорт" },
+    { name: "phone_number", type: "number", label: "Номер телефона" },
+    {
+      name: "type",
+      type: "dropdown",
+      label: "Тип",
+      items: [
+        { label: "Потенциальный клиент", key: 1, enumvalue: "LEAD" },
+        { label: "Клиент", key: 2, enumvalue: "CLIENT" },
+        { label: "Сотрудник", key: 3, enumvalue: "EMPLOYEE" },
+      ],
+    },
+  ];
+
   useEffect(() => {
     dispatch.setAuthLoading(false);
+    /* const fetcher = async () => {
+      const response = await ApiService.getLoanProducts();
+      console.log(response);
+    };
+    fetcher(); */
   }, []);
 
   const setClients = (arr: any) => {
@@ -56,11 +66,16 @@ function MainContent() {
         <h3 className="text-black font-extrabold text-[18px]">Клиенты</h3>
         <div className="flex gap-2 items-center justify-center">
           <Filters
-            filters={<ClientFilters setFilters={filterSubmit} activeFilter={externalFilters}/>}
+            filters={
+              <ClientFilters
+                setFilters={filterSubmit}
+                activeFilter={externalFilters}
+              />
+            }
             isVisible={showFilterDialog}
             setVisibility={setShowFilterDialog}
             activeFilter={externalFilters}
-            clearFilters={() => setExternalFilters('')}
+            clearFilters={() => setExternalFilters("")}
             supportedFilters={supportedFilterList}
             isDisabled
           />
