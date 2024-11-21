@@ -23,9 +23,10 @@ function NewClientBtns({ formId }: { formId?: string }) {
     setIsModalOpen(true)
   }
 
+  console.log(stepState)
 
   const buttons =
-  stepState.step === 'hold'
+  stepState.step !== 'initial'
       ? [
           {
             title: "Подтвердить",

@@ -26,7 +26,7 @@ export function generateBreads(stepName:string | null, maxStep: number) {
 
       return <div className="flex">
       {mappedArr.map(crumb => (
-        <p key={crumb.title} onClick={(e) => {e.stopPropagation(); store.dispatch(clientActions.setStepState({id: crumb.id, step: crumb.step}))}}> / {crumb.title}</p>))}
+        <p className="hover:cursor-pointer" key={crumb.title} onClick={(e) => {e.stopPropagation(); store.dispatch(clientActions.setStepState({id: crumb.id, step: crumb.step}))}}> / {crumb.title}</p>))}
       </div>
 }
 
