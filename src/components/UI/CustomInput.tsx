@@ -28,6 +28,7 @@ interface ICustomInput {
   containedLabel?: string;
   isDisabled?: boolean;
   modificator?: (val: string) => string
+  withSpaces?: boolean | undefined
 }
 
 const CustomInput = ({
@@ -50,7 +51,8 @@ const CustomInput = ({
   showTime,
   containedLabel,
   isDisabled,
-  modificator
+  modificator,
+  withSpaces
 }: ICustomInput) => {
   const dateFormatList = ["DD/MM/YYYY", "YYYY-MM-DD"]
   dayjs.extend(customParseFormat);
@@ -150,7 +152,7 @@ const CustomInput = ({
             defaultValue={value}
             render={({field}) => {              
               const handleInputChange = (value:string) => {
-                const modifiedValue = modificator ? modificator(nonSpacedNonSymbols(value).slice(0, maxLength)) : nonSpacedNonSymbols(value).slice(0, maxLength)
+                const modifiedValue = modificator ? modificator(nonSpacedNonSymbols(value, withSpaces).slice(0, maxLength)) : nonSpacedNonSymbols(value, withSpaces).slice(0, maxLength)
                 field.onChange(modifiedValue);
                 handleChange && handleChange({title: name, value: modifiedValue});
               };

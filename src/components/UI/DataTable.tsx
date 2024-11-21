@@ -1,7 +1,6 @@
 import { ConfigProvider, Table } from "antd";
 import type { TableColumnsType, TablePaginationConfig, TableProps } from "antd";
 import { DataTableType } from "../../../src/helpers/types";
-import { toDefineItemsPerPage } from "../../helpers/fnHelpers";
 import { useEffect, useState } from "react";
 import { SorterResult } from "antd/es/table/interface";
 
@@ -11,13 +10,14 @@ export interface IDataTable {
   selectHandler?: (...args: any[]) => void;
   classes?: string;
   pagination?: boolean;
-  endPoint?: (page: number, size: number, sort?:string, filters?: string) => Promise<any>;
+  endPoint?: any;
   setDataToState?: (arr: any[]) => any,
   settedFilters?: string,
   rowClasses?: (record: any) => string, 
   sortStr?: string,
   tableSize?: 'small' | 'large' | 'middle',
-  triggerUpdate?: boolean
+  triggerUpdate?: boolean,
+  searchVal?: string,
 }
 
 interface TableParams {
@@ -39,7 +39,8 @@ function DataTable({
   sortStr,
   tableSize,
   rowClasses,
-  triggerUpdate
+  triggerUpdate,
+  searchVal,
 }: IDataTable) {
 
   const [results, setResults] = useState<DataTableType[]>();
@@ -54,12 +55,24 @@ function DataTable({
     setLoading(true);
     try {
     if(tableParams.pagination?.current && tableParams.pagination?.pageSize) {
-      const response = endPoint && await endPoint(
-        tableParams.pagination?.current - 1, 
-        tableParams.pagination?.pageSize,
-        sortStr,
-        settedFilters
-      );
+      let response:any;
+      if(endPoint) {
+        if(searchVal) {
+          response = await endPoint(
+            searchVal,
+            tableParams.pagination?.current - 1, 
+            tableParams.pagination?.pageSize,
+            sortStr,
+          );
+        } else {
+          response = await endPoint(
+            tableParams.pagination?.current - 1, 
+            tableParams.pagination?.pageSize,
+            sortStr,
+            settedFilters
+          );
+        }
+      }
       const dataWithIndexes = response.data.content.map((val: any, index: number) =>{ 
         val.index = (response.data.pageable.page * response.data.pageable.size) + index + 1   
       return val
@@ -131,7 +144,7 @@ function DataTable({
                   pageSize: pageSizeToPagination,
                   position: ["bottomLeft"],
                   showSizeChanger: true,
-                  pageSizeOptions: tableParams.pagination?.total ? toDefineItemsPerPage(tableParams.pagination?.total) : [],
+                  pageSizeOptions: [10, 20, 30, 50],
                   locale: { items_per_page: `из ${tableParams.pagination?.total}` },
                   className: "flex justify-start w-full",
                   total: tableParams.pagination?.total,

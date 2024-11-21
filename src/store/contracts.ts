@@ -1,20 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { dataContracts } from "../helpers/fnHelpers";
 import { IDataContractType } from "../helpers/types";
 
 const contractsSlice = createSlice({
   name: "contracts",
   initialState: {
     contractChoosenOne: null,
-    allContracts: dataContracts,
+    contractList: [],
   } as {
     contractChoosenOne: null | IDataContractType | any;
-    allContracts: IDataContractType[];
+    contractList: IDataContractType[];
   },
   reducers: {
     setContractChoosenOne(state, selection) {
       state.contractChoosenOne = selection.payload;
     },
+    setContractsList(state, contractList) {
+      state.contractList = contractList.payload
+    }
   },
 });
 

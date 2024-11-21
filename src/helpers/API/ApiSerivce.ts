@@ -12,8 +12,11 @@ const endPoints = {
   passwordSetNew_post: '/api/v1/users/password',
   
   customers: '/api/v1/customers',
+  regions: '/api/v1/regions',
 
   loans: '/api/v1/loans',
+
+  collaterals: '/api/v1/collateral',
 
   users: '/api/v1/users',
 
@@ -77,8 +80,8 @@ export const ApiService = {
     const response = await privateAxios.put(`${endPoints.customers}/${formData.id}`, formData, {headers: {"If-Match": etag}});
     return response;
   },
-  searchCustomers: async(query: string) => {
-    const response = await privateAxios.get(`${endPoints.customers}/search?query=${query}`);
+  searchCustomers: async(query: string, page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.customers}/search?query=${query}&page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
   addDocument: async(formData: FormData, id: string) => {
@@ -91,7 +94,27 @@ export const ApiService = {
   },
   deleteDocument: async(customerId: string, docId: string) => {
     const response = await privateAxios.delete(`${endPoints.customers}/${customerId}/documents/${docId}`);
+    return response.data;
+  },
+  getRegions: async() => {
+    const response = await privateAxios.get(`${endPoints.regions}`);
     return response;
+  },
+  getCustomerComments: async(customerId:string) => {
+    const response = await privateAxios.get(`${endPoints.customers}/${customerId}/comments`)
+    return response
+  },
+  addCustomerComments: async(customerId:string,formData:{[key:string]: string}) => {
+    const response = await privateAxios.post(`${endPoints.customers}/${customerId}/comments`,formData)
+    return response
+  },
+  updateCustomerComments: async(customerId:string,commentId:string,formData:{[key:string]: string}) => {
+    const response = await privateAxios.put(`${endPoints.customers}/${customerId}/comments/${commentId}`,formData)
+    return response
+  },
+  deleteCustomerComments: async(customerId:string,commentId:string) => {
+    const response = await privateAxios.delete(`${endPoints.customers}/${customerId}/comments/${commentId}`)
+    return response
   },
 
   //contracts: 
@@ -99,8 +122,32 @@ export const ApiService = {
     const response = await privateAxios.get(`${endPoints.loans}/products`);
     return response;
   },
-  postLoanProduct: async(formData: {[key:string]: string}) => {
-    const response = await privateAxios.post(endPoints.loans, formData);
+  postLoanProduct: async(formData: {[key:string]: string | boolean | number}) => {
+    const response = await privateAxios.post(`${endPoints.loans}/products`, formData);
+    return response;
+  },  
+  getCollateralTypes: async() => {
+    const response = await privateAxios.get(`${endPoints.collaterals}-types`);
+    return response;
+  },
+  createCollateralType: async(name: string, formula_type: 'SIMPLE_MULTIPLICATION') => {
+    const response = await privateAxios.post(`${endPoints.collaterals}-types`, {name, formula_type, is_active: true});
+    return response;
+  },  
+  getCollateralPriceList: async(page:number = 0, size:number = 14, sortStr?: string) => {
+    const response = await privateAxios.get(`${endPoints.collaterals}-price-list?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  createCollateralPriceList: async(formData: {[key:string]: string | boolean | number | object}) => {
+    const response = await privateAxios.post(`${endPoints.collaterals}-price-list`, formData);
+    return response;
+  },  
+  createPOinHold: async(formData: {[key:string]: string | boolean | number}) => {
+    const response = await privateAxios.post(`${endPoints.loans}/hold`, formData);
+    return response;
+  },
+  getPaginatenPOs: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.loans}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
   

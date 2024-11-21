@@ -1,88 +1,163 @@
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import UsualSwitch from "../../UI/UsualSwitch";
-import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import DepositItem from "./DepositItem";
 import Deal from "./Deal";
 import CollapseWrapper from "../../UI/CollapseWrapper";
 import DealInfo from "./DealInfo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import DealInfoPopup from "./DealInfoPopup";
+import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
+import useActions from "../../../helpers/hooks/useActions";
+import { ApiService } from "../../../helpers/API/ApiSerivce";
+import { ICollateralType } from "../../../helpers/API/Schemas";
+import { convertDataToList4DropDown } from "../../../helpers/fnHelpers";
 
 function DepositDetails() {
-  const [formDepositItems, setFormDepositItems] = useState([{ id: Math.random().toFixed(8) }]);
-  const clientRegStep = useAppSelector(state => state.clientStore.regClientStep);
-  const [formValues, setFormValues] = useState<{[key:string]: string}>({})
+  const [formDepositItems, setFormDepositItems] = useState([
+    { id: Math.random().toFixed(8) },
+  ]);
+  const stepState = useAppSelector((state) => state.clientStore.stepState);
+  const [formValues, setFormValues] = useState<{ [key: string]: string }>({});
   const [showDialog, setShowDialog] = useState(false);
+  const dispatch = useActions();
+  const [collateralTypes, setCollateralTypes] = useState<ICollateralType[] | []>([]);
+
+  useEffect(() => {
+    async function getCollateral() {
+      const collateralTypeList = await ApiService.getCollateralTypes();
+      setCollateralTypes(collateralTypeList.data.content)
+      await ApiService.getCollateralPriceList();
+      /* await ApiService.createCollateralPriceList({
+        name: 'TestPrices List',
+        market_price: 1500000,
+        collateral_type_id: 2,
+        attribute_values: {},
+        estimated_price_min: 1000000,
+        estimated_price_max: 1200000,
+        valid_from: '2024-10-31'
+      }) */
+    }
+    getCollateral();
+  }, []);
 
   function pushIndexToDepositItems() {
     let newID = Math.random().toFixed(8);
-    while(formDepositItems.map(val => val.id).includes(newID)){
+    while (formDepositItems.map((val) => val.id).includes(newID)) {
       newID = Math.random().toFixed(8);
     }
-    setFormDepositItems(prev => ([...prev, {id: newID}]))
+    setFormDepositItems((prev) => [...prev, { id: newID }]);
   }
-  function deleteFromDepositItems(id:string) {
-    const filtredIndexes = formDepositItems.filter(item => item.id !== id)
+  function deleteFromDepositItems(id: string) {
+    const filtredIndexes = formDepositItems.filter((item) => item.id !== id);
     setFormDepositItems(filtredIndexes);
   }
 
-  function handleAddDataInputsToID(inputData:{[key:string]: string | string[]}) {
-    const updatedFormDepositItems = formDepositItems.map((item) => 
-    item.id === inputData.id ? {...item, ...inputData} : item);
-    setFormDepositItems(updatedFormDepositItems)
+  function handleAddDataInputsToID(inputData: {
+    [key: string]: string | string[];
+  }) {
+    const updatedFormDepositItems = formDepositItems.map((item) =>
+      item.id === inputData.id ? { ...item, ...inputData } : item
+    );
+    setFormDepositItems(updatedFormDepositItems);
   }
 
-  const paymentTypeChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
-    setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value})) 
-  }
+  const paymentTypeChangeHandler = (inputValue: {
+    id?: string;
+    title: string;
+    value: string | string[];
+  }) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [inputValue.title]: Array.isArray(inputValue.value)
+        ? inputValue.value[0]
+        : inputValue.value,
+    }));
+  };
 
-  const additionalFields = formValues.creditType !== 'CASH' ? 
-      (<div className="bg-lombard-bg-inactive-grey flex flex-col rounded-lg p-3 my-2">
+  const additionalFields =
+    formValues.creditType !== "CASH" ? (
+      <div className="bg-lombard-bg-inactive-grey flex flex-col rounded-lg p-3 my-2">
         <div className="flex gap-3">
-        <CustomInput
-          type="number"
-          name="bankCode"
-          label="Код Банка"
-          placeholder="0"
-        />
-        <CustomInput
-          type="number"
-          name="accountN"
-          label="Номер счета"
-          placeholder="0"
-        />
-        <CustomInput
-          type="number"
-          name="cardN"
-          label="Номер карты"
-          placeholder="0"
-        /></div>
-        {formValues.creditType === 'COMPLEX' && <div className="flex gap-3"><CustomInput
-          type="number"
-          name="toCard"
-          label="На карту"
-          placeholder="0"
-        />
-        <CustomInput
-          type="number"
-          name="byCash"
-          label="Наличные"
-          placeholder="0"
-        /></div>}
-      </div>) : <></>
+          <CustomInput
+            type="number"
+            name="bankCode"
+            label="Код Банка"
+            placeholder="0"
+          />
+          <CustomInput
+            type="number"
+            name="accountN"
+            label="Номер счета"
+            placeholder="0"
+          />
+          <CustomInput
+            type="number"
+            name="cardN"
+            label="Номер карты"
+            placeholder="0"
+          />
+        </div>
+        {formValues.creditType === "COMPLEX" && (
+          <div className="flex gap-3">
+            <CustomInput
+              type="number"
+              name="toCard"
+              label="На карту"
+              placeholder="0"
+            />
+            <CustomInput
+              type="number"
+              name="byCash"
+              label="Наличные"
+              placeholder="0"
+            />
+          </div>
+        )}
+      </div>
+    ) : (
+      <></>
+    );
 
   return (
     <div className="flex flex-col gap-3 pr-4">
-      <CollapseWrapper title="Договор" page="newClient" notActive={clientRegStep < 1}>
+      <CollapseWrapper
+        title="Договор"
+        page="newClient"
+        notActive={stepState.maxStep < 1}
+        shouldBeSelected={stepState.id === 1}
+        handleBlockSelect={
+          !(stepState.maxStep < 1)
+            ? () => dispatch.setStepState({id: 1, step: "hold" })
+            : undefined
+        }
+      >
         <Deal />
       </CollapseWrapper>
-      <CollapseWrapper title="Залог" page="newClient" notActive={clientRegStep < 2}>
+      <CollapseWrapper
+        title="Залог"
+        page="newClient"
+        notActive={stepState.maxStep < 2}
+        shouldBeSelected={stepState.id === 2}
+        handleBlockSelect={
+          !(stepState.maxStep < 2)
+            ? () => dispatch.setStepState({id: 2, step: "collateral" })
+            : undefined
+        }
+      >
         <ul>
-          {formDepositItems.map(item =>
-            <DepositItem item={item} key={item.id} formDepositItems={formDepositItems} pushNewIndex={pushIndexToDepositItems} deleteIndex={deleteFromDepositItems} submitInputData={handleAddDataInputsToID}/>
-          )}
+          {formDepositItems.map((item) => (
+            <DepositItem
+              item={item}
+              key={item.id}
+              formDepositItems={formDepositItems}
+              pushNewIndex={pushIndexToDepositItems}
+              deleteIndex={deleteFromDepositItems}
+              submitInputData={handleAddDataInputsToID}
+              collateralTypes={convertDataToList4DropDown(collateralTypes)}
+            />
+          ))}
         </ul>
         <div className="flex items-center my-5">
           <div className="flex gap-6">
@@ -107,18 +182,20 @@ function DepositDetails() {
           </div>
         </div>
       </CollapseWrapper>
-      <CollapseWrapper title="Выдача кредита" page="newClient" notActive={clientRegStep < 3}>
+      <CollapseWrapper
+        title="Выдача кредита"
+        page="newClient"
+        notActive={stepState.maxStep < 3}  
+        shouldBeSelected={stepState.id === 3}      
+        handleBlockSelect={
+          !(stepState.maxStep < 3)
+            ? () => dispatch.setStepState({id: 3, step: "deposit" })
+            : undefined
+        }
+      >
         <div className="flex gap-2  my-5">
-          <CustomInput
-            type="date"
-            name="dateIssue"
-            label="Дата выдачи"
-          />
-          <CustomInput
-            type="date"
-            name="datePayment"
-            label="Дата оплаты"
-          />
+          <CustomInput type="date" name="dateIssue" label="Дата выдачи" />
+          <CustomInput type="date" name="datePayment" label="Дата оплаты" />
           <CustomInput
             type="number"
             name="creditSumTo"
@@ -134,9 +211,9 @@ function DepositDetails() {
           <DropDown
             title="Выбрать"
             listOfItems={[
-              { label: "Наличные", key: 1, enumvalue: 'CASH' },
-              { label: "На карту", key: 2, enumvalue: 'CARD' },
-              { label: "Смешанная", key: 3, enumvalue: 'COMPLEX' },
+              { label: "Наличные", key: 1, enumvalue: "CASH" },
+              { label: "На карту", key: 2, enumvalue: "CARD" },
+              { label: "Смешанная", key: 3, enumvalue: "COMPLEX" },
             ]}
             name="creditType"
             label="Тип выдачи"
@@ -145,10 +222,25 @@ function DepositDetails() {
         </div>
         {additionalFields}
       </CollapseWrapper>
-      <CollapseWrapper title="Данные сделки" page="newClient" handleClick={() => setShowDialog(true)} notActive={clientRegStep < 4}>
+      <CollapseWrapper
+        title="Данные сделки"
+        page="newClient"
+        handleClick={() => setShowDialog(true)}
+        shouldBeSelected={stepState.id === 4}
+        notActive={stepState.maxStep < 4}        
+        handleBlockSelect={
+          !(stepState.maxStep < 4)
+            ? () => dispatch.setStepState({id: 4, step: "deal_info" })
+            : undefined
+        }
+      >
         <DealInfo />
       </CollapseWrapper>
-      {showDialog && createPortal(<DealInfoPopup clickHandler={() => setShowDialog(false)} />, document.body)}
+      {showDialog &&
+        createPortal(
+          <DealInfoPopup clickHandler={() => setShowDialog(false)} />,
+          document.body
+        )}
     </div>
   );
 }

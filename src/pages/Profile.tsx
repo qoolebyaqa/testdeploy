@@ -58,10 +58,6 @@ function Profile() {
         </div>
         <div className="flex gap-2">
           <ButtonComponent
-            titleBtn={t("allbtns.save")}
-            className="bg-lombard-btn-green"
-          />
-          <ButtonComponent
             titleBtn={t("allbtns.changePass")}
             className="bg-lombard-main-blue"
           />

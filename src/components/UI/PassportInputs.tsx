@@ -60,9 +60,7 @@ function PassportInputs({
                   id={name + "1"}
                   placeholder="AA"
                   required={required}
-                  value={
-                    seriesVal !== undefined ? seriesVal : field.value || ""
-                  }
+                  value={field.value }
                   className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey w-[46px] mr-2 px-[8px]"
                   onChange={(e) => handleOnChange(e.target.value)}
                 />
@@ -86,7 +84,7 @@ function PassportInputs({
                   id={name + "2"}
                   placeholder="123456789"
                   required={required}
-                  value={passNum ? passNum : ""}
+                  value={field.value}
                   className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey px-[11px] w-11/12"
                   onChange={(e) => handleOnChange(e.target.value)}
                   onWheel={(e: React.WheelEvent<HTMLInputElement>) =>

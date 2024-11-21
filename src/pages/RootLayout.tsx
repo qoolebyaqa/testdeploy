@@ -20,6 +20,8 @@ function RootLayout() {
           localStorage.setItem('rt', result.data.refresh_token);
           const res = await ApiService.getUserInfo();
           dispatch.setCurrentUser({role_id: res.data.role_id, name: res.data.first_name, login: res.data.login})
+          const regions = await ApiService.getRegions();
+          dispatch.setAllRegions(regions.data);
           setLoading(false);
         }
       } catch (error) {

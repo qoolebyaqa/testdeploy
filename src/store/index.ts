@@ -7,6 +7,7 @@ import employeelReducer from "./employee";
 import katmReducer from "./katm";
 import contractsReducer from "./contracts";
 import fingerPrintReducer from "./fingerPrint";
+import globalReducer from './globalSearch';
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     katmStore: katmReducer,
     contractStore: contractsReducer,
     fingerPrintReducer: fingerPrintReducer,
+    globalStore: globalReducer,
   },
 });
 

@@ -11,10 +11,12 @@ export interface ICollapseWrapper {
   page?: string,
   children: ReactNode;
   notActive?: boolean;
-  handleClick?: () => void
+  handleClick?: () => void;
+  handleBlockSelect?: () => void;
+  shouldBeSelected?: boolean | undefined
 }
 
-const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, notActive, handleClick }) => {
+const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, notActive, handleClick, handleBlockSelect, shouldBeSelected }) => {
   const [showTable, setShowTable] = useState(true);
   const animationVariantsTable = {open: { height: ['auto', 0] }, closed: { height: [0, 'auto'] }}
   const animationVariantsBtn = {open: { rotate: [85, 0] }, closed: { rotate: [0, 85] }}
@@ -28,7 +30,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
     }
   };
 
-  return ( <div className={`mx-2 bg-white rounded-2xl px-2 border-2 transition-all duration-100 ${page==='newClient' ? 'focus-within:border-lombard-main-blue focus-within:border-4': ''}`}>
+  return ( <div className={`mx-2 bg-white rounded-2xl px-2 border-2 transition-all duration-100 ${shouldBeSelected ? 'border-lombard-main-blue border-4': ''}`} onClick={(e) => {e.stopPropagation(); handleBlockSelect && handleBlockSelect()}}>
     <div className="text-black font-extrabold text-[18px] flex justify-between border-b-[1px] mb-2">
           <div className="flex items-center gap-2">
             <h3 className={`p-4 ${notActive ? 'text-lombard-borders-grey' : ''}`}>{title}</h3>

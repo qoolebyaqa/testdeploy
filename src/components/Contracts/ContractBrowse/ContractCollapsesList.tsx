@@ -1,6 +1,6 @@
-import { Table } from "antd";
+/* import { Table } from "antd"; */
 import CollapseWrapper from "../../UI/CollapseWrapper";
-import { columnsForContracts, dataContracts } from "../../../helpers/fnHelpers";
+/* import { columnsForContracts, dataContracts } from "../../../helpers/fnHelpers"; */
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import DottedBtn from "../../NewClient/DepositDetails/DottedBtn";
@@ -40,7 +40,7 @@ function ContractCollapsesList() {
 
   return (
     <div className="flex flex-col gap-3 pr-4 w-4/5">
-      <CollapseWrapper title="Договоры">
+      {/* <CollapseWrapper title="Договоры">
         <Table
           columns={columnsForContracts}
           dataSource={dataContracts}
@@ -54,7 +54,7 @@ function ContractCollapsesList() {
             return { onClick: () => {} };
           }}
         />
-      </CollapseWrapper>
+      </CollapseWrapper> */}
       <CollapseWrapper title="Залог">
         <></>
       </CollapseWrapper>
@@ -114,7 +114,7 @@ function ContractCollapsesList() {
           )}          
         </div>
       </CollapseWrapper>
-      <CollapseWrapper title="Выписка">
+      {/* <CollapseWrapper title="Выписка">
         <Table
           columns={columnsForContracts}
           dataSource={dataContracts}
@@ -128,7 +128,7 @@ function ContractCollapsesList() {
             return { onClick: () => {} };
           }}
         />
-      </CollapseWrapper>
+      </CollapseWrapper> */}
 
       {isOpenModal  && createPortal(<FindThirdPerson handleClick={() => setIsModalOpen(false)} />, document.body)}
     </div>

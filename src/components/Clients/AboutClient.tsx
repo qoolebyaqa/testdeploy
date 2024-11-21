@@ -15,11 +15,24 @@ interface IDocumentList{
   title?:string,
 }
 
+interface ICommentList{
+  id:number,
+  customer_id:number,
+  author_first_name:string,
+  author_last_name:string,
+  author_role_id:string,
+  content:string,
+  created_at:string,
+  created_time?:string,
+  created_date?:string,
+  updated_at:string,
+}
+
 
 function AboutClient({closeHandler}:{closeHandler: () => void,}) {
-  const modalRef = useRef<HTMLDivElement>(null);
+const modalRef = useRef<HTMLDivElement>(null);
  const params=useParams()
- const id = params.id_browse ? params.id_browse.slice(params.id_browse.indexOf("=") + 1):"";
+ const id = params.id_browse ? params.id_browse :"";
  const [docList,setDocList] = useState<IDocumentList[]>([]) 
  
 
@@ -29,18 +42,33 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
         closeHandler();
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closeHandler]);
-
+  const fetchCustomerComments=()=>{
+    ApiService.getCustomerComments(id)
+    .then((response)=>{
+      const formattedComments = response.data.map((comment:ICommentList) => {
+        const createdAt = new Date(comment.created_at);
+        return {
+          ...comment,
+          created_at: createdAt,
+          created_time:createdAt.toLocaleTimeString().replace(/\//g, '.'),
+          created_date:createdAt.toLocaleDateString().replace(/\//g, '.'),
+        };
+      });
+      setCommentsList(formattedComments);
+    })
+  }
+  
   useEffect(()=>{
     ApiService.getDocuments(id,"document")
     .then((response)=>{
       setDocList(response.data)
-    })
+    });
+    fetchCustomerComments()
   },[id])
   function downloadFile(fileUrl:string) {
     const filename = fileUrl.split('/').pop();
@@ -61,15 +89,26 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
       });
   }
 
-  const userList=[
-    {name:"Равшан Азимжонов", role:"Админ", date:"01.01.2024", time:"09:08", comment:"“Постоянный клиент, регулярно обращается. Надежный, всегда вовремя выкупает имущество.”", gender:"FEMALE"},
-    {name:"Равшан Азимжонов", role:"Админ", date:"01.01.2024", time:"09:08", comment:"“Постоянный клиент, регулярно обращается. Надежный, всегда вовремя выкупает имущество.”", gender:"MALE"},
-  ]
+  const [comment, setComment] = useState('');
+  const [commentsList,setCommentsList] = useState<ICommentList[]>([])
+  function saveComment(){
+    const data = {
+      content:comment
+    }
+    ApiService.addCustomerComments(id,data)
+    .then((): void =>{
+      fetchCustomerComments()
+    })
+    setComment("")
+  }
+  const handleCommentChange = (inputValue: {id?: string, title:string, value: string | string[]}) => {  
+    setComment(inputValue.value as string);
+  };
   return ( <div className="w-[520px] h-screen fixed top-20 left-[150px]  inset-0 z-50 ">
     <motion.div ref={modalRef} className="flex gap-[1px]" animate={{translateY: [-10, 10, 0]}} transition={{duration: 0.4}} >
-    <form className=" bg-white p-[30px] rounded-xl">
-      <div className="mb-4"> 
-        <CollapseWrapper title="Документы  (4)" >
+    <form className=" bg-white p-[30px] rounded-xl border-lombard-borders-grey border-[1px]">
+      <div className="mb-4">
+        <CollapseWrapper title={`Документы  (${docList.length})`} >
           <>
           <ul className="list-none">
             {docList.map((item,idx)=>{
@@ -88,18 +127,18 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
         </CollapseWrapper>
       </div>
       <div className="mb-10">
-        <CollapseWrapper title="Компентарии  (2)">
+        <CollapseWrapper title={`Комментарии  (${commentsList.length})`}>
           <>
             <ul className="list-none">
-              {userList.map((item,idx)=>{
+              {commentsList.map((item,idx)=>{
                 return(
                   <li className="bg-transparent/5 py-2 px-2 mb-2 rounded-lg text-sm " key={idx} >
                     <div className="flex items-start">
-                      <img className="rounded-sm mr-2" src={item.gender === 'FEMALE' ? '/defaultAvatarFemale.png': '/defaultAvatarMale.png'} alt="avatar" width={45} height={32} />
-                      <div className="flex flex-col">
-                        <div className="font-bold flex justify-between"><span>{item.name}</span> <span>{item.date}</span></div>
-                        <span className=" font-medium mb-2 flex justify-between"><span className="text-red-600">{item.role}</span> <span>{item.time}</span></span>
-                        <span>{item.comment}</span>
+                      <img className="rounded-sm mr-2" src={'/defaultAvatarMale.png'} alt="avatar" width={45} height={32} />
+                      <div className="flex flex-col flex-grow">
+                        <div className="font-bold flex justify-between"><span>{item.author_first_name}</span><span>{item.created_date}</span></div>
+                        <span className=" font-medium mb-2 flex justify-between"><span className="text-red-600">{item.author_role_id}</span> {item.created_time}</span>
+                        <span>{item.content}</span>
                       </div>                      
                     </div>
                   </li>
@@ -110,12 +149,14 @@ function AboutClient({closeHandler}:{closeHandler: () => void,}) {
         </CollapseWrapper>
       </div>
 
-      <CustomInput type="textarea" name="Комментарий" placeholder="Комментарий" />
+      <div className="w-full">
+        <CustomInput className="w-full" type="textarea" name="Комментарий" value={comment} handleChange={handleCommentChange} placeholder="Комментарий" />
+      </div>
 
       <ButtonComponent
         color="bg-lombard-btn-green"
         titleBtn="Добавить"
-        clickHandler={closeHandler}
+        clickHandler={saveComment}
         className="w-full mt-4"
       />
     </form>

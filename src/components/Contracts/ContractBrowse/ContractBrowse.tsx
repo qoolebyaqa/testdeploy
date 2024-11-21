@@ -53,7 +53,7 @@ function ContractBrowse() {
         </div>
       </div>
         <div className="flex p-2 mx-auto justify-center">
-          <GeneralClientInfo inputsValues={{}}/>
+          <GeneralClientInfo inputsValues={{}} />
           <ContractCollapsesList />
         </div>
 

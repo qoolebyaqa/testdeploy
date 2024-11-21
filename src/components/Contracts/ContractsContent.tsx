@@ -1,22 +1,29 @@
 /* import ButtonComponent from "../UI/ButtonComponent"; */
-import { columnsForContracts } from "../../helpers/fnHelpers";
+import { getColumnsForContracts } from "../../helpers/fnHelpers";
 import DataTable from "../UI/DataTable";
 import { useNavigate } from "react-router";
 import RangeFilter from "../Clients/RangeFilter";
 import useActions from "../../helpers/hooks/useActions";
-import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 import { IDataContractType } from "../../helpers/types";
+import { useCallback } from "react";
+import { ApiService } from "../../helpers/API/ApiSerivce";
 
 function ContractsContent() {
-  const dataContracts = useAppSelector(state => state.contractStore.allContracts);
   const dispatch = useActions();
   const navigate = useNavigate();
 
-  function selectContractHandler (...args: IDataContractType[]) {
+  function selectContractHandler(...args: IDataContractType[]) {
     dispatch.setContractChoosenOne(args[0]);
-    navigate(`/contracts/browse=${args[0].index}`)
+    navigate(`/contracts/${args[0].index}`);
   }
 
+  const setContracts = (arr:any) => {
+    dispatch.setContractsList(arr);
+  }
+
+  const columnsForContracts = useCallback(() => {
+    return getColumnsForContracts();
+  }, []);
 
   return (
     <>
@@ -26,7 +33,13 @@ function ContractsContent() {
           <RangeFilter iconInput="filters" />
         </div>
       </div>
-      <DataTable columns={columnsForContracts} data={dataContracts} pagination selectHandler={selectContractHandler}/>
+      <DataTable
+        columns={columnsForContracts()}
+        pagination
+        selectHandler={selectContractHandler}
+        endPoint={ApiService.getPaginatenPOs}
+        setDataToState={setContracts}
+      />
     </>
   );
 }

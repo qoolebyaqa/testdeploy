@@ -70,7 +70,6 @@ const childrenRoutes = [
           </RouteProtector>
         ),
         title: "Клиенты",
-        /* loader: clientsLoader, */
       },
       {
         path: ":id_browse",
@@ -81,7 +80,11 @@ const childrenRoutes = [
         ),
         title: "Обзор клиента",
         loader: clientLoader,
-      },
+        shouldRevalidate: ({ currentUrl }:{ currentUrl: URL}) => {
+          return currentUrl.pathname === "/clients";
+        },
+
+      }
     ],
   },
   {
@@ -304,70 +307,8 @@ async function passReset({ params }: any) {
   }
 }
 
-/* async function clientsLoader() {
-  if (!localStorage.getItem("rt")) {
-    return redirect("/auth");
-  } else {
-    try {
-      const response = await ApiService.getCustomers();
-      if (response.status === 401) {
-        return redirect("/auth");
-      } else {
-        return response.data.content
-          .map((item: any, index: number) => {
-            const client: any = { ...item };
-            client.key = item.id;
-            client.index = index + 1;
-            client.name = `${item.first_name} ${item.last_name} ${
-              item.middle_name ? item.middle_name : ""
-            }`;
-            client.passport =
-              `${item.passport_series} ${item.passport_number}`.toUpperCase();
-            client.sum = "-";
-            delete client.passport_number;
-            delete client.passport_series;
-            delete client.first_name;
-            delete client.last_name;
-            delete client.middle_name;
-            return client;
-          })
-          .sort((a: any, b: any) => a.index - b.index);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-} */
-
-/* async function employeesLoader() {
-  if (!localStorage.getItem("rt")) {
-    return redirect("/auth");
-  } else {
-    try {
-      const response = await ApiService.getUsers();
-      if (response.status === 401) {
-        return redirect("/auth");
-      } else {
-        return response.data.content
-          .map((user: any, index: number) => {
-            user.workterm = 1;
-            user.fprint = 10;
-            user.seekdays = "Воскресенье";
-            user.grade = 5;
-            user.key = user.id;
-            user.index = index + 1;
-            return user;
-          })
-          .sort((a: any, b: any) => a.index - b.index);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-} */
-
 async function clientLoader({ params }: any) {
-  const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);
+  const id = params.id_browse;
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {
@@ -387,9 +328,6 @@ async function clientLoader({ params }: any) {
         }
         const client = { ...response.data };
         client.key = client.id;
-        client.index = store
-          .getState()
-          .clientStore.clientsList.find((val) => val.id === client.id)?.index;
         client.sum = "-";
         store.dispatch(clientActions.setClientChoosenOne(client));
         return defer({ client, etag, docList });
@@ -401,7 +339,7 @@ async function clientLoader({ params }: any) {
 }
 
 async function employeeLoader({ params }: any) {
-  const id = params.id_browse.slice(params.id_browse.indexOf("=") + 1);
+  const id = params.id_browse;
   if (!localStorage.getItem("rt")) {
     return redirect("/auth");
   } else {

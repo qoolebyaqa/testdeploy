@@ -31,7 +31,7 @@ function EmployeesContent() {
   }
 
   function selectEmployeeHandler(...args: IDataEmployeeType[]) {
-    navigate(`/employees/browse=${args[0].id}`);
+    navigate(`/employees/${args[0].id}`);
   }
   async function deleteEmployee() {
     try {

@@ -16,7 +16,7 @@ function NewClientContent({currentClient, etag, docList}:{currentClient?: any, e
       <NewClientBtns formId={currentClient && currentClient.id} />
       <div className="flex p-2 mx-auto justify-center">
         <GeneralClientInfo inputsValues={formValues} handleInput={valueChangeHandler} formId={currentClient && currentClient.id} etag={etag} docList={docList}/>
-        <DepositDetails />
+        <DepositDetails/>
       </div> 
     </div>
   );

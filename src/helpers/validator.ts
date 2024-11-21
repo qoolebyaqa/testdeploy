@@ -24,11 +24,11 @@ export type clientFormValue = {
   id?: string,
   first_name: string,
   last_name: string,
-  phone_number: number,
-  pin?: number | string,
+  phone_number: string,
+  pin?: string,
   birth_date?: string,
   passport_series?: string,
-  passport_number?: number,
+  passport_number?: string,
   passport_issue_date?: string,
   passport_expire_date?: string,
   passport_issue_place?: string,
@@ -39,7 +39,7 @@ export type clientFormValue = {
   citizenship_id?: string,
   work_capacity?: string,
   passport_type?: string,
-  income_amount?: number | string,
+  income_amount?: string,
   tax_id?: string,
   type?: string,
   middle_name?: string
@@ -49,12 +49,12 @@ export const clientFormSchema = yup.object().shape({
   id: yup.string(),
   last_name: yup.string().required('Заполните имя клиента'),
   first_name: yup.string().required('Заполните фамилию клиента'),
-  phone_number: yup.number().typeError('Заполните номер телефона клиента').test('length', 'Введите действительный телефонный номер', (val:number | undefined) => val?.toString().length === 12).required('Заполните номер телефона клиента'),
-  pin: yup.string(),
+  phone_number: yup.string().typeError('Заполните номер телефона клиента').test('length', 'Введите действительный телефонный номер', (val:string | undefined) => val?.toString().length === 12).required('Заполните номер телефона клиента'),
+  pin: yup.string().test('length', 'Введите действительный ПИНФЛ', (val) => val ? val!.toString().length > 13 : true),
   birth_date: yup.string(),
   passport_series: yup.string().required('Укажите серию паспорта')
   .matches(/^[a-zA-Z]+$/, 'Введите действительную серию паспорта'),
-  passport_number: yup.number().typeError('Укажите номер паспорта').required('Укажите номер паспорта'),
+  passport_number: yup.string().typeError('Укажите номер паспорта').required('Укажите номер паспорта'),
   passport_issue_date: yup.string(),
   passport_expire_date: yup.string(),
   passport_issue_place: yup.string(),
@@ -107,3 +107,7 @@ export type QueueReq = {
   scheduled_at?: string,
 /*   recipient_type: 'GROUP' | 'CLIENT' | 'ALL', */
 }
+
+export const productSchema = yup.object().shape({
+  loan_product_id: yup.string().required('Выберите тип продукта')
+})

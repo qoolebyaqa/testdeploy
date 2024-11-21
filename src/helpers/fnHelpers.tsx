@@ -17,15 +17,30 @@ import {
 } from "./types";
 import SVGComponent from "../components/UI/SVGComponent";
 import i18next from '../i18n.js'
+import store from "../store/index.js";
+import { clientActions } from "../store/client.js";
 
-export function nonSpacedNonSymbols(value: string) {
-  const nonSpaced = value.trim()
-  return nonSpaced.match(/[^\w]/) ? nonSpaced.slice(0, nonSpaced.length - 1) : nonSpaced
+export function generateBreads(stepName:string | null, maxStep: number) {
+  const breadsArr = [{id: 0, step: 'initial', title: 'Создание клиента'}, {id: 1, step: 'hold', title: 'Договор'}, {id: 2, step: 'collateral', title: 'Залог'}, {id: 3, step: 'credit', title: 'Выдача кредита'}, {id: 4, step: 'deal_info', title: 'Данные сделки'}];
+  const mappedArr = stepName ? breadsArr.slice(0, maxStep + 1) : breadsArr
+
+      return <div className="flex">
+      {mappedArr.map(crumb => (
+        <p key={crumb.title} onClick={(e) => {e.stopPropagation(); store.dispatch(clientActions.setStepState({id: crumb.id, step: crumb.step}))}}> / {crumb.title}</p>))}
+      </div>
+}
+
+export function nonSpacedNonSymbols(value: string, withSpaces: boolean = false) {
+  return withSpaces ? value.replace(/[^\w\s]/g, '') : value.replace(/[^\w]/g, '')
 } 
 
-export function nonNumberValue(value: string) {
-  return value.match(/[0-9]/) ? value.slice(0, value.length - 1) : value
+export function nonNumberUpperCaseValue(value: string) {
+  return value.replace(/[0-9]/, '').toUpperCase()
 } 
+
+export function convertDataToList4DropDown(data: any[]) {
+  return data.map(val => ({label: val.name, key: val.id, enum: val.id}))
+}
 
 export async function convertSlides(
   slides: IFileSlide[]
@@ -140,21 +155,6 @@ export function getUserNav(user: string) {
     { titleBtn: "navigation.operator.katm", svgCase: "KATM", path: "/katm" },
     { titleBtn: "navigation.operator.messaging", svgCase: "sms", path: "/sms" },
   ];
-}
-
-export function toDefineItemsPerPage(length: number) {
-  if (length < 50) {
-    return new Array(length).fill(0).map((_item, index) => index + 1);
-  }
-  if (length < 101) {
-    return new Array(length / 10)
-      .fill(0)
-      .map((_item, index) => (index + 1) * 10);
-  } else {
-    return new Array(length / 100)
-      .fill(0)
-      .map((_item, index) => (index + 1) * 100);
-  }
 }
 
 export async function convertTo64(file: Blob) {
@@ -530,53 +530,97 @@ export const getColumnsForClients = (
 ];
 
 ///contracts
-export const columnsForContracts: TableColumnsType<IDataContractType> = [
+export const getColumnsForContracts = (): TableColumnsType<IDataContractType> => [
   {
     title: titleWIthIcon("№"),
     dataIndex: "index",
+    key: "index"
   },
   {
-    title: titleWIthIcon("Номер договора"),
-    dataIndex: "contract",
+    title: titleWIthIcon("id"),
+    dataIndex: "agreement_id",
+    key: "agreement_id"
   },
   {
-    title: titleWIthIcon("ФИО клиента"),
-    dataIndex: "name",
+    title: titleWIthIcon("Статус договора"),
+    dataIndex: "loan_status",
+    key: "loan_status"
   },
   {
-    title: "ПИНФЛ",
-    dataIndex: "jshir",
-  },
-  {
-    title: "Паспорт",
-    dataIndex: "passport",
+    title: 'ФИО клиента',
+    key: "first_name",
+    dataIndex: "first_name",
+    render: (_text, record) =>
+      `${record.first_name} ${record.last_name} ${record.middle_name || ""}`,
   },
   {
     title: "Номер телефона",
-    dataIndex: "phoneN",
+    dataIndex: "phone_number",
+    key: "phone_number"
   },
   {
-    title: "Статус договора",
-    dataIndex: "contractStatus",
+    title: "Сумма договора",
+    dataIndex: "loan_amount",
+    key: "loan_amount"
   },
   {
-    title: "Сумма",
-    dataIndex: "sum",
+    title: "Условия",
+    dataIndex: "loan_term",
+    key: "loan_term"
   },
+  {
+    title: "Дата выпуска",
+    dataIndex: "issue_date",
+    key: "issue_date"
+  },
+  {
+    title: "Дата окончания",
+    dataIndex: "due_date",
+    key: "due_date"
+  },
+  {
+    title: "Тип графика",
+    dataIndex: "repayment_schedule_type",
+    key: "repayment_schedule_type"
+  },
+  {
+    title: "ID аккаунта",
+    dataIndex: "loan_account_id",
+    key: "loan_account_id"
+  },
+  {
+    title: "ID аккаунта interest",
+    dataIndex: "interest_account_id",
+    key: "interest_account_id"
+  },
+  {
+    title: "ID аккаунта overdue",
+    dataIndex: "overdue_account_id",
+    key: "overdue_account_id"
+  },
+  {
+    title: "ID аккаунта liquidation",
+    dataIndex: "liquidation_account_id",
+    key: "liquidation_account_id"
+  },
+  {
+    title: "Филиал",
+    dataIndex: "branch_id",
+    key: "branch_id"
+  },
+  {
+    title: "ПИНФЛ",
+    dataIndex: "pin",
+    key: "pin"
+  },
+  {
+    title: 'Паспорт',
+    key: "passport_series",
+    dataIndex: "passport_series",
+    render: (_text, record) =>
+      `${record.passport_series || ""} ${record.passport_number || "-"}`,
+  }
 ];
-export const itemContract = {
-  key: 1,
-  id: 1,
-  index: 1,
-  contract: "10/5505",
-  name: "Narmuratova Rushana Maxmatmurodovna",
-  jshir: "20.03.2024",
-  passport: "AD 5484456",
-  phoneN: "+998 90 123 45 67",
-  contractStatus: "-",
-  sum: 500000,
-};
-export const dataContracts: IDataContractType[] = Copier(itemContract, 16);
 
 ///KATMRequests short dialog
 export const columnsKatmDialog: TableColumnsType<IKatmDialogType> = [

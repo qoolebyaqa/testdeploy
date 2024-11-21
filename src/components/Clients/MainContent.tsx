@@ -8,10 +8,14 @@ import { IDataClientType } from "../../helpers/types";
 import { ApiService } from "../../helpers/API/ApiSerivce";
 import Filters from "../UI/Filters";
 import ClientFilters from "./ClientFilters";
+import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
 function MainContent() {
   const navigate = useNavigate();
   const dispatch = useActions();
+  const isSearchApplied = useAppSelector(state => state.globalStore.isSearchApplied)
+  const globalSearchValue = useAppSelector(state => state.globalStore.globalSearchValue)
+  const triggerUpdate = useAppSelector(state => state.globalStore.trigerUpdate)
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [externalFilters, setExternalFilters] = useState("");
   const [currestSort, setCurrentSort] = useState("");
@@ -36,11 +40,23 @@ function MainContent() {
 
   useEffect(() => {
     dispatch.setAuthLoading(false);
-    /* const fetcher = async () => {
-      const response = await ApiService.getLoanProducts();
-      console.log(response);
+    const fetcher = async () => {
+      /* const response = await ApiService.postLoanProduct({
+        name: "Product_GOLD",
+        description: "Product_GOLD description",
+        loan_term: "1M",
+        repayment_schedule_type: "LOMBARD",
+        is_active: true,
+        valid_from_date: "2024-11-10",
+        valid_till_date: "2025-01-01",
+        branch_id: 1,
+      }); */
     };
-    fetcher(); */
+    fetcher();
+    return () => {
+      dispatch.setGlobalSearchValue('');
+      dispatch.setIsSearchApplied(false);
+    }
   }, []);
 
   const setClients = (arr: any) => {
@@ -48,7 +64,7 @@ function MainContent() {
   };
 
   function selectClientHandler(...args: IDataClientType[]) {
-    navigate(`/clients/browse=${args[0].id}`);
+    navigate(`/clients/${args[0].id}`);
   }
 
   const columnsForClients = useCallback(() => {
@@ -90,7 +106,9 @@ function MainContent() {
         columns={columnsForClients()}
         pagination
         selectHandler={selectClientHandler}
-        endPoint={ApiService.getCustomers}
+        endPoint={isSearchApplied ? ApiService.searchCustomers : ApiService.getCustomers}
+        triggerUpdate={triggerUpdate}
+        searchVal={globalSearchValue}
         sortStr={currestSort}
         setDataToState={setClients}
         settedFilters={externalFilters}

@@ -22,7 +22,7 @@ function KatmContent() {
 
   function selectKATMHandler(...args: IDataKatmType[]) {
     dispatch.setKATMChoosenOne(args[0]);
-    navigate(`/katm/browse=${args[0].index}`);
+    navigate(`/katm/${args[0].index}`);
   }
   function handleClick() {
     if (input.current) {

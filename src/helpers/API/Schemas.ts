@@ -38,3 +38,33 @@ export interface ICreateUser {
   type: 'INTERNAL' | 'EXTERNAL'
   email?: string
 }
+
+export interface IProduct {
+    "id": number,
+    "name": string,
+    "description": string,
+    "loan_term": string,
+    "repayment_schedule_type": "LOMBARD" | "ANNUITY" | "DIFFERENTIAL",
+    "is_active": boolean,
+    "valid_from_date": string,
+    "valid_till_date": string,
+    "branch_id": number
+}
+
+export interface ICollateralType {
+  "id": number,
+  "name": string,
+  "isActive": true,
+  "formulaType": string,
+  "attributes": []
+}
+
+export type DistrictDTO = {
+  id: number,
+  name: string
+} 
+export interface IRegion {
+  id: number,
+  name: string,
+  districts: DistrictDTO[]
+}

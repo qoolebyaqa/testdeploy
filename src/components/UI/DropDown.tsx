@@ -8,6 +8,7 @@ interface ISelect {
   label: string;
   enumvalue?: string | number;
   key: number;
+  additionalInfo?: {}
 }
 
 interface IDropDownProps {
@@ -81,7 +82,7 @@ const DropDown = ({
                 <Select
                   disabled={isDisabled}
                   onChange={handleOnChange}
-                  value={value || field.value}
+                  value={field.value}
                   placeholder={title}
                   suffixIcon={<SVGComponent title="arrow"/>}
                 >

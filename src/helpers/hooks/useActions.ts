@@ -8,6 +8,7 @@ import { smsActions } from "../../store/sms";
 import { katmActions } from "../../store/katm";
 import { contractsActions } from "../../store/contracts";
 import { fingerPrintStoreActions } from "../../store/fingerPrint";
+import { globalActions } from "../../store/globalSearch";
 
 const actions = {
   ...clientActions,
@@ -18,6 +19,7 @@ const actions = {
   ...smsActions,
   ...katmActions,
   ...fingerPrintStoreActions,
+  ...globalActions
 };
 
 export const useActions = () => {

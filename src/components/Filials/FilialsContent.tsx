@@ -14,7 +14,7 @@ function FilialsContent() {
 
   function selectFilialHandler (...args: IDataFilialType[]) {
     dispatch.setFilialChoosenOne(args[0]);
-    navigate(`/filials/browse=${args[0].index}`)
+    navigate(`/filials/${args[0].index}`)
   }
 
 

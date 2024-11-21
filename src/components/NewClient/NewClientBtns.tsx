@@ -1,49 +1,39 @@
 import ButtonComponent from "../UI/ButtonComponent";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
-import useActions from "../../helpers/hooks/useActions";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import KATMreqPOPup from "./KATMreqPOPup";
-import { useNavigate } from "react-router";
 import DialogComponent from "../UI/DialogComponent";
+import AboutClient from "../Clients/AboutClient";
 
 function NewClientBtns({ formId }: { formId?: string }) {
   const [showDialog, setShowDialog] = useState("");
-  const navigate = useNavigate();
-  const regStep = useAppSelector((state) => state.clientStore.regClientStep);
+  const [isOpenModal, setIsModalOpen] = useState(false) 
+  const stepState = useAppSelector(state => state.clientStore.stepState)
   const clientLoading = useAppSelector(
     (state) => state.clientStore.clientLoading
   );
   const katmResponse = useAppSelector((state) => state.clientStore.katmRequest);
-  const dispatch = useActions();
   useEffect(() => {
     if (katmResponse.result === "err") setShowDialog("katmReq");
   }, [katmResponse]);
 
+
+  const openAboutClient = () =>{
+    setIsModalOpen(true)
+  }
+
+
   const buttons =
-    regStep !== 0
+  stepState.step === 'hold'
       ? [
           {
             title: "Подтвердить",
             color: "bg-lombard-btn-green",
-            submit: false,
-            form: "",
-            handler: () => {
-              if (regStep === 4) {
-                dispatch.clearNewClientFormData();
-                navigate("/");
-              } else {
-                dispatch.addRegClientStep();
-              }
-            },
+            submit: true,
+            form: stepState.step,
+            handler: () => {},
             shouldBeDisabled: katmResponse.result === "err",
-          },
-          {
-            title: "Отменить",
-            color: "bg-lombard-btn-red",
-            handler: () => {
-              dispatch.reduceRegClientStep();
-            },
           },
           {
             title: "СМС",
@@ -73,12 +63,13 @@ function NewClientBtns({ formId }: { formId?: string }) {
   return (
     <>
       <div className="bg-[#EFF2F4] flex justify-between items-center px-3 text-[18px] h-[60px]">
-        {regStep === 0 ? (
+        {!stepState.id ? (
           <h3 className="text-black font-extrabold">Создание клиента</h3>
         ) : (
           <div className="bg-[#EFF2F4] flex justify-between items-center px-3 gap-x-2">
             <ButtonComponent
               titleBtn="О клиенте"
+              clickHandler={openAboutClient}
               color="bg-white"
               className="text-lombard-text-black border-lombard-borders-grey border-[1px]"
             />
@@ -136,6 +127,8 @@ function NewClientBtns({ formId }: { formId?: string }) {
             <KATMreqPOPup clickHandler={() => setShowDialog("")} />,
             document.body
           )}
+      {isOpenModal  && createPortal(<AboutClient closeHandler={() => setIsModalOpen(false)}  />, document.body)}
+
       </div>
     </>
   );
