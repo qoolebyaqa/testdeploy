@@ -84,8 +84,8 @@ export const ApiService = {
     const response = await privateAxios.get(`${endPoints.customers}/search?query=${query}&page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
-  addDocument: async(formData: FormData, id: string) => {
-    const response = await privateAxios.post(`${endPoints.customers}/${id}/documents`, formData);
+  addDocument: async(formData: FormData, id: string, type: 'DOCUMENT' | 'PASSPORT') => {
+    const response = await privateAxios.post(`${endPoints.customers}/${id}/documents?type=${type}`, formData);
     return response;
   },
   getDocuments: async(customerId: string, type?: string) => {
@@ -124,6 +124,10 @@ export const ApiService = {
   },
   postLoanProduct: async(formData: {[key:string]: string | boolean | number}) => {
     const response = await privateAxios.post(`${endPoints.loans}/products`, formData);
+    return response;
+  },
+  getCollaterals: async(page:number = 0, size:number = 14, sortStr?: string) => {
+    const response = await privateAxios.get(`${endPoints.collaterals}?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },  
   getCollateralTypes: async() => {

@@ -11,9 +11,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { clientFormSchema, clientFormValue } from "../../helpers/validator";
 import { useEffect, useRef } from "react";
-import { convertDataToList4DropDown, nonNumberUpperCaseValue } from "../../helpers/fnHelpers";
+import { convertDataToList4DropDown, filteredObject, nonNumberUpperCaseValue } from "../../helpers/fnHelpers";
 import { toast} from "react-toastify";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
+import { useNavigate } from "react-router";
 
 const regDropDowns = [
   {
@@ -56,6 +57,7 @@ function GeneralClientInfo({
   handleInput
 }: IGeneralClientInfo) {
   const dispatch = useActions();
+  const navigate = useNavigate();
   const clientIdRef = useRef(inputsValues.id);
   const clientEtagRef = useRef(etag);
   const stepState = useAppSelector(state => state.clientStore.stepState)
@@ -74,9 +76,9 @@ function GeneralClientInfo({
   } = useForm({ mode: "onChange", resolver: yupResolver(clientFormSchema), defaultValues: {
     first_name: inputsValues.first_name,
     last_name: inputsValues.last_name,
-    middle_name: inputsValues.middle_name,
+    middle_name: inputsValues.middle_name || '',
     phone_number: inputsValues.phone_number,
-    pin: inputsValues.pin,
+    pin: inputsValues.pin || '',
     birth_date: inputsValues.birth_date || '',
     passport_series: inputsValues.passport_series,
     passport_number: inputsValues.passport_number,
@@ -95,7 +97,7 @@ function GeneralClientInfo({
   } });
 
   const regionId = watch("region_id");
- 
+  console.log(isDirty)
   const districts = !!regions.find(region => String(region.id) === watch('region_id')) ?
   convertDataToList4DropDown(regions.find(region => String(region.id) === watch('region_id'))!.districts) : regionAfterGet ? convertDataToList4DropDown(regionAfterGet?.districts) : []
 
@@ -134,7 +136,7 @@ function GeneralClientInfo({
       dispatch.setClientLoading(true);
       if (clientEtagRef.current) {
         clientDataToPost.id = inputsValues.id;
-        const updatedClient = await ApiService.updateCustomer(clientDataToPost, clientEtagRef.current);
+        const updatedClient = await ApiService.updateCustomer(filteredObject(clientDataToPost), clientEtagRef.current);
         const etagMatch = String(updatedClient.headers.etag).match(/"(.*)"/);
         if (etagMatch && etagMatch[1]) {
           clientEtagRef.current = etagMatch[1];
@@ -142,8 +144,9 @@ function GeneralClientInfo({
         reset(clientDataToPost)
         toast.success('Данные о клиенте обновлены');
       } else {
-        await ApiService.createCustomer(clientDataToPost);
-        toast.success('Клиент успешно создан')
+        const clientId = await ApiService.createCustomer(filteredObject(clientDataToPost));
+        toast.success('Клиент успешно создан');
+        navigate(`/clients/${clientId.data.id}`)
         /* if (random % 2) {
           dispatch.setKatmRequest({
             result: "ok",
@@ -195,7 +198,7 @@ function GeneralClientInfo({
     try {
       const formData = new FormData();
       formData.append("file", fileData.file);
-      const uploadedFile = await ApiService.addDocument(formData, clientIdRef.current);
+      const uploadedFile = await ApiService.addDocument(formData, clientIdRef.current, 'PASSPORT');
       dispatch.setClientLoading(false);
       return uploadedFile.data;
     } catch (err) {

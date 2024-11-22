@@ -42,6 +42,13 @@ export function convertDataToList4DropDown(data: any[]) {
   return data.map(val => ({label: val.name, key: val.id, enum: val.id}))
 }
 
+export const filteredObject = (formData: {}) => Object.entries(formData).reduce((acc:any, [key, value]) => {
+  if (value !== "") {
+      acc[key] = value;
+  }
+  return acc;
+}, {});
+
 export async function convertSlides(
   slides: IFileSlide[]
 ): Promise<IBase64Slide[]> {

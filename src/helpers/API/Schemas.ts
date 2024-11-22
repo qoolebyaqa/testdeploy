@@ -40,15 +40,15 @@ export interface ICreateUser {
 }
 
 export interface IProduct {
-    "id": number,
-    "name": string,
-    "description": string,
-    "loan_term": string,
-    "repayment_schedule_type": "LOMBARD" | "ANNUITY" | "DIFFERENTIAL",
-    "is_active": boolean,
-    "valid_from_date": string,
-    "valid_till_date": string,
-    "branch_id": number
+  "id": number,
+  "name": string,
+  "description": string,
+  "loan_term": string,
+  "repayment_schedule_type": "LOMBARD" | "ANNUITY" | "DIFFERENTIAL",
+  "is_active": boolean,
+  "valid_from_date": string,
+  "valid_till_date": string,
+  "branch_id": number
 }
 
 export interface ICollateralType {
@@ -57,6 +57,24 @@ export interface ICollateralType {
   "isActive": true,
   "formulaType": string,
   "attributes": []
+}
+
+export interface ICollateralPriceList {
+  "id": number,
+  "collateral_type_id": number,
+  "attribute_values": null | [],
+  "market_price": number,
+  "estimated_price_min": number,
+  "estimated_price_max": number,
+  "valid_from": [
+    number,
+    number,
+    number
+  ],
+  "created_at": string,
+  "created_by": number,
+  "updated_at": null | string,
+  "updated_by": null | string
 }
 
 export type DistrictDTO = {

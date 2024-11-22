@@ -11,7 +11,7 @@ import DealInfoPopup from "./DealInfoPopup";
 import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import useActions from "../../../helpers/hooks/useActions";
 import { ApiService } from "../../../helpers/API/ApiSerivce";
-import { ICollateralType } from "../../../helpers/API/Schemas";
+import { ICollateralPriceList, ICollateralType } from "../../../helpers/API/Schemas";
 import { convertDataToList4DropDown } from "../../../helpers/fnHelpers";
 
 function DepositDetails() {
@@ -21,14 +21,18 @@ function DepositDetails() {
   const stepState = useAppSelector((state) => state.clientStore.stepState);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({});
   const [showDialog, setShowDialog] = useState(false);
+  const [contractNumber, setContractNumber] = useState<null | number>(null)
   const dispatch = useActions();
   const [collateralTypes, setCollateralTypes] = useState<ICollateralType[] | []>([]);
+  const [_collateralPriceLists, setCollateralPriceLists] = useState<ICollateralPriceList[] | []>([])
 
   useEffect(() => {
     async function getCollateral() {
       const collateralTypeList = await ApiService.getCollateralTypes();
       setCollateralTypes(collateralTypeList.data.content)
-      await ApiService.getCollateralPriceList();
+      const collateralPriceList = await ApiService.getCollateralPriceList();
+      await ApiService.getCollaterals();
+      setCollateralPriceLists(collateralPriceList.data)
       /* await ApiService.createCollateralPriceList({
         name: 'TestPrices List',
         market_price: 1500000,
@@ -123,6 +127,7 @@ function DepositDetails() {
   return (
     <div className="flex flex-col gap-3 pr-4">
       <CollapseWrapper
+        contractNumber={contractNumber}
         title="Договор"
         page="newClient"
         notActive={stepState.maxStep < 1}
@@ -133,9 +138,10 @@ function DepositDetails() {
             : undefined
         }
       >
-        <Deal />
+        <Deal setContractNumber={setContractNumber}/>
       </CollapseWrapper>
       <CollapseWrapper
+        contractNumber={contractNumber}
         title="Залог"
         page="newClient"
         notActive={stepState.maxStep < 2}
@@ -183,6 +189,7 @@ function DepositDetails() {
         </div>
       </CollapseWrapper>
       <CollapseWrapper
+        contractNumber={contractNumber}
         title="Выдача кредита"
         page="newClient"
         notActive={stepState.maxStep < 3}  
@@ -223,6 +230,7 @@ function DepositDetails() {
         {additionalFields}
       </CollapseWrapper>
       <CollapseWrapper
+        contractNumber={contractNumber}
         title="Данные сделки"
         page="newClient"
         handleClick={() => setShowDialog(true)}

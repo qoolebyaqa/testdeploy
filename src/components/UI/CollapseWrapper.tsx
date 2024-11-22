@@ -11,12 +11,13 @@ export interface ICollapseWrapper {
   page?: string,
   children: ReactNode;
   notActive?: boolean;
+  contractNumber?: number | null;
   handleClick?: () => void;
   handleBlockSelect?: () => void;
   shouldBeSelected?: boolean | undefined
 }
 
-const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, notActive, handleClick, handleBlockSelect, shouldBeSelected }) => {
+const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, notActive, handleClick, handleBlockSelect, shouldBeSelected, contractNumber }) => {
   const [showTable, setShowTable] = useState(true);
   const animationVariantsTable = {open: { height: ['auto', 0] }, closed: { height: [0, 'auto'] }}
   const animationVariantsBtn = {open: { rotate: [85, 0] }, closed: { rotate: [0, 85] }}
@@ -39,7 +40,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
           </div>
           <div className="flex self-center">
             {page === 'filial' || page === 'newEmployee' && <ButtonComponent color="bg-lombard-btn-green" titleBtn="Добавить" clickHandler={handleClick} />}
-            {page === 'newClient' && <p className="text-[#D2DBE1] font-medium text-[14px]">Договор № <b className="text-[black] font-bold text-[15px]">10/29983</b></p> }                
+            {page === 'newClient' && <p className="text-[#D2DBE1] font-medium text-[14px]">Договор № <b className="text-[black] font-bold text-[15px]">{contractNumber}</b></p> }                
             <motion.button 
             onClick={() => setShowTable(prev => !prev)}
             variants={animationVariantsBtn}
