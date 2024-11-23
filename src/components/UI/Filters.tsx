@@ -68,7 +68,7 @@ function Filters({
           </i>
         </button>
         {!!headerFilter && (
-          <div className="flex items-end gap-2 w-[300px]">
+          <div className="flex items-end gap-2 min-w-[330px]">
             {
               (headerFilter?.type === "dropdown") ?(
                   <DropDown
