@@ -46,6 +46,7 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
       };
       const resHoldPO = await ApiService.createPOinHold(productDataToPost);/* {data: {loan_id: 45}} */
       setContractNumber(resHoldPO.data.loan_id)
+      await ApiService.confirmPo(resHoldPO.data.loan_id)
       toast.success(`Драфт договора №${resHoldPO.data.loan_id} создан`);
       dispatch.setStepState({id: 2, step:'collateral', maxStep: 2})
     } catch (err) {

@@ -150,6 +150,10 @@ export const ApiService = {
     const response = await privateAxios.post(`${endPoints.loans}/hold`, formData);
     return response;
   },
+  confirmPo: async (id: number) => {
+    const response = await privateAxios.post(`${endPoints.loans}/${id}/confirm`);
+    return response;
+  },  
   getPaginatenPOs: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
     const response = await privateAxios.get(`${endPoints.loans}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
     return response;

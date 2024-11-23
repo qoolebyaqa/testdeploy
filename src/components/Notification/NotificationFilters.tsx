@@ -6,9 +6,11 @@ import { parseFilters } from "../../helpers/fnHelpers";
 function NotificationFilters({
   setFilters,
   activeFilter,
+  clearFilters
 }: {
   setFilters: (arg: any) => Promise<void>;
   activeFilter: string;
+  clearFilters: () => void;
 }) {
   const appliedFilters = parseFilters(activeFilter);
   const {
@@ -57,6 +59,12 @@ function NotificationFilters({
         titleBtn="Применить"
         className={`${isDisabled ? 'text-black' : 'text-white'} h-[32px]`}
         submit
+      />
+      <ButtonComponent      
+        color={`${!isDisabled ? 'bg-lombard-btn-grey' : 'bg-lombard-main-blue'}`}
+        titleBtn="Сбросить"
+        className={`${!isDisabled ? 'text-black' : 'text-white'} h-[32px]`}
+        clickHandler={clearFilters}
       />
     </form>
   );

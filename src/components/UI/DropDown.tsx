@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { clientFormValue } from "../../helpers/validator";
 import ValidationError from "./ValidationError";
 
-interface ISelect {
+export interface ISelect {
   label: string;
   enumvalue?: string | number;
   key: number;

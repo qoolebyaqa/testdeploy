@@ -1,3 +1,4 @@
+import { ISelect } from "../components/UI/DropDown"
 
 export enum ROLE_ENUM {
   OPERATOR = 'roles.operator',
@@ -14,6 +15,13 @@ export enum NOTIFICATION_STATUS {
 
 export type FileData = {
   file: any
+}
+
+export type SupportedFilters = {
+  name: string,
+  type: string,
+  label: string,
+  items?: ISelect[]
 }
 
 export interface IFileSlide {fileId: string, fileUrl: string}

@@ -17,21 +17,26 @@ function NotificationContent() {
   const [showSendSmsDialog, setShowSendSmsDialog] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [externalFilters, setExternalFilters] = useState("");
+  const [tblHeaderFilter, setTblHeaderFilter] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showReSubmitDialog, setShowReSubmitDialog] = useState(false);
   const [updateTable, setUpdateTable] = useState(false);
+  const dispatch = useActions();
   const selectedRowKeys = useAppSelector((state) => state.smsStore.selectedSMS);
   const allSms = useAppSelector((state) => state.smsStore.allSMS);
-  const dispatch = useActions();
 
   const columns = useCallback(() => {
-    return columnsForSMS(allSms);
+    return columnsForSMS(allSms, setTblHeaderFilter);
   }, [allSms]);
+
+  console.log(tblHeaderFilter)
+
   const setSMS = (arr: any) => {
     dispatch.setAllSmsList(arr);
   };
 
   async function filterSubmit(formData: any) {
+    setTblHeaderFilter('')
     setExternalFilters(getFilter(formData));
     setShowFilterDialog(false);
   }
@@ -126,14 +131,16 @@ function NotificationContent() {
               <NotificationFilters
                 setFilters={filterSubmit}
                 activeFilter={externalFilters}
+                clearFilters={() => {setExternalFilters(""); setShowFilterDialog(false)}}
               />
             }
             isVisible={showFilterDialog}
             setVisibility={setShowFilterDialog}
-            activeFilter={externalFilters}
-            clearFilters={() => setExternalFilters("")}
+            activeFilter={tblHeaderFilter}
+            setTblHeaderFilter={setTblHeaderFilter}
+            setExternalFilters={setExternalFilters}
             supportedFilters={supportedFilterList}
-            isDisabled
+            activeFilterValue={externalFilters}
           />
           {selectedRowKeys.length > 0 &&
             selectedRowKeys.filter((elem) => elem.status === "SENT").length ===

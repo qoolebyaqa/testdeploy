@@ -292,7 +292,8 @@ export const dataFilials: IDataFilialType[] = Copier(itemFilial);
 
 ///notification
 export const columnsForSMS = (
-  list: ISMSDataType[]
+  list: ISMSDataType[],  
+  setTblHeaderFilter: any
 ): TableColumnsType<ISMSDataType> => [
   {
     title: "№",
@@ -314,6 +315,11 @@ export const columnsForSMS = (
     title: "Тип",
     dataIndex: "channel",
     key: "channel",
+    onHeaderCell: (record) => {
+      return {
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
+      };
+    },
   },
   {
     title: "Дата и время",
@@ -331,6 +337,11 @@ export const columnsForSMS = (
     title: "Статус",
     dataIndex: "status",
     key: "status",
+    onHeaderCell: (record) => {
+      return {
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
+      };
+    },
     render: (status: "SENT" | "FAILED" | "PENDING" | "SENDING") => {
       const cellStyles = (status: string) => {
         switch (status) {
@@ -478,7 +489,7 @@ export const dataKATM: IDataKatmType[] = Copier(itemKATM);
 export const getColumnsForClients = (
   setSort: any,
   currentSort: string,
-  /* setExternalFilters?: any */
+  setTblHeaderFilter?: any
 ): TableColumnsType<IDataClientType> => [
   {
     title: "№",
@@ -494,23 +505,33 @@ export const getColumnsForClients = (
     title: titleWIthIcon(i18next.t('clients.columns.fio'), setSort, currentSort, "first_name"),
     key: "first_name",
     dataIndex: "first_name",
-    /* onHeaderCell: () => {
+    onHeaderCell: setTblHeaderFilter? (record) => {
       return {
-        onClick: () => setExternalFilters(),
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
       };
-    }, */
+    }: undefined,
     render: (_text, record) =>
       `${record.first_name} ${record.last_name} ${record.middle_name || ""}`,
   },
   {
     title: i18next.t('clients.columns.jshir'),
-    key: "pin",
+    key: "pinfl",
     dataIndex: "pin",
+    onHeaderCell: setTblHeaderFilter? (record) => {
+      return {
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
+      };
+    }: undefined,
   },
   {
     title: i18next.t('clients.columns.passport'),
-    key: "passport_series",
+    key: "passport",
     dataIndex: "passport_series",
+    onHeaderCell: setTblHeaderFilter? (record) => {
+      return {
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
+      };
+    }: undefined,
     render: (_text, record) =>
       `${record.passport_series || ""} ${record.passport_number || "-"}`,
   },
@@ -518,6 +539,11 @@ export const getColumnsForClients = (
     title: i18next.t('clients.columns.phone'),
     key: "phone_number",
     dataIndex: "phone_number",
+    onHeaderCell: setTblHeaderFilter? (record) => {
+      return {
+        onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},
+      };
+    }: undefined,
   },
   {
     title: i18next.t('clients.columns.birthday'),

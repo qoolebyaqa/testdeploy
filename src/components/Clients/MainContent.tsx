@@ -18,6 +18,7 @@ function MainContent() {
   const triggerUpdate = useAppSelector(state => state.globalStore.trigerUpdate)
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [externalFilters, setExternalFilters] = useState("");
+  const [tblHeaderFilter, setTblHeaderFilter] = useState('');
   const [currestSort, setCurrentSort] = useState("");
 
   const supportedFilterList: any = [
@@ -68,10 +69,11 @@ function MainContent() {
   }
 
   const columnsForClients = useCallback(() => {
-    return getColumnsForClients(setCurrentSort, currestSort);
+    return getColumnsForClients(setCurrentSort, currestSort, setTblHeaderFilter);
   }, [currestSort]);
 
   async function filterSubmit(formData: any) {
+    setTblHeaderFilter('')
     setExternalFilters(getFilter(formData));
     setShowFilterDialog(false);
   }
@@ -86,14 +88,16 @@ function MainContent() {
               <ClientFilters
                 setFilters={filterSubmit}
                 activeFilter={externalFilters}
+                clearFilters={() => {setExternalFilters(""); setShowFilterDialog(false)}}
               />
             }
             isVisible={showFilterDialog}
             setVisibility={setShowFilterDialog}
-            activeFilter={externalFilters}
-            clearFilters={() => setExternalFilters("")}
+            activeFilter={tblHeaderFilter}
+            setTblHeaderFilter={setTblHeaderFilter}
+            setExternalFilters={setExternalFilters}
             supportedFilters={supportedFilterList}
-            isDisabled
+            activeFilterValue={externalFilters}
           />
           <ButtonComponent
             titleBtn="Создать"

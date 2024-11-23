@@ -6,10 +6,12 @@ import { parseFilters } from "../../helpers/fnHelpers";
 
 function ClientFilters({
   setFilters,
-  activeFilter
+  activeFilter,
+  clearFilters
 }: {
   setFilters: (arg: any) => Promise<void>;
-  activeFilter: string
+  activeFilter: string;
+  clearFilters: () => void;
 }) {
   const appliedFilters = parseFilters(activeFilter);
   const {
@@ -42,12 +44,20 @@ function ClientFilters({
         { label: "Клиент", key: 2, enumvalue: 'CLIENT'}, 
         { label: "Сотрудник", key: 3, enumvalue: 'EMPLOYEE'}
         ]}/>
-      <ButtonComponent
-        color={`${isDisabled ? 'bg-lombard-btn-grey' : 'bg-lombard-main-blue'}`}
-        titleBtn="Применить"
-        className={`${isDisabled ? 'text-black' : 'text-white'} h-[32px]`}
-        submit
-      />
+      <div className="flex gap-2">
+        <ButtonComponent
+          color={`${isDisabled ? 'bg-lombard-btn-grey' : 'bg-lombard-main-blue'}`}
+          titleBtn="Применить"
+          className={`${isDisabled ? 'text-black' : 'text-white'} h-[32px]`}
+          submit
+        />
+        <ButtonComponent      
+          color={`${!isDisabled ? 'bg-lombard-btn-grey' : 'bg-lombard-main-blue'}`}
+          titleBtn="Сбросить"
+          className={`${!isDisabled ? 'text-black' : 'text-white'} h-[32px]`}
+          clickHandler={clearFilters}
+        />
+      </div>
     </form>
   );
 }
