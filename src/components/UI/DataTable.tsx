@@ -157,7 +157,12 @@ function DataTable({
           }`}
           bordered
           onRow={(record) => {
-            return { onDoubleClick: () => selectHandler && selectHandler(record) };
+            let isMoving = false;
+            return { 
+              onMouseDown: () => isMoving = false,
+              onMouseMove: () => isMoving = true, 
+              onMouseUp: () => !isMoving && selectHandler && selectHandler(record),
+            };
           }}
         />
       </ConfigProvider>
