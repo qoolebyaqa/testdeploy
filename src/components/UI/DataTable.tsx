@@ -157,7 +157,7 @@ function DataTable({
           }`}
           bordered
           onRow={(record) => {
-            return { onClick: () => selectHandler && selectHandler(record) };
+            return { onDoubleClick: () => selectHandler && selectHandler(record) };
           }}
         />
       </ConfigProvider>

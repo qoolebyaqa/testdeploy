@@ -127,7 +127,7 @@ export const ApiService = {
     return response;
   },
   getCollaterals: async(page:number = 0, size:number = 14, sortStr?: string) => {
-    const response = await privateAxios.get(`${endPoints.collaterals}?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
+    const response = await privateAxios.get(`${endPoints.collaterals}s?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },  
   getCollateralTypes: async() => {

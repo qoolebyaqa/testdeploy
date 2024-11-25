@@ -503,7 +503,7 @@ export const getColumnsForClients = (
   },
   {
     title: titleWIthIcon(i18next.t('clients.columns.fio'), setSort, currentSort, "first_name"),
-    key: "first_name",
+    key: "last_name",
     dataIndex: "first_name",
     onHeaderCell: setTblHeaderFilter? (record) => {
       return {
@@ -515,7 +515,7 @@ export const getColumnsForClients = (
   },
   {
     title: i18next.t('clients.columns.jshir'),
-    key: "pinfl",
+    key: "pin",
     dataIndex: "pin",
     onHeaderCell: setTblHeaderFilter? (record) => {
       return {

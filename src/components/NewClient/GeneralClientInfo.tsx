@@ -235,18 +235,18 @@ function GeneralClientInfo({
             <CustomInput
               control={control}
               type="text"
-              name="first_name"
+              name="last_name"
               placeholder="Фамилия"
               modificator={nonNumberUpperCaseValue}
-              errorMsg={errors.first_name?.message}
+              errorMsg={errors.last_name?.message}
             />
             <CustomInput
               control={control}
               type="text"
-              name="last_name"
+              name="first_name"
               placeholder="Имя"
               modificator={nonNumberUpperCaseValue}
-              errorMsg={errors.last_name?.message}
+              errorMsg={errors.first_name?.message}
             />
           </div>
           <CustomInput

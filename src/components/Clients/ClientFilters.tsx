@@ -24,7 +24,7 @@ function ClientFilters({
   const firstName = watch("first_name");
   const phoneNumber = watch("phone_number");
   const type = watch("type");
-  const pinfl = watch("pinfl");
+  const pinfl = watch("pin");
   const passport = watch("passport");
 
   const isDisabled = !firstName && !phoneNumber && !type && !pinfl && !passport;
@@ -36,7 +36,7 @@ function ClientFilters({
     >
       <CustomInput name="first_name" type="text" control={control} containedLabel="Фамилия" value={appliedFilters.first_name}/>
       <CustomInput name="last_name" type="text" control={control} containedLabel="Имя" value={appliedFilters.last_name}/>
-      <CustomInput name="pinfl" type="text" control={control} containedLabel="ПИНФЛ" value={appliedFilters.pinfl}/>
+      <CustomInput name="pin" type="text" control={control} containedLabel="ПИНФЛ" value={appliedFilters.pinfl}/>
       <CustomInput name="passport" type="text" control={control} containedLabel="Паспорт" value={appliedFilters.passport}/>
       <CustomInput name="phone_number" type="number" control={control} containedLabel="Номер телефона" value={appliedFilters.phone_number}/>
       <DropDown name="type" control={control} containedLabel="Тип" value={appliedFilters.type} listOfItems={[

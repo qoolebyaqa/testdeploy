@@ -22,9 +22,9 @@ function MainContent() {
   const [currestSort, setCurrentSort] = useState("");
 
   const supportedFilterList: any = [
-    { name: "first_name", type: "text", label: "Фамилия" },
-    { name: "last_name", type: "text", label: "Имя" },
-    { name: "pinfl", type: "text", label: "ПИНФЛ" },
+    { name: "first_name", type: "text", label: "Имя" },
+    { name: "last_name", type: "text", label: "Фамилия" },
+    { name: "pin", type: "text", label: "ПИНФЛ" },
     { name: "passport", type: "text", label: "Паспорт" },
     { name: "phone_number", type: "number", label: "Номер телефона" },
     {
