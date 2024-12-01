@@ -47,14 +47,16 @@ interface IGeneralClientInfo {
   etag?: string;
   inputsValues: { [key: string]: string };
   docList?: any[];
-  handleInput?: any
+  handleInput?: any;
+  shouldDisableForm?: boolean | undefined 
 }
 function GeneralClientInfo({
   formId,
   etag,
   inputsValues,
   docList,
-  handleInput
+  handleInput,
+  shouldDisableForm
 }: IGeneralClientInfo) {
   const dispatch = useActions();
   const navigate = useNavigate();
@@ -97,7 +99,6 @@ function GeneralClientInfo({
   } });
 
   const regionId = watch("region_id");
-  console.log(isDirty)
   const districts = !!regions.find(region => String(region.id) === watch('region_id')) ?
   convertDataToList4DropDown(regions.find(region => String(region.id) === watch('region_id'))!.districts) : regionAfterGet ? convertDataToList4DropDown(regionAfterGet?.districts) : []
 
@@ -130,6 +131,11 @@ function GeneralClientInfo({
         return
     };
     const clientDataToPost = { ...formData };
+    const selectedRegion = regions.find(region => region.name === formData.region_id)
+    if (selectedRegion) {
+      clientDataToPost.region_id = String(selectedRegion?.id) 
+      clientDataToPost.district_id = String(selectedRegion.districts.find(district => district.name === formData.district_id)?.id)
+    }
     clientDataToPost.tax_id = "2931323";
     clientDataToPost.type = allFieldsFilled() ? 'CLIENT' : 'LEAD';
     try {
@@ -187,10 +193,8 @@ function GeneralClientInfo({
       try {
         const response = await ApiService.createCustomer(clientDataToPost);
         clientIdRef.current  = response.data.id
-        const etagMatch = String(response.headers.etag).match(/"(.*)"/);
-        if(etagMatch && etagMatch[1]) {
-          clientEtagRef.current = etagMatch[1] 
-        };
+        toast.success('Клиент успешно создан');
+        navigate(`/clients/${response.data.id}`)
       } catch (err) {
         console.log(err);
       }
@@ -209,7 +213,7 @@ function GeneralClientInfo({
   return (
     <div className='ml-2' onClick={(e) => {e.stopPropagation(); dispatch.setStepState({id: 0, step:'initial'})}}>
       <form
-        className={`bg-white flex flex-col gap-[16px] rounded-2xl  h-[85vh] overflow-y-scroll p-[18px] scroll ${stepState.id === 0 ? 'border-lombard-main-blue border-4': ''}`}
+        className={`bg-white flex flex-col gap-[16px] rounded-2xl  h-[85vh] overflow-y-scroll p-[18px] scroll ${stepState.id === 0 && !shouldDisableForm ? 'border-lombard-main-blue border-4': ''}`}
         id={formId || "someID"}
         onSubmit={handleSubmit(submitHandler)}
       >
@@ -222,6 +226,7 @@ function GeneralClientInfo({
             placeholder="12345678912345"
             maxLength={14}
             errorMsg={errors.pin?.message}
+            isDisabled={shouldDisableForm}
           />
           <i className="self-end flex-none">
             <SVGComponent title="search" className="w-[45px] h-[32px]" />
@@ -239,6 +244,7 @@ function GeneralClientInfo({
               placeholder="Фамилия"
               modificator={nonNumberUpperCaseValue}
               errorMsg={errors.last_name?.message}
+              isDisabled={shouldDisableForm}
             />
             <CustomInput
               control={control}
@@ -247,6 +253,7 @@ function GeneralClientInfo({
               placeholder="Имя"
               modificator={nonNumberUpperCaseValue}
               errorMsg={errors.first_name?.message}
+              isDisabled={shouldDisableForm}
             />
           </div>
           <CustomInput
@@ -255,6 +262,7 @@ function GeneralClientInfo({
             name="middle_name"
             placeholder="Отчество"
             modificator={nonNumberUpperCaseValue}
+            isDisabled={shouldDisableForm}
           />
         </div>
         <div className="flex justify-between items-center">
@@ -265,6 +273,7 @@ function GeneralClientInfo({
             value={inputsValues.birth_date}
             handleChange={handleInput}
             control={control}
+            isDisabled={shouldDisableForm}
           />
         </div>
         <PassportInputs
@@ -272,7 +281,8 @@ function GeneralClientInfo({
           name="clientPassport"
           errorMsg={
             errors.passport_series?.message || errors.passport_number?.message
-          }
+          }          
+          isDisabled={shouldDisableForm}
         />
         <CustomInput
           control={control}
@@ -282,6 +292,7 @@ function GeneralClientInfo({
           label="Номер телефона"
           placeholder="998 (__) ___-__-__"
           errorMsg={errors.phone_number?.message}
+          isDisabled={shouldDisableForm}
         />
         <DropDown
           listOfItems={[
@@ -289,6 +300,8 @@ function GeneralClientInfo({
             { label: "Паспорт РУз", key: 2, enumvalue: "PASSPORT_LOCAL" },
             { label: "Биопаспорт РУз", key: 3, enumvalue: "BIO_PASSPORT_LOCAL"},
             { label: "Водительские права РУз", key: 4, enumvalue: "DRIVER_LICENSE_LOCAL" },
+            { label: "Воинское удостоверение", key: 5, enumvalue: "MILITARY_ID" },
+            { label: "Вид на жительство", key: 6, enumvalue: "RESIDENT_CARD" },
           ]}
           name="passport_type"
           label="Тип документа"
@@ -297,6 +310,7 @@ function GeneralClientInfo({
             errors.passport_type?.message
           }
           title="Выбрать"
+          isDisabled={shouldDisableForm}
         />
         <DragNDrop
           multiple
@@ -304,6 +318,7 @@ function GeneralClientInfo({
           isValid={isValidTriggered}
           docList={docList}
           clientId={inputsValues.id}
+          isDisabled={shouldDisableForm}
         />
         <div>
           <p className="text-black text-[14px] font-bold mb-2">
@@ -316,6 +331,7 @@ function GeneralClientInfo({
               control={control}
               handleChange={handleInput}
               value={inputsValues.passport_issue_date}
+              isDisabled={shouldDisableForm}
             />
             <CustomInput
               type="date"
@@ -323,6 +339,7 @@ function GeneralClientInfo({
               control={control}
               handleChange={handleInput}
               value={inputsValues.passport_expire_date}
+              isDisabled={shouldDisableForm}
             />
           </div>
         </div>
@@ -332,6 +349,7 @@ function GeneralClientInfo({
           type="text"
           label="Место выдачи паспорта"
           withSpaces
+          isDisabled={shouldDisableForm}
         />
         <CustomInput
           control={control}
@@ -339,6 +357,7 @@ function GeneralClientInfo({
           type="text"
           label="Прописка по паспорту"
           withSpaces
+          isDisabled={shouldDisableForm}
         />
         <div className="flex flex-col justify-between gap-y-[8px]">
           <p className="font-bold text-black text-[14px]">Пол</p>
@@ -351,6 +370,7 @@ function GeneralClientInfo({
             selectedStyles="text-white bg-[#304F74]"
             unselectedTitle="Мужской"
             unselectedStyles="bg-[#fff] text-black border-[#D2DBE1]"
+            isDisabled={shouldDisableForm}
           />
         </div>
         <DropDown
@@ -359,6 +379,7 @@ function GeneralClientInfo({
           label="Номер региона"
           listOfItems={!!regions && convertDataToList4DropDown(regions)}
           title="Выбрать"
+          isDisabled={shouldDisableForm}
         />
         <DropDown
           control={control}
@@ -366,12 +387,14 @@ function GeneralClientInfo({
           title="Выбрать"
           listOfItems={!!regions && districts}
           label="Номер района"
+          isDisabled={shouldDisableForm}
         />
         <CustomInput
           control={control}
           name="income_amount"
           type="text"
           label="Доходы"
+          isDisabled={shouldDisableForm}
         />
         <ul className="flex flex-col justify-center gap-y-[10px]">
           {regDropDowns.map((dropDown) => (
@@ -383,6 +406,7 @@ function GeneralClientInfo({
                 name={dropDown.name}
                 control={control}
                 key={dropDown.label}
+                isDisabled={shouldDisableForm}
                 errorMsg={
                   errors[dropDown.name as keyof clientFormValue]?.message
                 }

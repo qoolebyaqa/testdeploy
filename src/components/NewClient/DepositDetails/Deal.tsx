@@ -28,6 +28,7 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
     control,
     formState: { errors  },
   } = useForm({ mode: "onChange", resolver: yupResolver(productSchema) });
+  
   const listOfItems = useCallback(
     () => convertDataToList4DropDown(products),
     [products]
@@ -44,9 +45,8 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
         branch_id: selectedProduct.branch_id,
         customer_id: id_browse,
       };
-      const resHoldPO = await ApiService.createPOinHold(productDataToPost);/* {data: {loan_id: 45}} */
+      const resHoldPO = await ApiService.createPOinHold(productDataToPost);/* {data: {loan_id: 64}} */
       setContractNumber(resHoldPO.data.loan_id)
-      await ApiService.confirmPo(resHoldPO.data.loan_id)
       toast.success(`Драфт договора №${resHoldPO.data.loan_id} создан`);
       dispatch.setStepState({id: 2, step:'collateral', maxStep: 2})
     } catch (err) {

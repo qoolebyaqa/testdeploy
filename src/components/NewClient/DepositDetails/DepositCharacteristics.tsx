@@ -1,73 +1,132 @@
+import { useForm } from "react-hook-form";
+import {
+  CreateCollateralResp,
+  ICollateralAttribute,
+} from "../../../helpers/API/Schemas";
 import ButtonComponent from "../../UI/ButtonComponent";
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { convertDataToList4DropDown } from "../../../helpers/fnHelpers";
+import { useParams } from "react-router";
+import { ApiService } from "../../../helpers/API/ApiSerivce";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { collateralAttributesSchema } from "../../../helpers/validator";
 
 function DepositCharacteristics({
   closeHandler,
-  id,
-  submitInputData
+  itemFormValues,
+  saveInputData,
+  availableAttributes,
+  contractNumber,
+  collateralId,
+  setPrice,
 }: {
-  id: string
+  itemFormValues: { [key: string]: any };
   closeHandler: () => void;
-  submitInputData: (data: {[key:string]: string | string[]}) => void
+  saveInputData: (data: { [key: string]: any }) => void;
+  availableAttributes: ICollateralAttribute[];
+  contractNumber: number | null;
+  collateralId?: string;
+  setPrice: (value: CreateCollateralResp) => void;
 }) {
-  const [depositCommentForm, setDepositCommentForm ] = useState<{[key:string]:string | string[]}>({});
-  function submitCharacteristics() {
-    const inputsData = {...depositCommentForm}
-    inputsData.id = id
-    submitInputData(inputsData)
-    console.log(inputsData)
-    closeHandler();
+  const { id_browse } = useParams();
+  const { t } = useTranslation();
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isDirty },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(collateralAttributesSchema(availableAttributes)),
+    defaultValues: itemFormValues.attribute_values && {
+      ...itemFormValues.attribute_values.reduce(
+        (acc: any, { collateral_type_attribute_id, value }: any) => {
+          acc[collateral_type_attribute_id] = value;
+          return acc;
+        },
+        {}
+      ),
+      comments: itemFormValues.description,
+    },
+  });
+  async function submitCharacteristics(formData: any) {
+    if(!isDirty) {
+      closeHandler();
+      return;
+    }
+    const attributes = { ...formData };
+    delete attributes.comments;
+    const collateralToPost = {
+      loan_agreement_id: contractNumber,
+      customer_id: id_browse,
+      collateral_type_id: collateralId,
+      description: formData.comments,
+      attribute_values: Object.entries(attributes).map(([key, value]) => ({
+        collateral_type_attribute_id: parseInt(key, 10),
+        value: value,
+      })),
+      storage_unit_id: 1,
+    };
+    try {
+      if(itemFormValues.price && itemFormValues.price.id) {
+        const response = await ApiService.updateCollateralForPO(collateralToPost, itemFormValues.price.id);
+        setPrice(response.data);
+        (collateralToPost as any).id = itemFormValues.id;
+        (collateralToPost as any).price = response.data;
+      } else {
+        const response = await ApiService.createCollateralForPO(collateralToPost);
+        console.log(response.data)
+        setPrice(response.data);
+        (collateralToPost as any).id = itemFormValues.id;
+        (collateralToPost as any).price = response.data;
+      }
+      saveInputData(collateralToPost);
+      closeHandler();
+    } catch (err) {
+      console.log(err)
+    }
   }
-  function handleInputChange(inputData: {id?: string, title: string, value: string | string[]}) {
-    setDepositCommentForm(prev => ({...prev, [inputData.title]: inputData.value}))
-    console.log(depositCommentForm)
-  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <form className="flex flex-col gap-2">
       <p className="mb-4 font-bold text-black border-b-2 border-lombard-borders-grey">
         Характеристика залога
       </p>
       <div className="flex gap-6">
-        <DropDown
-          title="Выбрать"
-          listOfItems={[
-            { label: "Золото", key: 1, enumvalue: "GOLD" },
-            { label: "Серебро", key: 2, enumvalue: "SILVER"  },
-          ]}
-          name="creditType"
-          label="Тип"
-          value={!Array.isArray(depositCommentForm?.creditType) ? depositCommentForm?.creditType : ''}
-          handleSelect={handleInputChange}
-        />
-        <DropDown
-          title="Выбрать"
-          listOfItems={[
-            { label: "583", key: 1, enumvalue: "583" },
-            { label: "585", key: 2, enumvalue: "585" },
-          ]}
-          name="quality"
-          label="Проба"
-          value={!Array.isArray(depositCommentForm?.quality) ? depositCommentForm?.quality : ''}
-          handleSelect={handleInputChange}
-        />
-        <CustomInput
-          type="number"
-          name="totalWeight"
-          label="Общ. Грам"
-          placeholder="0"
-          value={!Array.isArray(depositCommentForm?.totalWeight) ? depositCommentForm?.totalWeight : ''}
-          handleChange={handleInputChange}
-        />
-        <CustomInput
-          type="number"
-          name="pureWeight"
-          label="Чис. Грам"
-          placeholder="0"
-          value={!Array.isArray(depositCommentForm?.pureWeight) ? depositCommentForm?.pureWeight : ''}
-          handleChange={handleInputChange}
-        />
+        {availableAttributes?.map((attr) => {
+          return attr?.dataType === "OPTIONS" ? (
+            <div className="min-w-40">
+              <DropDown
+                key={attr.id}
+                label={t(attr.name)}
+                name={attr.id.toString()}
+                listOfItems={convertDataToList4DropDown(attr.options)}
+                control={control}
+                errorMsg={errors[attr.id.toString()]?.message as string}
+              />
+            </div>
+          ) : attr?.dataType === "DECIMAL" ? (
+            <CustomInput
+              key={attr.id}
+              name={attr.id.toString()}
+              label={t(attr.name)}
+              type="number"
+              control={control}
+              errorMsg={errors[attr.id.toString()]?.message as string}
+            />
+          ) : (
+            <CustomInput
+              key={attr.id}
+              name={t(attr.name)}
+              label={t(attr.name)}
+              type="text"
+              control={control}
+              errorMsg={errors[attr.id.toString()]?.message as string}
+            />
+          );
+        })}
       </div>
       <CustomInput
         type="textarea"
@@ -75,8 +134,8 @@ function DepositCharacteristics({
         label="Комментарии"
         placeholder="Комментарии"
         className="h-[105px]"
-        value={!Array.isArray(depositCommentForm?.comments) ? depositCommentForm?.comments : ''}
-        handleChange={handleInputChange}
+        control={control}
+        errorMsg={errors.comments?.message as string}
       />
       <div className="flex self-end gap-2">
         <ButtonComponent
@@ -86,12 +145,13 @@ function DepositCharacteristics({
           clickHandler={closeHandler}
         />
         <ButtonComponent
+          submit
           titleBtn="Сохранить"
           color="bg-lombard-btn-green"
-          clickHandler={submitCharacteristics}
+          clickHandler={handleSubmit(submitCharacteristics)}
         />
       </div>
-    </div>
+    </form>
   );
 }
 

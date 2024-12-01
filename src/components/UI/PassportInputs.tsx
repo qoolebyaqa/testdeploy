@@ -18,6 +18,7 @@ interface IPassportInputs {
   required?: boolean;
   control?: any;
   errorMsg?: string | undefined;
+  isDisabled?: boolean | undefined
 }
 
 function PassportInputs({
@@ -27,7 +28,8 @@ function PassportInputs({
   passNum,
   required,
   control,
-  errorMsg
+  errorMsg,
+  isDisabled
 }: IPassportInputs) {
   function hanlderChange(event: ChangeEvent<HTMLInputElement>, field: string) {
     handleChange &&
@@ -46,6 +48,7 @@ function PassportInputs({
             name="passport_series"
             control={control}
             defaultValue={seriesVal}
+            disabled={isDisabled}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
                 const modifiedValue = value.trim().slice(0, 2)
@@ -61,6 +64,7 @@ function PassportInputs({
                   placeholder="AA"
                   required={required}
                   value={field.value }
+                  disabled={isDisabled}
                   className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey w-[46px] mr-2 px-[8px]"
                   onChange={(e) => handleOnChange(e.target.value)}
                 />
@@ -71,6 +75,7 @@ function PassportInputs({
             name="passport_number"
             control={control}
             defaultValue={passNum}
+            disabled={isDisabled}
             render={({ field }) => {
               const handleOnChange = (value: string) => {
                 field.onChange(value.slice(0, 7));
@@ -85,6 +90,7 @@ function PassportInputs({
                   placeholder="123456789"
                   required={required}
                   value={field.value}
+                  disabled={isDisabled}
                   className="border-[1px] rounded-md border-lombard-borders-grey placeholder:text-lombard-borders-grey px-[11px] w-11/12"
                   onChange={(e) => handleOnChange(e.target.value)}
                   onWheel={(e: React.WheelEvent<HTMLInputElement>) =>

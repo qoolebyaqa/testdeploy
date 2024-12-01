@@ -22,9 +22,7 @@ function NewClientBtns({ formId }: { formId?: string }) {
   const openAboutClient = () =>{
     setIsModalOpen(true)
   }
-
-  console.log(stepState)
-
+  
   const buttons =
   stepState.step !== 'initial'
       ? [

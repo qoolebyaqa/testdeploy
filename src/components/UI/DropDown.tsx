@@ -53,7 +53,7 @@ const DropDown = ({
   if (control) {
     return (
       <div
-        className={`w-full flex flex-col justify-center text-black text-[14px] grow relative ${
+        className={`w-full flex flex-col justify-center text-black text-[14px] grow relative ${className} ${
           label ? "gap-2" : ""
         } ${
           containedLabel ? "mt-6" : ""
@@ -101,7 +101,7 @@ const DropDown = ({
   } else {
     return (
       <div
-        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow relative ${
+        className={`min-w-40 flex flex-col justify-center text-black text-[14px] grow relative ${className} ${
           label ? "gap-2" : ""
         }`}
       >

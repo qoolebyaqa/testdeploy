@@ -126,12 +126,66 @@ export const ApiService = {
     const response = await privateAxios.post(`${endPoints.loans}/products`, formData);
     return response;
   },
-  getCollaterals: async(page:number = 0, size:number = 14, sortStr?: string) => {
-    const response = await privateAxios.get(`${endPoints.collaterals}s?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
+  createPOinHold: async(formData: {[key:string]: string | boolean | number}) => {
+    const response = await privateAxios.post(`${endPoints.loans}/hold`, formData);
+    return response;
+  },
+  confirmPo: async (id: number) => {
+    const response = await privateAxios.post(`${endPoints.loans}/${id}/confirm`);
     return response;
   },  
+  issuePo: async (id: number, formData: {[key:string]: any}) => {
+    const response = await privateAxios.post(`${endPoints.loans}/${id}/issue`, formData);
+    return response;
+  },
+  getPaginatenPOs: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.loans}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },  
+  searchPOs: async(query: string, page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
+    const response = await privateAxios.get(`${endPoints.loans}/search?query=${query}&page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },
+  getPO: async(id: string | number) => {
+    const response = await privateAxios.get(`${endPoints.loans}/${id}`);
+    return response;
+  },
+
+  //collaterals:
+  getPOCollaterals: async(filter: string, page:number = 0, size:number = 14, sortStr?: string) => {
+    const response = await privateAxios.get(`${endPoints.collaterals}s?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
+    return response;
+  },  
+  createCollateralForPO: async(formData: {[key:string]: any}) => {
+    const response = await privateAxios.post(`${endPoints.collaterals}s`, formData);
+    return response;
+  },
+  updateCollateralForPO: async(formData: {[key:string]: any}, id: string | number) => {
+    const response = await privateAxios.put(`${endPoints.collaterals}s/${id}`, formData);
+    return response;
+  },
+  deleteCollateral: async(id: string | number) => {
+    const response = await privateAxios.delete(`${endPoints.collaterals}s/${id}`);
+    return response;
+  },
   getCollateralTypes: async() => {
     const response = await privateAxios.get(`${endPoints.collaterals}-types`);
+    return response;
+  },
+  createCollateralTypeAttr: async(id:string, formData: {[key:string]: string | boolean | number| string[]}) => {
+    const response = await privateAxios.post(`${endPoints.collaterals}-types/${id}/attributes`, formData);
+    return response;
+  },
+  updateCollateralTypeAttr: async(id:string, attrId: string, formData: {[key:string]: string | boolean | number | {}}) => {
+    const response = await privateAxios.put(`${endPoints.collaterals}-types/${id}/attributes/${attrId}`, formData);
+    return response;
+  },
+  deleteCollateralTypeAttr: async(id:string, attrId: string) => {
+    const response = await privateAxios.delete(`${endPoints.collaterals}-types/${id}/attributes/${attrId}`);
+    return response;
+  },
+  deleteCollateralType: async(id: string) => {
+    const response = await privateAxios.delete(`${endPoints.collaterals}-types/${id}`);
     return response;
   },
   createCollateralType: async(name: string, formula_type: 'SIMPLE_MULTIPLICATION') => {
@@ -142,22 +196,14 @@ export const ApiService = {
     const response = await privateAxios.get(`${endPoints.collaterals}-price-list?page=${page}&size=${size}${sortStr ? `&${sortStr}`:''}`);
     return response;
   },
+  updateCollateralPriceList: async(formData: {[key:string]: any}, id: string | number) => {
+    const response = await privateAxios.put(`${endPoints.collaterals}-price-list/${id}`, formData);
+    return response;
+  },
   createCollateralPriceList: async(formData: {[key:string]: string | boolean | number | object}) => {
     const response = await privateAxios.post(`${endPoints.collaterals}-price-list`, formData);
     return response;
   },  
-  createPOinHold: async(formData: {[key:string]: string | boolean | number}) => {
-    const response = await privateAxios.post(`${endPoints.loans}/hold`, formData);
-    return response;
-  },
-  confirmPo: async (id: number) => {
-    const response = await privateAxios.post(`${endPoints.loans}/${id}/confirm`);
-    return response;
-  },  
-  getPaginatenPOs: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {
-    const response = await privateAxios.get(`${endPoints.loans}?page=${page}&size=${size}${filter ? filter : ''}${sortStr ? `&${sortStr}`:''}`);
-    return response;
-  },
   
   //users:
   getUsers: async(page:number = 0, size:number = 14, sortStr?: string, filter?: string) => {

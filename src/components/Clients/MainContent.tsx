@@ -10,6 +10,25 @@ import Filters from "../UI/Filters";
 import ClientFilters from "./ClientFilters";
 import { useAppSelector } from "../../helpers/hooks/useAppSelector";
 
+const supportedFilterList: any = [
+  { name: "first_name", type: "text", label: "Имя" },
+  { name: "fio", type: "text", label: "ФИО" },
+  { name: "last_name", type: "text", label: "Фамилия" },
+  { name: "pin", type: "text", label: "ПИНФЛ" },
+  { name: "passport", type: "text", label: "Паспорт" },
+  { name: "phone_number", type: "number", label: "Номер телефона" },
+  {
+    name: "type",
+    type: "dropdown",
+    label: "Тип",
+    items: [
+      { label: "Потенциальный клиент", key: 1, enumvalue: "LEAD" },
+      { label: "Клиент", key: 2, enumvalue: "CLIENT" },
+      { label: "Сотрудник", key: 3, enumvalue: "EMPLOYEE" },
+    ],
+  },
+];
+
 function MainContent() {
   const navigate = useNavigate();
   const dispatch = useActions();
@@ -21,39 +40,8 @@ function MainContent() {
   const [tblHeaderFilter, setTblHeaderFilter] = useState('');
   const [currestSort, setCurrentSort] = useState("");
 
-  const supportedFilterList: any = [
-    { name: "first_name", type: "text", label: "Имя" },
-    { name: "last_name", type: "text", label: "Фамилия" },
-    { name: "pin", type: "text", label: "ПИНФЛ" },
-    { name: "passport", type: "text", label: "Паспорт" },
-    { name: "phone_number", type: "number", label: "Номер телефона" },
-    {
-      name: "type",
-      type: "dropdown",
-      label: "Тип",
-      items: [
-        { label: "Потенциальный клиент", key: 1, enumvalue: "LEAD" },
-        { label: "Клиент", key: 2, enumvalue: "CLIENT" },
-        { label: "Сотрудник", key: 3, enumvalue: "EMPLOYEE" },
-      ],
-    },
-  ];
-
-  useEffect(() => {
+   useEffect(() => {
     dispatch.setAuthLoading(false);
-    const fetcher = async () => {
-      /* const response = await ApiService.postLoanProduct({
-        name: "Product_GOLD",
-        description: "Product_GOLD description",
-        loan_term: "1M",
-        repayment_schedule_type: "LOMBARD",
-        is_active: true,
-        valid_from_date: "2024-11-10",
-        valid_till_date: "2025-01-01",
-        branch_id: 1,
-      }); */
-    };
-    fetcher();
     return () => {
       dispatch.setGlobalSearchValue('');
       dispatch.setIsSearchApplied(false);

@@ -45,7 +45,7 @@ function HeaderMainNav() {
     {
       path: "/contracts/",
       navTo: "/contracts",
-      breadCrumb: `/ ${currentContract?.name}`,
+      breadCrumb: `/ №${currentContract?.id}`,
       linkWording: "Договоры",
     },
     {

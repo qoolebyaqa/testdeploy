@@ -14,7 +14,7 @@ export type UploadedFile = {document_id: string, document_url: string};
 
 const formats = ['jpg', 'png', 'jpeg', 'pdf'];
 
-function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multiple?: boolean, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[], clientId?:string }) {
+function DragNDrop({ multiple, uploadFile, isValid, docList, clientId, isDisabled }: { multiple?: boolean, isDisabled?: boolean | undefined, uploadFile?: (arg:FileData) => Promise<any>, isValid?: () => any, docList?: any[], clientId?:string }) {
   const reFormat = docList && docList.reduce((acc, cur) => {
     const item = {fileId: cur.document_id, fileUrl: cur.document_url}
       return [...acc, item]
@@ -70,7 +70,8 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
   const props: UploadProps = {
     name: "file",
     multiple: !!multiple,
-    showUploadList: false, 
+    showUploadList: false,
+    disabled: isDisabled,
     beforeUpload: async () => {
       const valid = isValid && await isValid();
       if (!valid) {
@@ -112,7 +113,7 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
       {multiple && (
         <div className="flex items-center justify-between">
           <h4 className="text-lombard-text-black">Копия документов</h4>
-          <div className="flex">
+          <div className="flex items-center">
             <button
               className="p-1"
               id="arrowLeft"
@@ -134,13 +135,14 @@ function DragNDrop({ multiple, uploadFile, isValid, docList, clientId }: { multi
               </i>
             </button>
             <button
-              className="p-1"
+              className="p-1 bg-lombard-btn-red h-[24px] w-[24px] rounded-md flex justify-center" 
               id="cart"
               onClick={() => {setShowDialog(true)}}
               type="button"
+              disabled={isDisabled}
             >
               <i>
-                <SVGComponent title="cart" />
+                <SVGComponent title="cart"  className="w-[18px] h-[18px]"/>
               </i>
             </button>
             <button

@@ -17,6 +17,7 @@ interface ISwitchProps {
   inputName: string;
   currentSelect?: string;
   control?: any;
+  isDisabled?: boolean | undefined
 }
 
 function SwitchComponent({
@@ -28,6 +29,7 @@ function SwitchComponent({
   inputHandler,
   currentSelect,
   control,
+  isDisabled
 }: ISwitchProps) {
   const [isActive, setIsActive] = useState(currentSelect === "FEMALE"); //todo: delete after register in form
 
@@ -45,6 +47,7 @@ function SwitchComponent({
             <Controller
               name={inputName}
               control={control}
+              disabled={isDisabled}
               render={({ field: { onChange } }) => {
                 const handleSwitch = (newGender: string) => {
                   onChange(newGender);

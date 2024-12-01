@@ -23,7 +23,7 @@ const clientSlice = createSlice({
     globalSearchValue: string;
     isSearchApplied: boolean;
     katmRequest: {result: string, styles: string},
-    stepState: {id: number, step: 'initial' | 'hold' | 'collateral' | 'credit' | 'deal_info', maxStep: number}
+    stepState: {id: number, step: 'initial' | 'hold' | 'collateral' | 'credit' | 'deal_info' | 'payment' | 'receipt', maxStep: number}
   },
   reducers: {
     setClientChoosenOne(state, selection) {

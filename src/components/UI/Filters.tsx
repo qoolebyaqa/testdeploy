@@ -91,7 +91,7 @@ function Filters({
             <button
               className={`${isDirty
                 ? "bg-lombard-btn-green text-white"
-                : "bg-lombard-btn-yellow text-black"}`}
+                : "bg-lombard-btn-grey text-black"}`}
               type="submit"
             >
               {isDirty ? 'Применить' : 'Сбросить'}

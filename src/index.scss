@@ -72,6 +72,7 @@ input::placeholder {
   );
 }
 .ant-table-thead th {
+  user-select: none;
   background-color: #304f74 !important;
   color: white !important;
   text-align: center !important;

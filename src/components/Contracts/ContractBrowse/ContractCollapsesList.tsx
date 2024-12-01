@@ -1,17 +1,49 @@
-/* import { Table } from "antd"; */
 import CollapseWrapper from "../../UI/CollapseWrapper";
-/* import { columnsForContracts, dataContracts } from "../../../helpers/fnHelpers"; */
 import CustomInput from "../../UI/CustomInput";
 import DropDown from "../../UI/DropDown";
 import DottedBtn from "../../NewClient/DepositDetails/DottedBtn";
-/* import Modals from "./Modals"; */
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import FindThirdPerson from "./FindThirdPerson";
+import DataTable from "../../UI/DataTable";
+import { ApiService } from "../../../helpers/API/ApiSerivce";
+import { getColumnsForContracts } from "../../../helpers/fnHelpers";
+import { useSearchParams } from "react-router-dom";
+import DepositDetails from "../../NewClient/DepositDetails/DepositDetails";
+import { IDataContractType } from "../../../helpers/types";
+import useActions from "../../../helpers/hooks/useActions";
+import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 
-function ContractCollapsesList() {
+function ContractCollapsesList({client}:{client: any}) {
   const [paymentOptions, setPaymentOptions] = useState([{ id: Math.random().toFixed(8) }]);
   const [isOpenModal,setIsModalOpen] = useState(false)
+  const [searchParams] = useSearchParams();
+  const [selectedContract, setSelectedContract] = useState<null | IDataContractType>(null);
+  const [currestSort, setCurrentSort] = useState("");  
+  const stepState = useAppSelector((state) => state.clientStore.stepState);
+  const dispatch = useActions()
+
+  
+  useEffect(() => {
+    async function getPO() {
+      try {
+      const PoNumber = searchParams.get('po')
+      if(PoNumber) {
+        const PO = await ApiService.getPO(PoNumber)
+        setSelectedContract(PO.data);
+        dispatch.setContractChoosenOne(PO.data)
+        PO.data.status === 'HOLD' ? dispatch.setStepState({id: 2, step:'collateral', maxStep: 2}) : 
+        PO.data.status === 'CONFIRMED' ? dispatch.setStepState({id: 3, step:'deposit', maxStep: 3}) :
+        dispatch.setStepState({id: 4, step:'deal_info', maxStep: 4})
+      }
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    getPO();
+  }, [])
+
+
   function pushIndexToPaymentOptions() {
     let newID = Math.random().toFixed(8);
     while(paymentOptions.map(val => val.id).includes(newID)){
@@ -19,7 +51,7 @@ function ContractCollapsesList() {
     }
     setPaymentOptions(prev => ([...prev, {id: newID}]))
   }
-  function deleteFromPaymentOptions(id:string) {
+  function deleteFromPaymentOptions(id?:string | number) {
     const filtredIndexes = paymentOptions.filter(item => item.id !== id)
     setPaymentOptions(filtredIndexes);
   }
@@ -29,39 +61,33 @@ function ContractCollapsesList() {
     const updatedPaymentOptions = paymentOptions.map((item) => 
     item.id === inputData.id ? {...item, ...dataToAdd} : item);
     setPaymentOptions(updatedPaymentOptions)
-    console.log(paymentOptions)
   }
 
   function handleOpenThirdPeople(){
-    setIsModalOpen(true)
-    console.log("CollapseWrapper");
-    
+    setIsModalOpen(true)   
   }
 
+  const columnsForContracts = useCallback(() => {
+    const filterContracts = ['index', 'id', 'status', 'loan_amount', 'issue_date', 'due_date', 'loan_term']
+    return getColumnsForContracts(setCurrentSort, currestSort).filter(item => filterContracts.includes(item.key as string))
+  }, [currestSort]);
+
   return (
-    <div className="flex flex-col gap-3 pr-4 w-4/5">
-      {/* <CollapseWrapper title="Договоры">
-        <Table
-          columns={columnsForContracts}
-          dataSource={dataContracts}
-          pagination={false}
-          size="small"
-          virtual
-          scroll={{ y: 260 - 60 }}
-          className="hover:cursor-pointer"
-          bordered
-          onRow={(_record) => {
-            return { onClick: () => {} };
-          }}
-        />
-      </CollapseWrapper> */}
-      <CollapseWrapper title="Залог">
-        <></>
+    <div className="flex flex-col gap-3 pr-4 w-2/3">
+      <CollapseWrapper title="Договоры">
+        <DataTable endPoint={ApiService.getPaginatenPOs} columns={columnsForContracts()} tableSize="small" settedFilters={`&customer_id=${client.id}`} 
+        sortStr={currestSort}/>
       </CollapseWrapper>
-      <CollapseWrapper title="Данные сделки">
-        <></>
-      </CollapseWrapper>
-      <CollapseWrapper title="Оплата" page="contract" handleClick={handleOpenThirdPeople}>
+      <DepositDetails createdContract={selectedContract}/>
+      <CollapseWrapper title="Оплата" page="contract" handleClick={handleOpenThirdPeople} 
+        contractNumber={selectedContract?.id}
+        notActive={stepState.maxStep < 5}
+        shouldBeSelected={stepState.id === 5}
+        handleBlockSelect={
+          !(stepState.maxStep < 4)
+            ? () => dispatch.setStepState({ id: 5, step: "payment" })
+            : undefined
+        }>
         <div className="flex flex-col gap-[8px] pb-12">
           <div className="flex flex-row gap-[10px] justify-start items-start w-[600px]">
             <CustomInput
@@ -108,27 +134,23 @@ function ContractCollapsesList() {
               id={item.id}
             />
             <div className="mt-[5.5px]">
-              <DottedBtn id={item.id} deleteIndex={deleteFromPaymentOptions} items={paymentOptions} pushNewIndex={pushIndexToPaymentOptions}/>
+              <DottedBtn currentItem={item} deleteIndex={deleteFromPaymentOptions} items={paymentOptions} pushNewIndex={pushIndexToPaymentOptions}/>
             </div>
           </div>
           )}          
         </div>
       </CollapseWrapper>
-      {/* <CollapseWrapper title="Выписка">
-        <Table
-          columns={columnsForContracts}
-          dataSource={dataContracts}
-          pagination={false}
-          size="small"
-          virtual
-          scroll={{ y: 160 - 60 }}
-          className="drop-shadow-2xl hover:cursor-pointer"
-          bordered
-          onRow={(_record) => {
-            return { onClick: () => {} };
-          }}
-        />
-      </CollapseWrapper> */}
+      <CollapseWrapper title="Выписка" 
+        contractNumber={selectedContract?.id}
+        notActive={stepState.maxStep < 5}
+        shouldBeSelected={stepState.id === 6}
+        handleBlockSelect={
+          !(stepState.maxStep < 4)
+            ? () => dispatch.setStepState({ id: 6, step: "receipt" })
+            : undefined
+        }>        
+       <DataTable endPoint={ApiService.getPaginatenPOs} columns={columnsForContracts()} tableSize="small" settedFilters={`&customer_id=${client.id}`}/>
+      </CollapseWrapper>
 
       {isOpenModal  && createPortal(<FindThirdPerson handleClick={() => setIsModalOpen(false)} />, document.body)}
     </div>

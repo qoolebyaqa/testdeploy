@@ -40,27 +40,35 @@ export type DataTableType = IDataContractType
   | ILowCostType
 
 export interface IDataContractType {
-  key: React.Key;
-  index: number;
-  agreement_id: string,
-  loan_status: string,
-  first_name: string,
-  last_name: string,
-  middle_name?: string,
-  phone_number: string,
-  loan_amount: string,
-  due_date: string,
-  issue_date: string,
-  repayment_schedule_type: string,
-  loan_account_id: string,
-  loan_term: string,
-  interest_account_id: string,
-  overdue_account_id: string,
-  liquidation_account_id: string,
-  branch_id: string,
-  pin: number,
-  passport_series: string,
-  passport_number: number
+  "key"?: React.Key,
+  "index"?: number,
+  "id": number,
+  "loan_product_id": number | null,
+  "loan_amount": number | null,
+  "interest_rate": number | null,
+  "loan_term": number | null,
+  "repayment_schedule_type": number | null,
+  "overdue_interest_rate": number | null,
+  "issue_date": string,
+  "due_date": string,
+  "status": "CONFIRMED" | "ISSUED" | "HOLD",
+  "loan_account_number": string,
+  "interest_account_number": string,
+  "overdue_account_number": string,
+  "liquidation_account_number": string,
+  "branch_id": number,
+  "created_at": string,
+  "created_by": number,
+  "updated_at": string,
+  "updated_by": number,
+  "customer_id": number,
+  "first_name": string,
+  "last_name": string,
+  "middle_name"?: string | null,
+  "phone_number": string,
+  "passport_series": string,
+  "passport_number": string,
+  "pin": string
 }
 
 export interface IDataClientType {

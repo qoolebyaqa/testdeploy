@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { ICollateralAttribute } from './API/Schemas';
 
 export type passWordPower = {
   newPass?: string | undefined,
@@ -111,3 +112,63 @@ export type QueueReq = {
 export const productSchema = yup.object().shape({
   loan_product_id: yup.string().required('Выберите тип продукта')
 })
+
+export const collateralSchema = yup.object().shape({
+  collateralType: yup.string().required('Выберите тип залога')
+})
+
+export const collateralPriceSchema = (min: number, max:number) => yup.object().shape({
+  price: yup.number().typeError('Цена должна быть указана').required('Цена должна быть указана').
+  test('limits',  `Допустимо значение в пределах ${min}-${max}`, val => min <= val && max >= val)
+})
+
+
+export const collateralAttributesSchema = (attributes: ICollateralAttribute[]) => yup.object().shape({
+  ...attributes.reduce((acc: any, {id}: {id: number}) => {acc[id] = yup.string().required('Укажите характеристику'); return acc}, {}),
+  comments: yup.string().required('Добавьте описание/комментарии')
+})
+
+export const confirmationsSwitchersSchema = yup.object().shape({
+  confirmCollateral: yup.boolean().required('Подтвердите').test('isFalsy',  'Подтвердите', val => val),
+  confirmAcceptance: yup.boolean().required('Подтвердите').test('isFalsy',  'Подтвердите', val => val)
+})
+
+
+export const cardSchema = yup.object().shape({
+  type: yup.string().required('Выберите тип выдачи'),
+  bank_id: yup.string().required('Код банка обязателен'),
+  bank_account_number: yup.string().required('Номер счета обязателен'),
+  card_number: yup.string().required('Номер карты обязателен'),
+  amount_card: yup.string(),
+  amount_cash: yup.string(),
+  loan_amount: yup.number(),
+  creditPercentage: yup.string(),
+  dateIssue: yup.string(),
+  datePayment: yup.string()
+});
+
+export const complexSchema = yup.object().shape({
+  type: yup.string().required('Выберите тип выдачи'),
+  bank_id: yup.string().required('Код банка обязателен'),
+  bank_account_number: yup.string().required('Номер счета обязателен'),
+  card_number: yup.string().required('Номер карты обязателен'),
+  amount_card: yup.string().required('Укажите сумму на карту'),
+  amount_cash: yup.string().required('Укажите сумму наличными'),
+  loan_amount: yup.number(),
+  creditPercentage: yup.string(),
+  dateIssue: yup.string(),
+  datePayment: yup.string()
+});
+
+export const cashNonSchema = yup.object().shape({
+  type: yup.string(),
+  bank_id: yup.string(),
+  bank_account_number: yup.string(),
+  card_number: yup.string(),
+  amount_card: yup.string(),
+  amount_cash: yup.string(),
+  loan_amount: yup.number(),
+  creditPercentage: yup.string(),
+  dateIssue: yup.string(),
+  datePayment: yup.string()
+});

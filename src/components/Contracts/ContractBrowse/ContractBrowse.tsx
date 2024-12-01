@@ -1,20 +1,17 @@
 import ButtonComponent from "../../UI/ButtonComponent";
 import GeneralClientInfo from "../../NewClient/GeneralClientInfo";
-import { useAppSelector } from "../../../helpers/hooks/useAppSelector";
 import ContractCollapsesList from "./ContractCollapsesList";
 import { createPortal } from "react-dom";
 import AboutClient from "../../Clients/AboutClient"
 import { useState } from "react";
 import ConfirmatioModal from "../../UI/Confirmation";
+import { useLoaderData } from "react-router";
 
 function ContractBrowse() {
-  const currentContract = useAppSelector(
-    (state) => state.contractStore.contractChoosenOne
-  );
-  console.log(currentContract);
-
+  const {client, etag, docList}:any = useLoaderData();
+  
   const [isOpenModal,setIsModalOpen] = useState(false) 
-  const [isOpenConfirmation,setOpenConfirmation] = useState(false) 
+  const [isOpenConfirmation,setOpenConfirmation] = useState(false)
 
   const buttons = [
     { title: "Подтвердить", color: "bg-lombard-btn-green", func:openConfirmation },
@@ -53,8 +50,8 @@ function ContractBrowse() {
         </div>
       </div>
         <div className="flex p-2 mx-auto justify-center">
-          <GeneralClientInfo inputsValues={{}} />
-          <ContractCollapsesList />
+          <GeneralClientInfo inputsValues={client} etag={etag} docList={docList} shouldDisableForm/>
+          <ContractCollapsesList client={client}/>
         </div>
 
       {isOpenModal  && createPortal(<AboutClient closeHandler={() => setIsModalOpen(false)}  />, document.body)}

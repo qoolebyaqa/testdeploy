@@ -21,7 +21,7 @@ import store from "../store/index.js";
 import { clientActions } from "../store/client.js";
 
 export function generateBreads(stepName:string | null, maxStep: number) {
-  const breadsArr = [{id: 0, step: 'initial', title: 'Создание клиента'}, {id: 1, step: 'hold', title: 'Договор'}, {id: 2, step: 'collateral', title: 'Залог'}, {id: 3, step: 'credit', title: 'Выдача кредита'}, {id: 4, step: 'deal_info', title: 'Данные сделки'}];
+  const breadsArr = [{id: 0, step: 'initial', title: 'Создание договора'}, {id: 1, step: 'hold', title: 'Договор'}, {id: 2, step: 'collateral', title: 'Залог'}, {id: 3, step: 'credit', title: 'Выдача кредита'}, {id: 4, step: 'deal_info', title: 'Данные сделки'}];
   const mappedArr = stepName ? breadsArr.slice(0, maxStep + 1) : breadsArr
 
       return <div className="flex">
@@ -31,7 +31,7 @@ export function generateBreads(stepName:string | null, maxStep: number) {
 }
 
 export function nonSpacedNonSymbols(value: string, withSpaces: boolean = false) {
-  return withSpaces ? value.replace(/[^\w\s]/g, '') : value.replace(/[^\w]/g, '')
+  return withSpaces ? value.replace(/[^\w\s]/g, '') : value.replace(/[^\w.]/g, '')
 } 
 
 export function nonNumberUpperCaseValue(value: string) {
@@ -39,6 +39,7 @@ export function nonNumberUpperCaseValue(value: string) {
 } 
 
 export function convertDataToList4DropDown(data: any[]) {
+  if(typeof(data[0]) === 'string') return data.map((val, i) => ({label: val, key: val, enum: i}))
   return data.map(val => ({label: val.name, key: val.id, enum: val.id}))
 }
 
@@ -190,7 +191,7 @@ const titleWIthIcon = (
   key?: string
 ) => {
   const sort =
-    typeof currentSort === "string" && key && getSort(currentSort, key);
+    typeof currentSort === "string" && !!key && getSort(currentSort, key);
   const handleClick = () => {
     setSort(sort);
   };
@@ -200,7 +201,7 @@ const titleWIthIcon = (
       <button onClick={handleClick} className="p-0">
         <SVGComponent
           title="sortArrows"
-          color={`${key && currentSort?.includes(key) ? "green" : "#D2DBE1"}`}
+          color={`${!!key && currentSort?.includes(key) ? "green" : "#D2DBE1"}`}
         />
       </button>
     </div>
@@ -503,7 +504,7 @@ export const getColumnsForClients = (
   },
   {
     title: titleWIthIcon(i18next.t('clients.columns.fio'), setSort, currentSort, "first_name"),
-    key: "last_name",
+    key: "fio",
     dataIndex: "first_name",
     onHeaderCell: setTblHeaderFilter? (record) => {
       return {
@@ -563,21 +564,23 @@ export const getColumnsForClients = (
 ];
 
 ///contracts
-export const getColumnsForContracts = (): TableColumnsType<IDataContractType> => [
+export const getColumnsForContracts = (
+  setSort?: any,
+  currentSort?: string): TableColumnsType<IDataContractType> => [
   {
-    title: titleWIthIcon("№"),
+    title: "№",
     dataIndex: "index",
     key: "index"
   },
   {
-    title: titleWIthIcon("id"),
-    dataIndex: "agreement_id",
-    key: "agreement_id"
+    title: titleWIthIcon('№ Договора', setSort, currentSort, "id"),
+    dataIndex: "id",
+    key: "id"
   },
   {
-    title: titleWIthIcon("Статус договора"),
-    dataIndex: "loan_status",
-    key: "loan_status"
+    title: "Статус договора",
+    dataIndex: "status",
+    key: "status"
   },
   {
     title: 'ФИО клиента',
@@ -618,23 +621,23 @@ export const getColumnsForContracts = (): TableColumnsType<IDataContractType> =>
   },
   {
     title: "ID аккаунта",
-    dataIndex: "loan_account_id",
-    key: "loan_account_id"
+    dataIndex: "loan_account_number",
+    key: "loan_account_number"
   },
   {
     title: "ID аккаунта interest",
-    dataIndex: "interest_account_id",
-    key: "interest_account_id"
+    dataIndex: "interest_account_number",
+    key: "interest_account_number"
   },
   {
     title: "ID аккаунта overdue",
-    dataIndex: "overdue_account_id",
-    key: "overdue_account_id"
+    dataIndex: "overdue_account_number",
+    key: "overdue_account_number"
   },
   {
     title: "ID аккаунта liquidation",
-    dataIndex: "liquidation_account_id",
-    key: "liquidation_account_id"
+    dataIndex: "liquidation_account_number",
+    key: "liquidation_account_number"
   },
   {
     title: "Филиал",
@@ -916,3 +919,34 @@ export const itemLowCost = {
   measurmentUnit: "01.01.2024",
 };
 export const dataLowCost: ILowCostType[] = Copier(itemLowCost);
+
+
+export const mockContractData: IDataContractType = {
+  "id": 64,
+  "loan_product_id": 1,
+  "loan_amount": 200000000.00,
+  "interest_rate": null,
+  "loan_term": null,
+  "repayment_schedule_type": null,
+  "overdue_interest_rate": null,
+  "issue_date": "2024-11-30",
+  "due_date": "2025-11-30",
+  "status": "CONFIRMED",
+  "loan_account_number": "0",
+  "interest_account_number": "0",
+  "overdue_account_number": "0",
+  "liquidation_account_number": "0",
+  "branch_id": 1,
+  "created_at": "2024-11-29T14:15:13.621908Z",
+  "created_by": 35,
+  "updated_at": "2024-11-29T14:15:14.326187Z",
+  "updated_by": 35,
+  "customer_id": 7003,
+  "first_name": "ARTUR",
+  "last_name": "TEN",
+  "middle_name": null,
+  "phone_number": "998909541493",
+  "passport_series": "AD",
+  "passport_number": "2132132",
+  "pin": "58278278278272"
+}

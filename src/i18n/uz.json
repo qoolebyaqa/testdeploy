@@ -36,5 +36,9 @@
       "sum": "Kredit miqdori",
       "status": "status"
     }
-  }
+  },
+  "type": "Mahsulot turi",
+  "quality": "Namunasi",
+  "weight": "Umumiy og'irlik",
+  "quantity": "Sof og'irlik"
 }

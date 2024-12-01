@@ -1,34 +1,36 @@
 import { useState } from "react";
 import SVGComponent from "../../UI/SVGComponent";
+import Confirmation from "../../UI/Confirmation";
+import { createPortal } from "react-dom";
+import { LocalcollateralItem } from "../../../helpers/API/Schemas";
 
 interface IDottedBtn {
-  id: string;
+  currentItem: LocalcollateralItem;
   items: {[key:string]: string}[],
   pushNewIndex: () => void,
-  deleteIndex: (id: string) => void
+  deleteIndex: (item: any) => void,
+  isValid?: boolean | undefined
 }
 
-function DottedBtn({id, items, pushNewIndex, deleteIndex}: IDottedBtn) {  
+function DottedBtn({currentItem, items, pushNewIndex, deleteIndex, isValid}: IDottedBtn) {  
   const [openControls, setOpenControls] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   function addItem() {
     pushNewIndex()
     setOpenControls(false);
   }
-  function deleteItem(id: string) {
-    deleteIndex(id)
-  }
 
   const hiddenBtns = 
   <div className="flex flex-col absolute gap-[2px] z-10 left-12 top-0">
-    <button className="bg-lombard-btn-green p-0 m-0 w-[40px] h-[40px] mx-auto" onClick={addItem}>+</button>
-    {items[0].id !== id && <button className="bg-lombard-btn-red p-0 w-[40px] h-[40px]" onClick={() => deleteItem(id)}><SVGComponent title="cart"/></button>}
+    <button type='button' className="bg-lombard-btn-green p-0 m-0 w-[35px] h-[35px] mx-auto" onClick={isValid ? addItem : undefined}>+</button>
+    {items.length !== 1 && <button type='button' className="bg-lombard-btn-red p-0 w-[35px] h-[35px] flex justify-center items-center" onClick={() => setShowDeleteDialog(true)}><SVGComponent title="cart" className="w-[28px] h-[24px]"/></button>}
   </div>
 
   return (
     <div className="translate-y-[23px]">
     <button 
-      className="w-[40px] h-[40px] flex justify-center items-center bg-lombard-main-blue self-end mb-[2px]"
+      className="w-[35px] h-[35px] flex justify-center items-center bg-lombard-main-blue self-end mb-[2px]"
       onClick={() => setOpenControls(prev => !prev)}
       type="button"
     >
@@ -47,6 +49,7 @@ function DottedBtn({id, items, pushNewIndex, deleteIndex}: IDottedBtn) {
       </div>
     </button>
     {openControls && hiddenBtns}
+    {showDeleteDialog && createPortal(<Confirmation handleClose={() => setShowDeleteDialog(false)} handleSave={() => {deleteIndex(currentItem); setShowDeleteDialog(false)}} title="Удалить залог?" textMsg="Вы действительно хотите удалить залог?"/>, document.body)}
     </div>
   );
 }

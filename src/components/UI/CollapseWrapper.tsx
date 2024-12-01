@@ -36,7 +36,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
           <div className="flex items-center gap-2">
             <h3 className={`p-4 ${notActive ? 'text-lombard-borders-grey' : ''}`}>{title}</h3>
             {(handleClick && page === 'newClient' && !notActive) && <ButtonComponent titleBtn="График погашения" clickHandler={handleClick} color="bg-lombard-main-blue" />}
-            {(page === 'contract' && !notActive) && <UsualSwitch title="Платит третье лицо" switchFirst={true} onSwitchChange={handleThirdPartyPaymentChange}/>}
+            {(page === 'contract' && !notActive) && <UsualSwitch title="Платит третье лицо" onSwitchChange={handleThirdPartyPaymentChange} name="thirdParty"/> }
           </div>
           <div className="flex self-center">
             {page === 'filial' || page === 'newEmployee' && <ButtonComponent color="bg-lombard-btn-green" titleBtn="Добавить" clickHandler={handleClick} />}
@@ -50,7 +50,7 @@ const CollapseWrapper: React.FC<ICollapseWrapper> = ({ title, page, children, no
             ><SVGComponent title="arrow" /></motion.button>
           </div>
         </div>
-    <motion.div animate={!showTable ? 'open' : 'closed'} variants={animationVariantsTable} className="overflow-hidden">
+    <motion.div animate={!showTable ? 'open' : 'closed'} variants={animationVariantsTable} className="overflow-hidden mb-3">
       {children}
     </motion.div>
     </div>

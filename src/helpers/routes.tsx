@@ -108,6 +108,10 @@ const childrenRoutes = [
           </RouteProtector>
         ),
         title: "Обзор договора",
+        loader: clientLoader,
+        shouldRevalidate: ({ currentUrl }:{ currentUrl: URL}) => {
+          return currentUrl.pathname === "/contracts";
+        },
       },
     ],
   },

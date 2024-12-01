@@ -8,7 +8,6 @@ function NewClientContent({currentClient, etag, docList}:{currentClient?: any, e
 
   const valueChangeHandler = (inputValue: {id?: string, title:string, value: string | string[]}) => {   
     setFormValues(prev => ({...prev, [inputValue.title]: Array.isArray(inputValue.value) ? inputValue.value[0] : inputValue.value}))
-    console.log(formValues) 
   }
 
   return (

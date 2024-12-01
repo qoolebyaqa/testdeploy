@@ -7,24 +7,74 @@ import DepositCharacteristics from "./DepositCharacteristics";
 import DottedBtn from "./DottedBtn";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { CreateCollateralResp, ICollateralType, LocalcollateralItem } from "../../../helpers/API/Schemas";
+import { convertDataToList4DropDown } from "../../../helpers/fnHelpers";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { collateralPriceSchema, collateralSchema } from "../../../helpers/validator";
+import { useTranslation } from "react-i18next";
 
 function DepositItem({
   item,
   pushNewIndex,
   deleteIndex,
   formDepositItems,
-  submitInputData,
-  collateralTypes
+  saveInputData,
+  collateralTypes,
+  contractNumber
 }: {
-  item: { [key: string]: string };
+  item: LocalcollateralItem;
   pushNewIndex: () => void;
-  deleteIndex: (id: string) => void;
-  formDepositItems: { [key: string]: string }[];
-  submitInputData: (data: { [key: string]: string | string[] }) => void;
-  collateralTypes: any[]
+  deleteIndex: (id: LocalcollateralItem) => void;
+  formDepositItems: { [key: string]: any }[];
+  saveInputData: (data: { [key: string]: string | string[] }) => void;
+  collateralTypes: ICollateralType[];
+  contractNumber: number | null
 }) {
   const [showDialog, setShowDialog] = useState(false);
-  const info = `${item.comments} ${item.quality} проба, Общ. гр. ${item.totalWeight}, Чис. гр. ${item.pureWeight}`;
+  const {t} = useTranslation();
+  const [price, setPrice] = useState<CreateCollateralResp>({
+    "estimated_value": 0,
+    "estimated_value_min": 0,
+    "estimated_value_max": 0
+  });
+  const itemFormValues = formDepositItems.find(val => val.id === item.id);
+  
+  const {
+    handleSubmit,
+    control, getValues,
+    formState: { errors },
+    // @ts-ignore
+  } = useForm({ mode: "onChange", resolver: yupResolver(collateralSchema), defaultValues: {
+    collateralType: item.collateral_type_id?.toString()
+  } });
+
+  const {
+    control: priceControl,
+    reset: priceReset,
+    getValues: getPriceValue,
+    formState: { errors: priceErrors, isValid: isPriceValid },
+  } = useForm({ mode: "onChange", 
+    // @ts-ignore
+    resolver: item.price?.estimated_value ? yupResolver(collateralPriceSchema(item.price?.estimated_value_min, item.price?.estimated_value_max)) : yupResolver(collateralPriceSchema(price.estimated_value_min, price.estimated_value_max)), 
+    defaultValues: {price: price.estimated_value || item.price?.estimated_value} });
+
+  const handleSetPrice = (value: CreateCollateralResp) => {
+    setPrice(value);
+    priceReset({price: value.estimated_value})
+  }
+  
+  const availableAttributes = getValues('collateralType') ? collateralTypes.find(val => String(val.id) === getValues('collateralType'))!.attributes : [];
+  const itemFormConverted = itemFormValues?.attribute_values && itemFormValues.attribute_values.reduce(
+    (acc: any, { collateral_type_attribute_id, value }: any) => {
+      acc[collateral_type_attribute_id] = value;
+      return acc;
+    },
+    {}
+  )
+  const infoData = itemFormConverted && availableAttributes && (availableAttributes as ICollateralType[]).map(attr => ({name: attr.name, value: itemFormConverted[attr.id]}))
+  const info = infoData?.reduce((acc:string, cur: {name: string, value: string}) => {return acc + `${t(cur.name)} ${cur.value}, `}, '');
+
   return (
     <motion.li
       className="flex mt-5"
@@ -32,50 +82,58 @@ function DepositItem({
       transition={{ duration: 0.3 }}
     >
       <div className="w-5/12 mr-2">
-        <div className="flex gap-1 items-center">
+        <form className="flex gap-1 items-center" onSubmit={handleSubmit(() => setShowDialog(true))}>
           <DropDown
             title="Выбрать"
-            listOfItems={collateralTypes}
+            listOfItems={convertDataToList4DropDown(collateralTypes)}
             label="Тип залога"
-            name="typeDeposit"
-            className="h-[40px]"
+            name="collateralType"
+            control={control}
+            errorMsg={errors.collateralType?.message}
           />
           <button
-            className="self-end p-0 m-0 flex max-w-[280px] overflow-hidden text-lg"
-            onClick={() => setShowDialog(true)}
+            className="self-end p-0 m-0 flex h-[60px] max-w-[300px] min-w-[45px] overflow-hidden text-lg"
           >
-            <i>
+            <i className="self-end">
               <SVGComponent title="message" />
             </i>
-            {item.comments && (
-              <p className="text-black py-2 text-[10px]">{info}</p>
+            {info && (
+              <p className="text-black py-2 text-[10px] whitespace-normal leading-3">{info}</p>
             )}
           </button>
-        </div>
+        </form>
       </div>
       <div className="grow mr-12">
-        <div className="flex gap-1">
+        <form className="flex gap-1">
           <CustomInput
             type="number"
             label="Цена"
             name="price"
-            className="h-[42px]"
+            className="h-[35px]"
+            control={priceControl}
+            errorMsg={priceErrors.price?.message}
+            isDisabled={!itemFormValues?.attribute_values}
           />
           <DottedBtn
-            id={item.id}
+            currentItem={item}
             pushNewIndex={pushNewIndex}
             deleteIndex={deleteIndex}
             items={formDepositItems}
+            isValid={isPriceValid && getPriceValue('price') !== 0}
           />
-        </div>
+        </form>
       </div>
       {showDialog &&
         createPortal(
           <DialogComponent closeHandler={() => setShowDialog(false)}>
             <DepositCharacteristics
               closeHandler={() => setShowDialog(false)}
-              id={item.id}
-              submitInputData={submitInputData}
+              availableAttributes={availableAttributes}
+              saveInputData={saveInputData}
+              contractNumber={contractNumber}
+              collateralId={getValues('collateralType')}
+              itemFormValues={itemFormValues!}
+              setPrice={handleSetPrice}
             />
           </DialogComponent>,
           document.body
