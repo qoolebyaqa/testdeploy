@@ -169,7 +169,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
 
   const submitAndStepChange = async (_formData:any) => {  
     try {
-      /* await ApiService.confirmPo(Number(contractNumber)) */
+      await ApiService.confirmPo(Number(contractNumber))
       setContractData(mockContractData)
       toast.success(`Драфт договора №${contractNumber} подтверждён`);
       dispatch.setStepState({id: 3, step:'deposit', maxStep: 3});
