@@ -20,16 +20,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { cardSchema, cashNonSchema, complexSchema, confirmationsSwitchersSchema, } from "../../../helpers/validator";
 import { toast } from "react-toastify";
 import { IDataContractType } from "../../../helpers/types";
-import { mockContractData } from "../../../helpers/fnHelpers";
+import Loader from "../../UI/Loader";
 
 function DepositDetails({createdContract}: {createdContract?: IDataContractType | null}) {
   const [formDepositItems, setFormDepositItems] = useState<
     LocalcollateralItem[]
   >([{ id: Math.random().toFixed(8) }]);
   const stepState = useAppSelector((state) => state.clientStore.stepState);
+  const loadingPO = useAppSelector((state) => state.contractStore.loadingPO)
   const [showDialog, setShowDialog] = useState(false);
-  const [contractNumber, setContractNumber] = useState<null | number>(null);
-  const [contractData, setContractData] = useState<null | IDataContractType | undefined>(null)
+  const [contractNumber, setContractNumber] = useState<null | number>(createdContract?.id || null);
+  const [contractData, setContractData] = useState<null | IDataContractType | undefined>(createdContract || null)
   const dispatch = useActions();
   const [collateralTypes, setCollateralTypes] = useState<
     ICollateralType[] | []
@@ -64,6 +65,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
         }
         const collateralTypeList = await ApiService.getCollateralTypes();
         setCollateralTypes(collateralTypeList.data.content);
+        /* await ApiService.getPoStatement(81) */
       /* const collateralPriceList = await ApiService.getCollateralPriceList(); */
      /*  setCollateralPriceLists(collateralPriceList.data.content); */
       /* await ApiService.getCollateralPriceList() */
@@ -88,6 +90,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
       }, 2) */
     }
     getCollateral();
+    dispatch.setLoadingPo(false);
   }, [createdContract]);
 
   function pushIndexToDepositItems() {
@@ -99,9 +102,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
   }
 
   async function deleteFromDepositItems(elem: LocalcollateralItem) {
-    console.log(elem)
     const id = elem?.price?.id;
-    console.log(formDepositItems)
     try {
       if(id){
         await ApiService.deleteCollateral(id)
@@ -169,9 +170,15 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
 
   const submitAndStepChange = async (_formData:any) => {  
     try {
-      await ApiService.confirmPo(Number(contractNumber))
-      setContractData(mockContractData)
-      toast.success(`Драфт договора №${contractNumber} подтверждён`);
+      if(contractData?.status === 'CONFIRMED') {
+      } else {
+        const response = await ApiService.confirmPo(Number(contractNumber));
+        const mockResponse = {...response.data, 
+          "issue_date": "2024-11-30",
+          "due_date": "2025-11-30",}
+        setContractData(mockResponse)
+        toast.success(`Драфт договора №${contractNumber} подтверждён`);
+      }
       dispatch.setStepState({id: 3, step:'deposit', maxStep: 3});
     } catch (err) {
       console.log(err)
@@ -192,7 +199,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
       dataToIssuePO.push({amount: loan_amount, type})
     }
     try{
-     /*  contractNumber && await ApiService.issuePo(contractNumber, {issue_details: dataToIssuePO}) */
+      contractNumber && await ApiService.issuePo(contractNumber, {issue_details: dataToIssuePO})
       toast.success(`Договор №${contractNumber} выпущен`);
       dispatch.setStepState({id: 4, step:'deal_info', maxStep: 4});
 
@@ -266,6 +273,9 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
     ) : (
       <></>
     );
+  if(loadingPO) {
+    return <Loader/>
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -281,7 +291,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
             : undefined
         }
       >
-        <Deal setContractNumber={setContractNumber} />
+        <Deal setContractNumber={setContractNumber} contractNumber={contractNumber}/>
       </CollapseWrapper>}
       <CollapseWrapper
         contractNumber={contractNumber}

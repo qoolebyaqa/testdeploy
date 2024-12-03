@@ -55,6 +55,7 @@ function ContractsContent() {
   }
 
   function selectContractHandler(...args: IDataContractType[]) {
+    dispatch.setLoadingPo(true);
     navigate(`/contracts/${args[0].customer_id}?po=${args[0].id}`);
   }
 

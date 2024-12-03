@@ -150,6 +150,14 @@ export const ApiService = {
     const response = await privateAxios.get(`${endPoints.loans}/${id}`);
     return response;
   },
+  updatePO: async(id: string | number, formData: {[key: string]: any}) => {
+    const response = await privateAxios.put(`${endPoints.loans}/${id}`, formData);
+    return response;
+  },
+  getPoStatement: async(id: string | number) => {
+    const response = await privateAxios.get(`${endPoints.loans}/${id}/statement`);
+    return response;
+  },
 
   //collaterals:
   getPOCollaterals: async(filter: string, page:number = 0, size:number = 14, sortStr?: string) => {

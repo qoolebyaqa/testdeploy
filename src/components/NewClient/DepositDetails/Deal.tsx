@@ -10,7 +10,7 @@ import { productSchema } from "../../../helpers/validator";
 import { useParams } from "react-router";
 import useActions from "../../../helpers/hooks/useActions";
 
-function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
+function Deal({setContractNumber, contractNumber}: {setContractNumber: (poN: number) => void, contractNumber: number | null}) {
   const [products, setProducts] = useState<IProduct[] | []>([]);
   const { id_browse } = useParams();
   const dispatch = useActions();
@@ -26,7 +26,8 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
   const {
     handleSubmit,
     control,
-    formState: { errors  },
+    reset,
+    formState: { errors, isDirty  },
   } = useForm({ mode: "onChange", resolver: yupResolver(productSchema) });
   
   const listOfItems = useCallback(
@@ -35,6 +36,10 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
   );
 
   const codeSubmit = async (formData: any) => {
+    if(!isDirty) {
+      dispatch.setStepState({id: 2, step:'collateral', maxStep: 2});  
+      return
+    }
     if(id_browse) 
     try {
       const selectedProduct = products.filter(
@@ -45,10 +50,17 @@ function Deal({setContractNumber}: {setContractNumber: (poN: number) => void}) {
         branch_id: selectedProduct.branch_id,
         customer_id: id_browse,
       };
-      const resHoldPO = await ApiService.createPOinHold(productDataToPost);/* {data: {loan_id: 64}} */
-      setContractNumber(resHoldPO.data.loan_id)
-      toast.success(`Драфт договора №${resHoldPO.data.loan_id} создан`);
-      dispatch.setStepState({id: 2, step:'collateral', maxStep: 2})
+      let resHoldPO;
+      if(contractNumber) {
+        resHoldPO = await ApiService.updatePO(contractNumber, productDataToPost);        
+        toast.success(`Продукт в драфте договора №${contractNumber} обновлён`);
+      } else {
+        resHoldPO = await ApiService.createPOinHold(productDataToPost);
+        setContractNumber(resHoldPO.data.loan_id);
+        toast.success(`Драфт договора №${resHoldPO.data.loan_id} создан`);
+      } 
+      reset({loan_product_id: formData.loan_product_id})
+      dispatch.setStepState({id: 2, step:'collateral', maxStep: 2});  
     } catch (err) {
       console.log(err);
     }

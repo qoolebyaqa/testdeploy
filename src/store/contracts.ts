@@ -6,9 +6,11 @@ const contractsSlice = createSlice({
   initialState: {
     contractChoosenOne: null,
     contractList: [],
+    loadingPO: false,
   } as {
     contractChoosenOne: null | IDataContractType | any;
     contractList: IDataContractType[];
+    loadingPO: boolean;
   },
   reducers: {
     setContractChoosenOne(state, selection) {
@@ -16,6 +18,9 @@ const contractsSlice = createSlice({
     },
     setContractsList(state, contractList) {
       state.contractList = contractList.payload
+    },
+    setLoadingPo(state, bool) {
+      state.loadingPO = bool.payload
     }
   },
 });
