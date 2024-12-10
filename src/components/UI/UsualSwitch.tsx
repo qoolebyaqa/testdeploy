@@ -1,5 +1,5 @@
 import { Switch } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ValidationError from "./ValidationError";
 import { Controller } from "react-hook-form";
 
@@ -11,6 +11,7 @@ interface IUsualSwitchProps {
   shouldBeDisabled?: boolean | undefined;
   errorMsg?: string;
   control?: any;
+  defaultSelected?: boolean | undefined
 }
 
 function UsualSwitch({
@@ -21,14 +22,20 @@ function UsualSwitch({
   shouldBeDisabled,
   errorMsg,
   control,
+  defaultSelected,
 }: IUsualSwitchProps) {
-  const [turnOn, setTurnOn] = useState(false);
+  const [turnOn, setTurnOn] = useState(defaultSelected);
   const onChange = (checked: boolean) => {
     setTurnOn(checked);
     if (onSwitchChange) {
       onSwitchChange(checked);
     }
   };
+  
+  useEffect(() => {
+    setTurnOn(defaultSelected);
+  }, [defaultSelected]);
+  
   if (control) {
     return (
       <div className={`flex flex-col mr-4 ${className ? className : ""}`}>
@@ -39,12 +46,11 @@ function UsualSwitch({
             control={control}
             render={({ field }) => {
               const handleSwitch = (val: any) => {
-                console.log(val);
                 field.onChange(val);
                 onChange(val);
               };
               return (
-                <Switch onChange={handleSwitch} disabled={shouldBeDisabled} />
+                <Switch onChange={handleSwitch} disabled={shouldBeDisabled} checked={turnOn} />
               );
             }}
           />

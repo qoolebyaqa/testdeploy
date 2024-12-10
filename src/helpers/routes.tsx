@@ -1,36 +1,47 @@
 import { createBrowserRouter, defer, redirect } from "react-router-dom";
-import ContractBrowse from "../components/Contracts/ContractBrowse/ContractBrowse";
-import KATMBrowseContent from "../components/Katm/KATMBrowse/KATMBrowseContent";
-import Contracts from "../pages/Contracts";
-import Employees from "../pages/Eployees";
-import FilialBrowse from "../pages/FilialBrowse";
-import Filials from "../pages/Filials";
-import KATM from "../pages/KATM";
-import NewClient from "../pages/NewClient";
-import NewEmployeePage from "../pages/NewEmployeePage";
-import Notification from "../pages/Notification";
-import Authentification from "../pages/Authentification";
-import RootLayout from "../pages/RootLayout";
 import { ApiService } from "./API/ApiSerivce";
-import ClientBrowse from "../components/Clients/ClientBrowse/ClientBrowse";
 import store from "../store";
-import EmployeeBrowse from "../components/Employees/EmployeeBrowse/EmployeeBrowse";
-import Password from "../pages/Password";
-import CashCredit from "../components/Cash/CashCredit";
-import CashDebet from "../components/Cash/CashDebit";
-import DebitCreditLayout from "../pages/Cash/DebitCreditLayout";
-import General from "../components/Cash/General";
-import Received from "../components/Cash/Received";
-import Lowcost from "../components/Cash/Lowcost";
-import Bills from "../pages/Cash/Bills";
 import { RouteProtector } from "../components/UI/RouteProtector";
 import Main from "../pages/Main";
-import Clients from "../pages/Clients";
-import Monitoring from "../pages/Monitoring";
-import NotFound from "../pages/NotFound";
 import { clientActions } from "../store/client";
 import { employeeActions } from "../store/employee";
-import Profile from "../pages/Profile";
+import { lazy, Suspense } from "react";
+import Loader from "../components/UI/Loader";
+
+const Authentification = lazy(() => import("../pages/Authentification"));
+const RootLayout = lazy(() => import("../pages/RootLayout"));
+const Password = lazy(() => import("../pages/Password"));
+const ContractBrowse = lazy(
+  () => import("../components/Contracts/ContractBrowse/ContractBrowse")
+);
+const KATMBrowseContent = lazy(
+  () => import("../components/Katm/KATMBrowse/KATMBrowseContent")
+);
+const Contracts = lazy(() => import("../pages/Contracts"));
+const Employees = lazy(() => import("../pages/Eployees"));
+const FilialBrowse = lazy(() => import("../pages/FilialBrowse"));
+const Filials = lazy(() => import("../pages/Filials"));
+const KATM = lazy(() => import("../pages/KATM"));
+const NewClient = lazy(() => import("../pages/NewClient"));
+const NewEmployeePage = lazy(() => import("../pages/NewEmployeePage"));
+const Notification = lazy(() => import("../pages/Notification"));
+const ClientBrowse = lazy(
+  () => import("../components/Clients/ClientBrowse/ClientBrowse")
+);
+const EmployeeBrowse = lazy(
+  () => import("../components/Employees/EmployeeBrowse/EmployeeBrowse")
+);
+const CashCredit = lazy(() => import("../components/Cash/CashCredit"));
+const CashDebet = lazy(() => import("../components/Cash/CashDebit"));
+const DebitCreditLayout = lazy(() => import("../pages/Cash/DebitCreditLayout"));
+const General = lazy(() => import("../components/Cash/General"));
+const Lowcost = lazy(() => import("../components/Cash/Lowcost"));
+const Bills = lazy(() => import("../pages/Cash/Bills"));
+const Clients = lazy(() => import("../pages/Clients"));
+const Monitoring = lazy(() => import("../pages/Monitoring"));
+const NotFound = lazy(() => import("../pages/NotFound"));
+const Profile = lazy(() => import("../pages/Profile"));
+const Received = lazy(() => import("../components/Cash/Received"));
 
 const childrenCashOperationsRoutes = [
   { path: "debet", element: <CashDebet /> },
@@ -54,7 +65,9 @@ const childrenRoutes = [
     path: "/profile",
     element: (
       <RouteProtector allowedRoles={["OPERATOR", "ADMIN", "ACCOUNTANT"]}>
-        <Profile />
+        <Suspense fallback={<Loader justWhite/>}>
+          <Profile />
+        </Suspense>
       </RouteProtector>
     ),
     title: "Профиль",
@@ -66,7 +79,9 @@ const childrenRoutes = [
         path: "",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <Clients />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Clients />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Клиенты",
@@ -75,16 +90,17 @@ const childrenRoutes = [
         path: ":id_browse",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <ClientBrowse />
+            <Suspense fallback={<Loader justWhite/>}>
+              <ClientBrowse />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Обзор клиента",
         loader: clientLoader,
-        shouldRevalidate: ({ currentUrl }:{ currentUrl: URL}) => {
+        shouldRevalidate: ({ currentUrl }: { currentUrl: URL }) => {
           return currentUrl.pathname === "/clients";
         },
-
-      }
+      },
     ],
   },
   {
@@ -95,7 +111,9 @@ const childrenRoutes = [
         path: "",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <Contracts />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Contracts />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Контракты",
@@ -104,12 +122,14 @@ const childrenRoutes = [
         path: ":id_browse",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <ContractBrowse />
+            <Suspense fallback={<Loader justWhite/>}>
+              <ContractBrowse />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Обзор договора",
         loader: clientLoader,
-        shouldRevalidate: ({ currentUrl }:{ currentUrl: URL}) => {
+        shouldRevalidate: ({ currentUrl }: { currentUrl: URL }) => {
           return currentUrl.pathname === "/contracts";
         },
       },
@@ -123,7 +143,9 @@ const childrenRoutes = [
         path: "",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <KATM />
+            <Suspense fallback={<Loader justWhite/>}>
+              <KATM />
+            </Suspense>
           </RouteProtector>
         ),
         title: "КАТМ",
@@ -132,7 +154,9 @@ const childrenRoutes = [
         path: ":id_browse",
         element: (
           <RouteProtector allowedRoles={["OPERATOR"]}>
-            <KATMBrowseContent />
+            <Suspense fallback={<Loader justWhite/>}>
+              <KATMBrowseContent />
+            </Suspense>
           </RouteProtector>
         ),
         title: "выбранный КАТМ",
@@ -143,7 +167,9 @@ const childrenRoutes = [
     path: "/sms",
     element: (
       <RouteProtector allowedRoles={["OPERATOR", "ADMIN"]}>
-        <Notification />
+        <Suspense fallback={<Loader justWhite/>}>
+          <Notification />
+        </Suspense>
       </RouteProtector>
     ),
     title: "Уведомления",
@@ -152,7 +178,9 @@ const childrenRoutes = [
     path: "/monitoring",
     element: (
       <RouteProtector allowedRoles={["ADMIN"]}>
-        <Monitoring />
+        <Suspense fallback={<Loader justWhite/>}>
+          <Monitoring />
+        </Suspense>
       </RouteProtector>
     ),
     title: "Мониторинг",
@@ -165,7 +193,9 @@ const childrenRoutes = [
         path: "",
         element: (
           <RouteProtector allowedRoles={["ADMIN"]}>
-            <Employees />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Employees />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Сотрудники",
@@ -175,7 +205,9 @@ const childrenRoutes = [
         path: ":id_browse",
         element: (
           <RouteProtector allowedRoles={["ADMIN"]}>
-            <EmployeeBrowse />
+            <Suspense fallback={<Loader justWhite/>}>
+              <EmployeeBrowse />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Обзор сотрудника",
@@ -191,7 +223,9 @@ const childrenRoutes = [
         path: "",
         element: (
           <RouteProtector allowedRoles={["ADMIN"]}>
-            <Filials />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Filials />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Филиалы",
@@ -200,7 +234,9 @@ const childrenRoutes = [
         path: ":id_browse",
         element: (
           <RouteProtector allowedRoles={["ADMIN"]}>
-            <FilialBrowse />
+            <Suspense fallback={<Loader justWhite/>}>
+              <FilialBrowse />
+            </Suspense>
           </RouteProtector>
         ),
         title: "Обзор филиала",
@@ -211,7 +247,9 @@ const childrenRoutes = [
     path: "/new-employee",
     element: (
       <RouteProtector allowedRoles={["ADMIN"]}>
-        <NewEmployeePage />
+        <Suspense fallback={<Loader justWhite/>}>
+          <NewEmployeePage />
+        </Suspense>
       </RouteProtector>
     ),
     title: "Регистрация сотрудника",
@@ -220,7 +258,9 @@ const childrenRoutes = [
     path: "/new-client",
     element: (
       <RouteProtector allowedRoles={["OPERATOR"]}>
-        <NewClient />
+        <Suspense fallback={<Loader justWhite/>}>
+          <NewClient />
+        </Suspense>
       </RouteProtector>
     ),
     title: "Регистрация Клиента",
@@ -232,7 +272,9 @@ const childrenRoutes = [
         path: "operations/",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <DebitCreditLayout />
+            <Suspense fallback={<Loader justWhite/>}>
+              <DebitCreditLayout />
+            </Suspense>
           </RouteProtector>
         ),
         children: childrenCashOperationsRoutes,
@@ -241,7 +283,9 @@ const childrenRoutes = [
         path: "/accountant/bills",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <Bills />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Bills />
+            </Suspense>
           </RouteProtector>
         ),
       },
@@ -249,7 +293,9 @@ const childrenRoutes = [
         path: "/accountant/deals",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <Bills />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Bills />
+            </Suspense>
           </RouteProtector>
         ),
       },
@@ -257,7 +303,9 @@ const childrenRoutes = [
         path: "/accountant/proccess",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <Bills />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Bills />
+            </Suspense>
           </RouteProtector>
         ),
       },
@@ -265,7 +313,9 @@ const childrenRoutes = [
         path: "/accountant/reports",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <Bills />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Bills />
+            </Suspense>
           </RouteProtector>
         ),
       },
@@ -273,7 +323,9 @@ const childrenRoutes = [
         path: "/accountant/monitoring",
         element: (
           <RouteProtector allowedRoles={["ACCOUNTANT"]}>
-            <Bills />
+            <Suspense fallback={<Loader justWhite/>}>
+              <Bills />
+            </Suspense>
           </RouteProtector>
         ),
       },
@@ -284,18 +336,18 @@ const childrenRoutes = [
 export const router = createBrowserRouter([
   {
     path: "/auth",
-    element: <Authentification />,
-    errorElement: <NotFound />,
+    element: <Suspense fallback={<Loader justWhite/>}><Authentification /></Suspense>,
+    errorElement: <Suspense fallback={<Loader justWhite/>}><NotFound /></Suspense>,
   },
   {
     path: "/",
-    element: <RootLayout />,
+    element: <Suspense fallback={<Loader justWhite/>}><RootLayout /></Suspense>,
     children: childrenRoutes,
-    errorElement: <NotFound />,
+    errorElement: <Suspense fallback={<Loader justWhite/>}><NotFound /></Suspense>,
   },
   {
     path: "/password/:tkn",
-    element: <Password />,
+    element: <Suspense fallback={<Loader justWhite/>}><Password /></Suspense>,
     loader: passReset,
   },
 ]);
@@ -318,11 +370,11 @@ async function clientLoader({ params }: any) {
   } else {
     try {
       const response = await ApiService.getCustomer(id);
-      const documentsResponse = await ApiService.getDocuments(id, 'passport');
+      const documentsResponse = await ApiService.getDocuments(id, "passport");
       if (response.status === 401 || documentsResponse.status === 401) {
         return redirect("/auth");
       } else {
-        const docList = documentsResponse.data
+        const docList = documentsResponse.data;
         let etag = String(response.headers.etag);
         const etagMatch = etag.match(/"(.*)"/);
         if (etagMatch && etagMatch[1]) {

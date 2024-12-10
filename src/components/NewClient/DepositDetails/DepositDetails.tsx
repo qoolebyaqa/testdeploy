@@ -20,29 +20,31 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { cardSchema, cashNonSchema, complexSchema, confirmationsSwitchersSchema, } from "../../../helpers/validator";
 import { toast } from "react-toastify";
 import { IDataContractType } from "../../../helpers/types";
-import Loader from "../../UI/Loader";
 
-function DepositDetails({createdContract}: {createdContract?: IDataContractType | null}) {
+function DepositDetails({selectedContract}: {selectedContract?: IDataContractType | null}) {
   const [formDepositItems, setFormDepositItems] = useState<
     LocalcollateralItem[]
   >([{ id: Math.random().toFixed(8) }]);
   const stepState = useAppSelector((state) => state.clientStore.stepState);
-  const loadingPO = useAppSelector((state) => state.contractStore.loadingPO)
   const [showDialog, setShowDialog] = useState(false);
-  const [contractNumber, setContractNumber] = useState<null | number>(createdContract?.id || null);
-  const [contractData, setContractData] = useState<null | IDataContractType | undefined>(createdContract || null)
+  const [contractNumber, setContractNumber] = useState<null | number>(selectedContract?.id || null);
+  const [contractData, setContractData] = useState<null | IDataContractType | undefined>(selectedContract || null)
   const dispatch = useActions();
   const [collateralTypes, setCollateralTypes] = useState<
     ICollateralType[] | []
   >([]);
   const [validationIssueSchema, setValidationIssueSchema] = useState<any>(cardSchema);
 
+  const isContractIssued = contractData?.status === 'ISSUED'
+  const isContractRegistred = contractData?.status !== 'HOLD'
+
   useEffect(() => {
     async function getCollateral() {
-      if(createdContract) {
-        setContractNumber(createdContract.id)
+      if(selectedContract) {
+        setContractNumber(selectedContract.id)
+        setContractData(selectedContract)
         try {
-          const collaterals = await ApiService.getPOCollaterals(`&loan_agreement_id=${createdContract.id}`);
+          const collaterals = await ApiService.getPOCollaterals(`&loan_agreement_id=${selectedContract.id}`);
           const convertedCollaterals = collaterals.data.content.map((val:any) => ({
             id: val.id,
             storage_unit_id: val.storageUnitId,
@@ -58,13 +60,15 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
             },
             attribute_values: val.attributeValues
           }))
-          setFormDepositItems(convertedCollaterals)
+          convertedCollaterals.length > 0 ? setFormDepositItems(convertedCollaterals) : setFormDepositItems([{ id: Math.random().toFixed(8) }])
         } catch (err) {
           console.log(err)
         }
         }
-        const collateralTypeList = await ApiService.getCollateralTypes();
-        setCollateralTypes(collateralTypeList.data.content);
+        if(!isContractIssued) {
+          const collateralTypeList = await ApiService.getCollateralTypes();
+          setCollateralTypes(collateralTypeList.data.content);
+        }
         /* await ApiService.getPoStatement(81) */
       /* const collateralPriceList = await ApiService.getCollateralPriceList(); */
      /*  setCollateralPriceLists(collateralPriceList.data.content); */
@@ -91,7 +95,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
     }
     getCollateral();
     dispatch.setLoadingPo(false);
-  }, [createdContract]);
+  }, [selectedContract?.id]);
 
   function pushIndexToDepositItems() {
     let newID = Math.random().toFixed(8);
@@ -134,6 +138,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
   const {
     control: switcherControl,
     handleSubmit,
+    setValue: switcherSetValues,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -216,6 +221,8 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
   useEffect(() => {
     issuePoSetValue("dateIssue", contractData?.issue_date);
     issuePoSetValue("datePayment", contractData?.due_date);
+    switcherSetValues("confirmAcceptance", isContractRegistred)
+    switcherSetValues("confirmCollateral", isContractRegistred)
     contractData?.loan_amount && issuePoSetValue("loan_amount", contractData.loan_amount);
     issuePoSetValue("type", 'CARD');
   }, [contractData]);
@@ -273,13 +280,10 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
     ) : (
       <></>
     );
-  if(loadingPO) {
-    return <Loader/>
-  }
 
   return (
     <div className="flex flex-col gap-3">
-      {!createdContract && <CollapseWrapper
+      {!contractData && <CollapseWrapper
         contractNumber={contractNumber}
         title="Договор"
         page="newClient"
@@ -350,12 +354,14 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
               name="confirmCollateral"
               control={switcherControl}
               errorMsg={errors.confirmCollateral?.message}
+              defaultSelected={isContractRegistred}
             />
             <UsualSwitch
               title="Согласие"
               name="confirmAcceptance"
               control={switcherControl}
               errorMsg={errors.confirmAcceptance?.message}
+              defaultSelected={isContractRegistred}
             />
           </form>
         </div>
@@ -375,7 +381,7 @@ function DepositDetails({createdContract}: {createdContract?: IDataContractType 
         <form onSubmit={issuePoSubmit(bankInfoSubmit)} id='deposit'>
           <div className="flex gap-2  my-5">
           <CustomInput type="date" name="dateIssue" label="Дата выдачи" control={issuePoControl} isDisabled value={contractData?.issue_date}/>
-          <CustomInput type="date" name="datePayment" label="Дата оплаты" control={issuePoControl} isDisabled value={contractData?.due_date}/>
+          <CustomInput type="date" name="datePayment" label="Дата завершения" control={issuePoControl} isDisabled value={contractData?.due_date}/>
           <CustomInput
             type="number"
             name="loan_amount"

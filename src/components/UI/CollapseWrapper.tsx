@@ -7,8 +7,9 @@ import UsualSwitch from "./UsualSwitch";
 
 
 export interface ICollapseWrapper {
-  title: string,
-  page?: string,
+  title: string
+  page?: string
+  svg?: string
   children: ReactNode;
   notActive?: boolean;
   contractNumber?: number | null;

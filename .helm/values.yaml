@@ -1,0 +1,62 @@
+replicaCount: 1
+
+fullnameOverride: "uzlombard-frontend"
+
+image:
+  repository: registry.gitlab.com/asgardiateam/uzlombard-frontend
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets:
+  - name: regcred
+
+springProfile: ""
+
+minReadySeconds: 120
+terminationGracePeriodSeconds: 30
+
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+
+service:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http-port
+      protocol: TCP
+      name: app-port
+
+containerPorts:
+  - name: http-port
+    containerPort: 80
+    protocol: TCP
+
+resources:
+  limits:
+    memory: 500Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 20
+  periodSeconds: 1
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 80
+  initialDelaySeconds: 30
+  periodSeconds: 1
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

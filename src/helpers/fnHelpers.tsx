@@ -506,6 +506,7 @@ export const getColumnsForClients = (
     title: titleWIthIcon(i18next.t('clients.columns.fio'), setSort, currentSort, "first_name"),
     key: "fio",
     dataIndex: "first_name",
+    width: 400,
     onHeaderCell: setTblHeaderFilter? (record) => {
       return {
         onDoubleClick: (e) => {e.stopPropagation(); setTblHeaderFilter(record.key)},

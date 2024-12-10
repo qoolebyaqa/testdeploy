@@ -4,7 +4,7 @@ import { ApiService } from '../../helpers/API/ApiSerivce';
 import { useAppSelector } from '../../helpers/hooks/useAppSelector';
 import { toast, ToastContainer } from 'react-toastify';
 import useActions from "../../helpers/hooks/useActions";
-import RightHand from '../UI/RightHand'
+import RightHandComponent from '../UI/RightHandComponent'
 
 const FingerPrintRegistration = () => {
   const dataRightFingers = useAppSelector(state => state.fingerPrintReducer.rightHandFingers)
@@ -55,7 +55,7 @@ const FingerPrintRegistration = () => {
         <div className="relative w-128 h-64">
         <svg viewBox="0 0 500 400" className="w-full h-full">
           <g  transform="translate(0, 0)">
-            <RightHand/>
+            <RightHandComponent/>
           </g>
         </svg>
       </div>
